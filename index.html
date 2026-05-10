@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiteFight - Raporty</title>
+    <style>
+        body { 
+            background-color: #1e0e0e; 
+            color: #c00c0c; 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding-top: 100px; 
+        }
+        h1 { font-size: 40px; }
+        button { 
+            background: #1f7244; /* Zielony kolor Excela */
+            color: white; 
+            border: 2px solid #103c23; 
+            padding: 20px 40px; 
+            font-size: 24px; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            font-weight: bold;
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+        button:hover { background: #165231; transform: scale(1.05); }
+        #status { margin-top: 20px; color: #888; font-size: 14px; max-width: 500px; margin-left: auto; margin-right: auto;}
+    </style>
+</head>
+<body>
+    <h1>Statystyki BiteFight</h1>
+    <p>Pobierz dzisiejszy raport przyrostów wygenerowany automatycznie przez system w tle.</p>
+    
+    <button id="downloadBtn">Pobierz dzisiejszy raport (.csv)</button>
+    <div id="status">Skrypt odświeża i analizuje dane co 5 minut.</div>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // Pobieranie dzisiejszej daty w formacie DD.MM.YYYY
+            const dzisiaj = new Date();
+            const dd = String(dzisiaj.getDate()).padStart(2, '0');
+            const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0'); // Miesiące liczymy od 0
+            const yyyy = dzisiaj.getFullYear();
+            const dataString = dd + '.' + mm + '.' + yyyy;
+
+            // Konstruowanie nazwy pliku dokładnie takiej, jak robi to skrypt w Pythonie
+            const nazwaPliku = 'Raport_Bitefight_' + dataString + '.csv';
+            
+            // Komunikat pomocniczy
+            document.getElementById('status').innerHTML = "Pobieranie pliku: <b>" + nazwaPliku + "</b>... <br><br>(Jeżeli wyskoczy błąd 'Not Found', oznacza to, że nikt nie zdobył jeszcze dzisiaj doświadczenia lub minęła północ i skrypt jeszcze nie zadziałał).";
+
+            // Wywołanie pobierania
+            window.location.href = nazwaPliku;
+        });
+    </script>
+</body>
+</html>
