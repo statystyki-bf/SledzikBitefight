@@ -3,57 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiteFight - Raporty</title>
+    <title>BiteFight - Raporty na żywo</title>
     <style>
         body { 
             background-color: #1e0e0e; 
-            color: #c00c0c; 
+            color: #e0e0e0; 
             font-family: Arial, sans-serif; 
             text-align: center; 
-            padding-top: 100px; 
+            padding: 20px; 
         }
-        h1 { font-size: 40px; }
+        h1 { font-size: 36px; color: #c00c0c; }
         button { 
-            background: #1f7244; /* Zielony kolor Excela */
+            background: #1f7244; 
             color: white; 
             border: 2px solid #103c23; 
-            padding: 20px 40px; 
-            font-size: 24px; 
+            padding: 15px 30px; 
+            font-size: 20px; 
             cursor: pointer; 
-            border-radius: 10px; 
+            border-radius: 8px; 
             font-weight: bold;
-            margin-top: 30px;
+            margin-top: 10px;
+            margin-bottom: 20px;
             transition: 0.3s;
         }
         button:hover { background: #165231; transform: scale(1.05); }
-        #status { margin-top: 20px; color: #888; font-size: 14px; max-width: 500px; margin-left: auto; margin-right: auto;}
+        #status { color: #888; font-size: 14px; margin-bottom: 20px;}
+        
+        /* Wygląd tabeli na stronie */
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 95%;
+            max-width: 1200px;
+            background-color: #2b1717;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            font-size: 15px;
+        }
+        th, td {
+            border: 1px solid #600000;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #600000;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) { background-color: #381e1e; }
+        tr:hover { background-color: #4a2727; }
+        .przyrost-col { color: #55ff55; font-weight: bold; } /* Zielony kolor dla przyrostu */
     </style>
 </head>
 <body>
-    <h1>Statystyki BiteFight</h1>
-    <p>Pobierz dzisiejszy raport przyrostów wygenerowany automatycznie przez system w tle.</p>
+    <h1>Statystyki BiteFight (Live)</h1>
     
     <button id="downloadBtn">Pobierz dzisiejszy raport (.csv)</button>
-    <div id="status">Skrypt odświeża i analizuje dane co 5 minut.</div>
+    <div id="status">Skrypt analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.</div>
+
+    <div id="tableContainer">
+        <p>Ładowanie dzisiejszych danych...</p>
+    </div>
 
     <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            // Pobieranie dzisiejszej daty w formacie DD.MM.YYYY
+        // Pobieranie nazwy pliku na dzisiejszy dzień
+        function getTodayFileName() {
             const dzisiaj = new Date();
             const dd = String(dzisiaj.getDate()).padStart(2, '0');
-            const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0'); // Miesiące liczymy od 0
+            const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0');
             const yyyy = dzisiaj.getFullYear();
-            const dataString = dd + '.' + mm + '.' + yyyy;
+            return 'Raport_Bitefight_' + dd + '.' + mm + '.' + yyyy + '.csv';
+        }
 
-            // Konstruowanie nazwy pliku dokładnie takiej, jak robi to skrypt w Pythonie
-            const nazwaPliku = 'Raport_Bitefight_' + dataString + '.csv';
-            
-            // Komunikat pomocniczy
-            document.getElementById('status').innerHTML = "Pobieranie pliku: <b>" + nazwaPliku + "</b>... <br><br>(Jeżeli wyskoczy błąd 'Not Found', oznacza to, że nikt nie zdobył jeszcze dzisiaj doświadczenia lub minęła północ i skrypt jeszcze nie zadziałał).";
+        const nazwaPliku = getTodayFileName();
 
-            // Wywołanie pobierania
+        // Obsługa zielonego przycisku
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            document.getElementById('status').innerHTML = "Pobieranie pliku: <b>" + nazwaPliku + "</b>...";
             window.location.href = nazwaPliku;
         });
+
+        // Wczytywanie tabeli CSV prosto na stronę
+        async function loadTableData() {
+            const container = document.getElementById('tableContainer');
+            try {
+                // Trik z dodaniem czasu, aby przeglądarka zawsze pobierała najnowszą wersję
+                const response = await fetch(nazwaPliku + '?t=' + new Date().getTime());
+                if (!response.ok) throw new Error("Brak pliku");
+                
+                const text = await response.text();
+                const wiersze = text.trim().split('\n');
+                
+                if (wiersze.length <= 1) {
+                    container.innerHTML = "<p>Brak dzisiejszych przyrostów.</p>";
+                    return;
+                }
+
+                let tableHTML = "<table><thead><tr>";
+                
+                // Sztywne nagłówki wg Twojego życzenia (bez polskich znaków i błędów)
+                const bezpieczneNaglowki = ["Data i godzina", "Gracz", "Statystyka", "Stara wartosc", "Nowa wartosc", "Przyrost"];
+                bezpieczneNaglowki.forEach(naglowek => {
+                    tableHTML += `<th>${naglowek}</th>`;
+                });
+                tableHTML += "</tr></thead><tbody>";
+
+                // Czytanie danych z pominięciem pierwszej linii z CSV (bo używamy własnych nagłówków)
+                for (let i = 1; i < wiersze.length; i++) {
+                    const komorki = wiersze[i].split(';');
+                    if (komorki.length < 2) continue;
+                    
+                    tableHTML += "<tr>";
+                    for(let j = 0; j < komorki.length; j++) {
+                        // Jeśli to ostatnia kolumna (Przyrost), kolorujemy ją na zielono
+                        let klasa = (j === 5) ? ' class="przyrost-col"' : '';
+                        tableHTML += `<td${klasa}>${komorki[j].trim()}</td>`;
+                    }
+                    tableHTML += "</tr>";
+                }
+                
+                tableHTML += "</tbody></table>";
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                container.innerHTML = `<p style="color: #ff5555; font-size: 18px;">Nie utworzono jeszcze dzisiejszego raportu.<br>Nikt nie zdobył dziś jeszcze żadnych statystyk (Czekam na aktywność...)</p>`;
+            }
+        }
+
+        // Pierwsze załadowanie od razu po wejściu
+        loadTableData();
+        
+        // Magia: Strona sama aktualizuje tabelę co równe 5 minut!
+        setInterval(loadTableData, 300000);
     </script>
 </body>
 </html>
