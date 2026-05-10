@@ -58,66 +58,61 @@
 <body>
     <h1>Statystyki BiteFight (Live)</h1>
     
-    <button id="downloadBtn">Pobierz dzisiejszy raport (.csv)</button>
-    <div id="status">Skrypt analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.</div>
+    <button id="downloadBtn">Pobierz pełny raport (.csv)</button>
+    <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.<br><b>Najnowsze wpisy widoczne są na samej górze.</b></div>
 
     <div id="tableContainer">
-        <p>Ładowanie dzisiejszych danych...</p>
+        <p>Ładowanie najnowszych danych z bazy Google...</p>
     </div>
 
     <script>
-        // Pobieranie nazwy pliku na dzisiejszy dzień
-        function getTodayFileName() {
-            const dzisiaj = new Date();
-            const dd = String(dzisiaj.getDate()).padStart(2, '0');
-            const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0');
-            const yyyy = dzisiaj.getFullYear();
-            return 'Raport_Bitefight_' + dd + '.' + mm + '.' + yyyy + '.csv';
-        }
-
-        const nazwaPliku = getTodayFileName();
+        // Link wystawiony przez Twój Arkusz Google
+        const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
 
         // Obsługa zielonego przycisku
         document.getElementById('downloadBtn').addEventListener('click', function() {
-            document.getElementById('status').innerHTML = "Pobieranie pliku: <b>" + nazwaPliku + "</b>...";
-            window.location.href = nazwaPliku;
+            document.getElementById('status').innerHTML = "Pobieranie arkusza...";
+            window.location.href = urlGoogleSheet;
         });
 
         // Wczytywanie tabeli CSV prosto na stronę
         async function loadTableData() {
             const container = document.getElementById('tableContainer');
             try {
-                // Trik z dodaniem czasu, aby przeglądarka zawsze pobierała najnowszą wersję
-                const response = await fetch(nazwaPliku + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error("Brak pliku");
+                // Trik z dodaniem czasu (&t=), aby omijać pamięć podręczną przeglądarki i zawsze brać najświeższe dane
+                const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
+                if (!response.ok) throw new Error("Błąd pobierania bazy");
                 
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 
                 if (wiersze.length <= 1) {
-                    container.innerHTML = "<p>Brak dzisiejszych przyrostów.</p>";
+                    container.innerHTML = "<p>Brak danych do wyświetlenia. Czekam na statystyki...</p>";
                     return;
                 }
 
                 let tableHTML = "<table><thead><tr>";
                 
-                // Sztywne nagłówki wg Twojego życzenia (bez polskich znaków i błędów)
+                // Sztywne nagłówki
                 const bezpieczneNaglowki = ["Data i godzina", "Gracz", "Statystyka", "Stara wartosc", "Nowa wartosc", "Przyrost"];
                 bezpieczneNaglowki.forEach(naglowek => {
                     tableHTML += `<th>${naglowek}</th>`;
                 });
                 tableHTML += "</tr></thead><tbody>";
 
-                // Czytanie danych z pominięciem pierwszej linii z CSV (bo używamy własnych nagłówków)
-                for (let i = 1; i < wiersze.length; i++) {
-                    const komorki = wiersze[i].split(';');
+                // Pętla idąca od końca (najnowsze przyrosty lądują na szczycie tabeli)
+                for (let i = wiersze.length - 1; i >= 1; i--) {
+                    // Magia dzielenia CSV: Arkusze Google używają przecinków. Ta komenda ignoruje przecinki ukryte w datach.
+                    const komorki = wiersze[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (komorki.length < 2) continue;
                     
                     tableHTML += "<tr>";
                     for(let j = 0; j < komorki.length; j++) {
-                        // Jeśli to ostatnia kolumna (Przyrost), kolorujemy ją na zielono
                         let klasa = (j === 5) ? ' class="przyrost-col"' : '';
-                        tableHTML += `<td${klasa}>${komorki[j].trim()}</td>`;
+                        
+                        // Zdejmujemy cudzysłowy (jeśli Google jakieś nałożyło)
+                        let czystaWartosc = komorki[j].replace(/(^"|"$)/g, '').trim();
+                        tableHTML += `<td${klasa}>${czystaWartosc}</td>`;
                     }
                     tableHTML += "</tr>";
                 }
@@ -126,14 +121,14 @@
                 container.innerHTML = tableHTML;
 
             } catch (error) {
-                container.innerHTML = `<p style="color: #ff5555; font-size: 18px;">Nie utworzono jeszcze dzisiejszego raportu.<br>Nikt nie zdobył dziś jeszcze żadnych statystyk (Czekam na aktywność...)</p>`;
+                container.innerHTML = `<p style="color: #ff5555; font-size: 18px;">Nie można połączyć się z serwerem Google.<br>Błąd: ${error.message}</p>`;
             }
         }
 
-        // Pierwsze załadowanie od razu po wejściu
+        // Pierwsze załadowanie od razu po wejściu na stronę
         loadTableData();
         
-        // Magia: Strona sama aktualizuje tabelę co równe 5 minut!
+        // Magia: Strona sama aktualizuje tabelę co 5 minut bez klikania F5
         setInterval(loadTableData, 300000);
     </script>
 </body>
