@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Warsaw
 
     steps:
       - name: Pobieranie repozytorium
