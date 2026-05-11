@@ -18,7 +18,7 @@
         tr:nth-child(even) { background-color: #381e1e; }
         tr:hover { background-color: #4a2727; }
         .przyrost-col { color: #55ff55; font-weight: bold; }
-        .suma-col { color: #ffcc00; font-weight: bold; } /* Kolor złoty dla sumy */
+        .suma-col { color: #ffcc00; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -39,9 +39,18 @@
         let globalData = [];
 
         document.getElementById('downloadBtn').addEventListener('click', () => window.location.href = urlGoogleSheet);
-        document.getElementById('filterDate').addEventListener('change', renderTable);
-        document.getElementById('filterPlayer').addEventListener('change', renderTable);
-        document.getElementById('filterStat').addEventListener('change', renderTable);
+        
+        // Zapisywanie wybranego filtru do pamięci przeglądarki i odświeżenie tabeli
+        function handleFilterChange() {
+            localStorage.setItem('bf_filterDate', document.getElementById('filterDate').value);
+            localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
+            localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
+            renderTable();
+        }
+
+        document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+        document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+        document.getElementById('filterStat').addEventListener('change', handleFilterChange);
 
         async function loadTableData() {
             try {
@@ -51,15 +60,13 @@
                 if (wiersze.length <= 1) return;
 
                 let rawData = [];
-                // Czytamy od początku (chronologicznie), aby poprawnie policzyć kumulację
                 for (let i = 1; i < wiersze.length; i++) {
                     const komorki = wiersze[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (komorki.length < 2) continue;
                     rawData.push(komorki.map(k => k.replace(/(^"|"$)/g, '').trim()));
                 }
 
-                // LOGIKA LICZNIKA SKUMULOWANEGO
-                let playerAccumulator = {}; // Tu trzymamy sumy dla każdego gracza
+                let playerAccumulator = {}; 
                 globalData = [];
 
                 rawData.forEach(row => {
@@ -69,22 +76,18 @@
 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
 
-                    // Jeśli statystyka to atrybut (Siła, Obrona itp.) - zerujemy licznik złota
                     const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
                     if (atrybuty.includes(stat)) {
                         playerAccumulator[gracz] = 0;
                     } 
-                    // Jeśli to zrabowane dobra - dodajemy do licznika
                     else if (stat === "Zrabowane dobra") {
                         playerAccumulator[gracz] += przyrost;
                     }
 
-                    // Dodajemy kolumnę z aktualnym stanem licznika do każdego wiersza
                     let rowWithSum = [...row, playerAccumulator[gracz]];
                     globalData.push(rowWithSum);
                 });
 
-                // Odwracamy na koniec, żeby najnowsze były na górze strony
                 globalData.reverse();
 
                 updateFilters();
@@ -99,17 +102,29 @@
                 if(w[1]) gracze.add(w[1]);
                 if(w[2]) statystyki.add(w[2]);
             });
-            const populate = (id, set, txt) => {
-                const s = document.getElementById(id), cur = s.value;
+            
+            const populate = (id, set, txt, storageKey) => {
+                const s = document.getElementById(id);
+                // Szukamy zapisanego wyboru w pamięci, jak nie ma, to zostawiamy to co jest
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
+                
                 Array.from(set).sort().forEach(o => {
                     let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === cur) el.selected = true; s.appendChild(el);
+                    if(o === targetVal) el.selected = true; // Zaznacza opcję z pamięci
+                    s.appendChild(el);
                 });
+
+                // Jeśli gracz/statystyka z pamięci już nie istnieje w arkuszu, zresetuj pamięć na ALL
+                if (s.value !== targetVal) {
+                    localStorage.setItem(storageKey, 'ALL');
+                }
             };
-            populate('filterDate', dni, 'Wszystkie dni');
-            populate('filterPlayer', gracze, 'Wszyscy gracze');
-            populate('filterStat', statystyki, 'Wszystkie statystyki');
+            
+            populate('filterDate', dni, 'Wszystkie dni', 'bf_filterDate');
+            populate('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
+            populate('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
         }
 
         function renderTable() {
@@ -120,23 +135,21 @@
             
             filtered.forEach(w => {
                 html += "<tr>";
-                let isZrabowane = (w[2] === 'Zrabowane dobra'); // Sprawdzamy czy wiersz dotyczy złota
+                let isZrabowane = (w[2] === 'Zrabowane dobra');
 
                 for(let j = 0; j < w.length; j++) {
                     let klasa = (j === 5) ? ' class="przyrost-col"' : (j === 6 ? ' class="suma-col"' : '');
                     let val = w[j];
                     
-                    // Kolumna Przyrost: kropki tylko dla Zrabowanych dóbr
                     if (j === 5 && isZrabowane && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                     
-                    // Kolumna Suma od skilla: pokazuj kropki TYLKO jeśli to Zrabowane dobra, w przeciwnym razie ukryj
                     if (j === 6) {
                         if (isZrabowane) {
                             val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         } else {
-                            val = ""; // Zostawia puste pole dla innych statystyk
+                            val = ""; 
                         }
                     }
 
