@@ -120,12 +120,26 @@
             
             filtered.forEach(w => {
                 html += "<tr>";
+                let isZrabowane = (w[2] === 'Zrabowane dobra'); // Sprawdzamy czy wiersz dotyczy złota
+
                 for(let j = 0; j < w.length; j++) {
                     let klasa = (j === 5) ? ' class="przyrost-col"' : (j === 6 ? ' class="suma-col"' : '');
                     let val = w[j];
-                    if ((j === 5 && w[2] === "Zrabowane dobra") || j === 6) {
+                    
+                    // Kolumna Przyrost: kropki tylko dla Zrabowanych dóbr
+                    if (j === 5 && isZrabowane && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
+                    
+                    // Kolumna Suma od skilla: pokazuj kropki TYLKO jeśli to Zrabowane dobra, w przeciwnym razie ukryj
+                    if (j === 6) {
+                        if (isZrabowane) {
+                            val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        } else {
+                            val = ""; // Zostawia puste pole dla innych statystyk
+                        }
+                    }
+
                     html += `<td${klasa}>${val}</td>`;
                 }
                 html += "</tr>";
