@@ -210,9 +210,18 @@
                 // Rysowanie właściwych wierszy
                 filteredData.forEach(komorki => {
                     tableHTML += "<tr>";
+                    let isZrabowane = (komorki[2] === 'Zrabowane dobra'); // Sprawdzamy czy wiersz dotyczy zrabowanego dobra
+                    
                     for(let j = 0; j < komorki.length; j++) {
                         let klasa = (j === 5) ? ' class="przyrost-col"' : '';
-                        tableHTML += `<td${klasa}>${komorki[j]}</td>`;
+                        let wartosc = komorki[j];
+                        
+                        // Dodawanie kropek: tylko dla kolumny "Przyrost" (j=5) i tylko jeśli to "Zrabowane dobra"
+                        if (j === 5 && isZrabowane && wartosc !== "") {
+                            wartosc = wartosc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        }
+                        
+                        tableHTML += `<td${klasa}>${wartosc}</td>`;
                     }
                     tableHTML += "</tr>";
                 });
