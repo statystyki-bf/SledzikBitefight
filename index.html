@@ -6,26 +6,40 @@
     <title>BiteFight - Raporty na żywo</title>
     <style>
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        h1 { font-size: 36px; color: #c00c0c; }
+        h1 { font-size: 36px; color: #c00c0c; margin-bottom: 5px; }
+        h2 { font-size: 26px; color: #ffcc00; margin-top: 30px; margin-bottom: 15px; text-transform: uppercase; }
         button { background: #1f7244; color: white; border: 2px solid #103c23; padding: 15px 30px; font-size: 20px; cursor: pointer; border-radius: 8px; font-weight: bold; margin-top: 10px; margin-bottom: 20px; transition: 0.3s; }
         button:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 14px; margin-bottom: 20px;}
-        .filter-container { margin-bottom: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .filter-container { margin-bottom: 25px; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         select { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; }
+        
+        /* Wygląd tabel */
         table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1300px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
         th, td { border: 1px solid #600000; padding: 10px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; }
         tr:nth-child(even) { background-color: #381e1e; }
         tr:hover { background-color: #4a2727; }
+        
+        /* Specjalne kolory */
         .przyrost-col { color: #55ff55; font-weight: bold; }
         .suma-col { color: #ffcc00; font-weight: bold; }
+        .level-col { color: #00e5ff; font-weight: bold; font-size: 16px; }
+        
+        /* Linia oddzielająca sekcje */
+        .separator { border: 1px solid #600000; width: 95%; max-width: 1300px; margin: 40px auto; }
     </style>
 </head>
 <body>
     <h1>Statystyki BiteFight (Live)</h1>
-    <button id="downloadBtn">Pobierz pełny raport (.csv)</button>
     <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.</div>
+    <button id="downloadBtn">Pobierz pełny raport (.csv)</button>
 
+    <div id="summaryContainer"></div>
+
+    <hr class="separator">
+    
+    <h2>Pełny log operacji (Z filtrami)</h2>
     <div class="filter-container">
         <select id="filterDate"><option value="ALL">Wszystkie dni</option></select>
         <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
@@ -40,7 +54,6 @@
 
         document.getElementById('downloadBtn').addEventListener('click', () => window.location.href = urlGoogleSheet);
         
-        // Zapisywanie wybranego filtru do pamięci przeglądarki i odświeżenie tabeli
         function handleFilterChange() {
             localStorage.setItem('bf_filterDate', document.getElementById('filterDate').value);
             localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
@@ -88,11 +101,70 @@
                     globalData.push(rowWithSum);
                 });
 
-                globalData.reverse();
+                globalData.reverse(); // Najnowsze na górze
 
+                renderSummaryTable(); // Rysowanie podsumowania dziennego
                 updateFilters();
-                renderTable();
+                renderTable(); // Rysowanie głównej tabeli z historią
             } catch (e) { console.error(e); }
+        }
+
+        // NOWA FUNKCJA: Rysowanie dziennego podsumowania
+        function renderSummaryTable() {
+            // Generowanie dzisiejszej daty w formacie DD.MM.YYYY
+            const dzisiaj = new Date();
+            const dd = String(dzisiaj.getDate()).padStart(2, '0');
+            const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dzisiaj.getFullYear();
+            const todayString = `${dd}.${mm}.${yyyy}`;
+
+            let summary = {};
+            
+            // Znajdź wszystkich graczy, by każdy miał chociaż 0 na liście
+            globalData.forEach(w => {
+                if(w[1] && !summary[w[1]]) {
+                    summary[w[1]] = { zloto: 0, poziomy: 0 };
+                }
+            });
+
+            // Filtrujemy dane TYLKO z dzisiaj
+            let dzisiejszeWpisy = globalData.filter(w => w[0] && w[0].startsWith(todayString));
+
+            // Sumowanie łupów i leveli
+            dzisiejszeWpisy.forEach(w => {
+                let gracz = w[1];
+                let stat = w[2];
+                let przyrost = parseInt(w[5]) || 0;
+
+                if (stat === 'Zrabowane dobra') {
+                    summary[gracz].zloto += przyrost;
+                } else if (stat === 'Poziom') {
+                    summary[gracz].poziomy += przyrost;
+                }
+            });
+
+            // Sortujemy graczy od tego, który nakradł dziś najwięcej złota
+            let posortowaniGracze = Object.keys(summary).sort((a, b) => summary[b].zloto - summary[a].zloto);
+
+            let html = `<h2>Podsumowanie Dzisiejsze (${todayString})</h2>`;
+            html += `<table><thead><tr><th>Gracz</th><th>Zdobyte Złoto Dziś</th><th>Wbite Poziomy Dziś</th></tr></thead><tbody>`;
+
+            posortowaniGracze.forEach(gracz => {
+                let data = summary[gracz];
+                let zlotoStr = data.zloto > 0 ? data.zloto.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                
+                // Jak wbił poziom, dajemy rzucający się w oczy kolorowy napis np. "+1"
+                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+
+                html += `<tr>
+                            <td><strong>${gracz}</strong></td>
+                            <td class="suma-col">${zlotoStr}</td>
+                            <td>${poziomStr}</td>
+                         </tr>`;
+            });
+
+            html += "</tbody></table>";
+            document.getElementById('summaryContainer').innerHTML = html;
         }
 
         function updateFilters() {
@@ -105,21 +177,17 @@
             
             const populate = (id, set, txt, storageKey) => {
                 const s = document.getElementById(id);
-                // Szukamy zapisanego wyboru w pamięci, jak nie ma, to zostawiamy to co jest
                 let targetVal = localStorage.getItem(storageKey) || s.value;
                 
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
                 
                 Array.from(set).sort().forEach(o => {
                     let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === targetVal) el.selected = true; // Zaznacza opcję z pamięci
+                    if(o === targetVal) el.selected = true; 
                     s.appendChild(el);
                 });
 
-                // Jeśli gracz/statystyka z pamięci już nie istnieje w arkuszu, zresetuj pamięć na ALL
-                if (s.value !== targetVal) {
-                    localStorage.setItem(storageKey, 'ALL');
-                }
+                if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
             
             populate('filterDate', dni, 'Wszystkie dni', 'bf_filterDate');
@@ -136,21 +204,21 @@
             filtered.forEach(w => {
                 html += "<tr>";
                 let isZrabowane = (w[2] === 'Zrabowane dobra');
+                let isPoziom = (w[2] === 'Poziom'); // Sprawdzamy, czy to wiersz z levelem
 
                 for(let j = 0; j < w.length; j++) {
-                    let klasa = (j === 5) ? ' class="przyrost-col"' : (j === 6 ? ' class="suma-col"' : '');
+                    let klasa = "";
+                    if (j === 5 && isZrabowane) klasa = ' class="przyrost-col"';
+                    if (j === 5 && isPoziom) klasa = ' class="level-col"'; // Jasnoniebieski kolor dla wbitego levela w logach
+                    if (j === 6) klasa = ' class="suma-col"';
+                    
                     let val = w[j];
                     
                     if (j === 5 && isZrabowane && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
-                    
                     if (j === 6) {
-                        if (isZrabowane) {
-                            val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                        } else {
-                            val = ""; 
-                        }
+                        val = isZrabowane ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
                     }
 
                     html += `<td${klasa}>${val}</td>`;
