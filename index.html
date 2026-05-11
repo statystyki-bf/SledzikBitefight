@@ -29,6 +29,27 @@
         button:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 14px; margin-bottom: 20px;}
         
+        /* Styl dla sekcji z filtrami */
+        .filter-container {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        select {
+            background-color: #2b1717;
+            color: white;
+            border: 1px solid #600000;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        select:hover, select:focus { border-color: #c00c0c; background-color: #381e1e; }
+
         /* Wygląd tabeli na stronie */
         table {
             margin: 0 auto;
@@ -61,13 +82,25 @@
     <button id="downloadBtn">Pobierz pełny raport (.csv)</button>
     <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.<br><b>Najnowsze wpisy widoczne są na samej górze.</b></div>
 
+    <div class="filter-container">
+        <select id="filterDate">
+            <option value="ALL">Wszystkie dni</option>
+        </select>
+        <select id="filterPlayer">
+            <option value="ALL">Wszyscy gracze</option>
+        </select>
+        <select id="filterStat">
+            <option value="ALL">Wszystkie statystyki</option>
+        </select>
+    </div>
+
     <div id="tableContainer">
         <p>Ładowanie najnowszych danych z bazy Google...</p>
     </div>
 
     <script>
-        // Link wystawiony przez Twój Arkusz Google
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
+        let globalData = []; // Baza danych trzymana w pamięci przeglądarki
 
         // Obsługa zielonego przycisku
         document.getElementById('downloadBtn').addEventListener('click', function() {
@@ -75,11 +108,14 @@
             window.location.href = urlGoogleSheet;
         });
 
-        // Wczytywanie tabeli CSV prosto na stronę
+        // Nasłuchiwacze na filtry – odświeżają tabelę od razu po zmianie
+        document.getElementById('filterDate').addEventListener('change', renderTable);
+        document.getElementById('filterPlayer').addEventListener('change', renderTable);
+        document.getElementById('filterStat').addEventListener('change', renderTable);
+
+        // Funkcja pobierająca dane z Google
         async function loadTableData() {
-            const container = document.getElementById('tableContainer');
             try {
-                // Trik z dodaniem czasu (&t=), aby omijać pamięć podręczną przeglądarki i zawsze brać najświeższe dane
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
                 if (!response.ok) throw new Error("Błąd pobierania bazy");
                 
@@ -87,48 +123,109 @@
                 const wiersze = text.trim().split('\n');
                 
                 if (wiersze.length <= 1) {
-                    container.innerHTML = "<p>Brak danych do wyświetlenia. Czekam na statystyki...</p>";
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak danych do wyświetlenia. Czekam na statystyki...</p>";
                     return;
                 }
 
-                let tableHTML = "<table><thead><tr>";
+                globalData = []; // Czyścimy starą pamięć
                 
-                // Sztywne nagłówki
-                const bezpieczneNaglowki = ["Data i godzina", "Gracz", "Statystyka", "Stara wartosc", "Nowa wartosc", "Przyrost"];
-                bezpieczneNaglowki.forEach(naglowek => {
-                    tableHTML += `<th>${naglowek}</th>`;
-                });
-                tableHTML += "</tr></thead><tbody>";
-
-                // Pętla idąca od końca (najnowsze przyrosty lądują na szczycie tabeli)
+                // Ładowanie wierszy od końca (od najnowszych)
                 for (let i = wiersze.length - 1; i >= 1; i--) {
-                    // Magia dzielenia CSV: Arkusze Google używają przecinków. Ta komenda ignoruje przecinki ukryte w datach.
                     const komorki = wiersze[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (komorki.length < 2) continue;
                     
-                    tableHTML += "<tr>";
-                    for(let j = 0; j < komorki.length; j++) {
-                        let klasa = (j === 5) ? ' class="przyrost-col"' : '';
-                        
-                        // Zdejmujemy cudzysłowy (jeśli Google jakieś nałożyło)
-                        let czystaWartosc = komorki[j].replace(/(^"|"$)/g, '').trim();
-                        tableHTML += `<td${klasa}>${czystaWartosc}</td>`;
-                    }
-                    tableHTML += "</tr>";
+                    // Zapisujemy wyczyszczone komórki do głównej bazy
+                    let wierszDanych = komorki.map(k => k.replace(/(^"|"$)/g, '').trim());
+                    globalData.push(wierszDanych);
                 }
-                
-                tableHTML += "</tbody></table>";
-                container.innerHTML = tableHTML;
+
+                updateFilters();
+                renderTable();
 
             } catch (error) {
-                container.innerHTML = `<p style="color: #ff5555; font-size: 18px;">Nie można połączyć się z serwerem Google.<br>Błąd: ${error.message}</p>`;
+                document.getElementById('tableContainer').innerHTML = `<p style="color: #ff5555; font-size: 18px;">Nie można połączyć się z serwerem Google.<br>Błąd: ${error.message}</p>`;
             }
         }
 
-        // Pierwsze załadowanie od razu po wejściu na stronę
+        // Funkcja wyłapująca opcje do filtrów
+        function updateFilters() {
+            const dni = new Set();
+            const gracze = new Set();
+            const statystyki = new Set();
+
+            globalData.forEach(wiersz => {
+                if(wiersz[0]) {
+                    // Wyciągnięcie samej daty (sprzed przecinka i godziny)
+                    let samaData = wiersz[0].split(',')[0].trim();
+                    dni.add(samaData);
+                }
+                if(wiersz[1]) gracze.add(wiersz[1]);
+                if(wiersz[2]) statystyki.add(wiersz[2]);
+            });
+
+            // Wypełnianie list rozwijanych (bez resetowania tego, co użytkownik już wybrał)
+            function populateSelect(selectId, optionsSet, defaultText) {
+                const select = document.getElementById(selectId);
+                const currentVal = select.value; // Zapisz aktualny wybór
+                
+                select.innerHTML = `<option value="ALL">${defaultText}</option>`;
+                
+                Array.from(optionsSet).sort().forEach(opt => {
+                    let optionElement = document.createElement('option');
+                    optionElement.value = opt;
+                    optionElement.textContent = opt;
+                    if(opt === currentVal) optionElement.selected = true; // Przywróć wybór
+                    select.appendChild(optionElement);
+                });
+            }
+
+            populateSelect('filterDate', dni, 'Wszystkie dni');
+            populateSelect('filterPlayer', gracze, 'Wszyscy gracze');
+            populateSelect('filterStat', statystyki, 'Wszystkie statystyki');
+        }
+
+        // Funkcja rysująca tabelę na podstawie wybranych filtrów
+        function renderTable() {
+            const fDate = document.getElementById('filterDate').value;
+            const fPlayer = document.getElementById('filterPlayer').value;
+            const fStat = document.getElementById('filterStat').value;
+
+            // Filtrowanie zaciągniętej bazy
+            let filteredData = globalData.filter(wiersz => {
+                let dateMatch = (fDate === 'ALL' || wiersz[0].startsWith(fDate));
+                let playerMatch = (fPlayer === 'ALL' || wiersz[1] === fPlayer);
+                let statMatch = (fStat === 'ALL' || wiersz[2] === fStat);
+                return dateMatch && playerMatch && statMatch;
+            });
+
+            let tableHTML = "<table><thead><tr>";
+            const bezpieczneNaglowki = ["Data i godzina", "Gracz", "Statystyka", "Stara wartosc", "Nowa wartosc", "Przyrost"];
+            bezpieczneNaglowki.forEach(naglowek => { tableHTML += `<th>${naglowek}</th>`; });
+            tableHTML += "</tr></thead><tbody>";
+
+            // Jeśli filtry są zbyt rygorystyczne i nic nie znaleziono
+            if (filteredData.length === 0) {
+                tableHTML += `<tr><td colspan="6" style="padding: 20px; color: #888;">Brak wyników dla wybranych filtrów.</td></tr>`;
+            } else {
+                // Rysowanie właściwych wierszy
+                filteredData.forEach(komorki => {
+                    tableHTML += "<tr>";
+                    for(let j = 0; j < komorki.length; j++) {
+                        let klasa = (j === 5) ? ' class="przyrost-col"' : '';
+                        tableHTML += `<td${klasa}>${komorki[j]}</td>`;
+                    }
+                    tableHTML += "</tr>";
+                });
+            }
+            
+            tableHTML += "</tbody></table>";
+            document.getElementById('tableContainer').innerHTML = tableHTML;
+        }
+
+        // Uruchomienie na start
         loadTableData();
         
-        // Magia: Strona sama aktualizuje tabelę co 5 minut bez klikania F5
+        // Odświeżanie w tle co 5 minut
         setInterval(loadTableData, 300000);
     </script>
 </body>
