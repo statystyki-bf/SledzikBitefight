@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "139.162.413 / 139.186.155",
-        "Sila": "3872",
+        "Doswiadczenie": "139.242.152 / 139.291.695",
+        "Sila": "3877",
         "Obrona": "3645",
         "Zwinnosc": "3462",
         "Wytrzymalosc": "3172",
         "Charyzma": "1505",
-        "Walki": "94.543",
-        "Zrabowane dobra": "237.336.084.422 krwi"
+        "Walki": "94.546",
+        "Zrabowane dobra": "237.397.870.277 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "114.000.635 / 114.007.900",
@@ -16,28 +16,28 @@
         "Zwinnosc": "2220",
         "Wytrzymalosc": "1960",
         "Charyzma": "1543",
-        "Walki": "56.639",
+        "Walki": "56.640",
         "Zrabowane dobra": "181.589.630.227 krwi"
     },
     "lux": {
-        "Doswiadczenie": "93.205.235 / 93.229.935",
+        "Doswiadczenie": "93.273.720 / 93.316.320",
         "Sila": "2352",
         "Obrona": "2819",
         "Zwinnosc": "2062",
         "Wytrzymalosc": "2482",
         "Charyzma": "1857",
         "Walki": "103.408",
-        "Zrabowane dobra": "162.948.718.316 krwi"
+        "Zrabowane dobra": "162.996.928.110 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "318.500.804 / 318.569.600",
+        "Doswiadczenie": "318.662.441 / 318.729.260",
         "Sila": "4291",
         "Obrona": "3071",
         "Zwinnosc": "3813",
-        "Wytrzymalosc": "3624",
+        "Wytrzymalosc": "3629",
         "Charyzma": "2836",
         "Walki": "115.604",
-        "Zrabowane dobra": "729.244.001.297 mięsa"
+        "Zrabowane dobra": "729.385.633.943 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "128.555.436 / 128.580.275",
@@ -46,11 +46,11 @@
         "Zwinnosc": "2565",
         "Wytrzymalosc": "2359",
         "Charyzma": "1540",
-        "Walki": "49.066",
+        "Walki": "49.067",
         "Zrabowane dobra": "237.399.005.010 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "144.019.221 / 144.028.810",
+        "Doswiadczenie": "144.021.423 / 144.028.810",
         "Sila": "4766",
         "Obrona": "3280",
         "Zwinnosc": "2992",
