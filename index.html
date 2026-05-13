@@ -96,6 +96,7 @@
                         if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0;
                     }
 
+                    // Suma (sakiewka) trafia do globalData jako element o indeksie 6
                     let rowWithSum = [...row, playerAccumulator[gracz]];
                     globalData.push(rowWithSum);
                 });
@@ -141,7 +142,6 @@
                 }
             });
 
-            // Sortowanie po łącznym zysku z polowań i walk
             let posortowaniGracze = Object.keys(summary).sort((a, b) => (summary[b].dobra + summary[b].zlotoPvP) - (summary[a].dobra + summary[a].zlotoPvP));
 
             let html = `<h2>Podsumowanie Dzisiejsze (${todayString})</h2>`;
@@ -205,28 +205,25 @@
                 html += "<tr>";
                 let stat = w[2];
                 let isPoziom = (stat === 'Poziom'); 
-                let requiresDots = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
+                let isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
 
-                for(let j = 0; j < w.length; j++) {
+                // Rysowanie standardowych kolumn (od indeksu 0 do 5 z arkusza Google)
+                for(let j = 0; j <= 5; j++) {
                     let klasa = "";
-                    if (j === 5 && (requiresDots || stat === 'Walki')) klasa = ' class="przyrost-col"';
+                    if (j === 5 && (isLoot || stat === 'Walki')) klasa = ' class="przyrost-col"';
                     if (j === 5 && stat === 'Stracone złoto') klasa = ' class="strata-col"';
                     if (j === 5 && isPoziom) klasa = ' class="level-col"'; 
-                    if (j === 6) klasa = ' class="suma-col"';
                     
                     let val = w[j];
                     
-                    if (j === 5 && requiresDots && val !== "") {
+                    if (j === 5 && isLoot && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                    }
-                    if (j === 6) {
-                        val = requiresDots ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
                     }
 
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
-                // Nowa kolumna na końcu wiersza: Wynik PvP
+                // Rysowanie kolumny Wynik PvP
                 let pvpResult = "";
                 let przyrostZlota = w[5] ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 
@@ -235,8 +232,15 @@
                 } else if (stat === 'Stracone złoto') {
                     pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
                 }
-                
                 html += `<td><strong>${pvpResult}</strong></td>`;
+
+                // Rysowanie kolumny Sakiewka (indeks 6 w globalData)
+                let sakiewkaVal = "";
+                if (isLoot && w[6] !== undefined) {
+                    sakiewkaVal = w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+                html += `<td class="suma-col">${sakiewkaVal}</td>`;
+
                 html += "</tr>";
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
