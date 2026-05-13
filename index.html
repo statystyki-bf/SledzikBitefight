@@ -14,19 +14,17 @@
         .filter-container { margin-bottom: 25px; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         select { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; }
         
-        /* Wygląd tabel */
         table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1300px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
         th, td { border: 1px solid #600000; padding: 10px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; }
         tr:nth-child(even) { background-color: #381e1e; }
         tr:hover { background-color: #4a2727; }
         
-        /* Specjalne kolory */
         .przyrost-col { color: #55ff55; font-weight: bold; }
+        .strata-col { color: #ff5555; font-weight: bold; } /* Czerwony dla straty */
         .suma-col { color: #ffcc00; font-weight: bold; }
         .level-col { color: #00e5ff; font-weight: bold; font-size: 16px; }
         
-        /* Linia oddzielająca sekcje */
         .separator { border: 1px solid #600000; width: 95%; max-width: 1300px; margin: 40px auto; }
     </style>
 </head>
@@ -36,7 +34,6 @@
     <button id="downloadBtn">Pobierz pełny raport (.csv)</button>
 
     <div id="summaryContainer"></div>
-
     <hr class="separator">
     
     <h2>Pełny log operacji (Z filtrami)</h2>
@@ -93,25 +90,28 @@
                     if (atrybuty.includes(stat)) {
                         playerAccumulator[gracz] = 0;
                     } 
-                    else if (stat === "Zrabowane dobra") {
+                    // Logika liczenia portfela
+                    else if (stat === "Zrabowane złoto") {
                         playerAccumulator[gracz] += przyrost;
+                    }
+                    else if (stat === "Stracone złoto") {
+                        playerAccumulator[gracz] -= przyrost;
+                        if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0; // nie zejdzie poniżej 0
                     }
 
                     let rowWithSum = [...row, playerAccumulator[gracz]];
                     globalData.push(rowWithSum);
                 });
 
-                globalData.reverse(); // Najnowsze na górze
+                globalData.reverse(); 
 
-                renderSummaryTable(); // Rysowanie podsumowania dziennego
+                renderSummaryTable(); 
                 updateFilters();
-                renderTable(); // Rysowanie głównej tabeli z historią
+                renderTable(); 
             } catch (e) { console.error(e); }
         }
 
-        // NOWA FUNKCJA: Rysowanie dziennego podsumowania
         function renderSummaryTable() {
-            // Generowanie dzisiejszej daty w formacie DD.MM.YYYY
             const dzisiaj = new Date();
             const dd = String(dzisiaj.getDate()).padStart(2, '0');
             const mm = String(dzisiaj.getMonth() + 1).padStart(2, '0');
@@ -120,30 +120,25 @@
 
             let summary = {};
             
-            // Znajdź wszystkich graczy, by każdy miał chociaż 0 na liście
             globalData.forEach(w => {
-                if(w[1] && !summary[w[1]]) {
-                    summary[w[1]] = { zloto: 0, poziomy: 0 };
-                }
+                if(w[1] && !summary[w[1]]) summary[w[1]] = { zloto: 0, poziomy: 0 };
             });
 
-            // Filtrujemy dane TYLKO z dzisiaj
             let dzisiejszeWpisy = globalData.filter(w => w[0] && w[0].startsWith(todayString));
 
-            // Sumowanie łupów i leveli
             dzisiejszeWpisy.forEach(w => {
                 let gracz = w[1];
                 let stat = w[2];
                 let przyrost = parseInt(w[5]) || 0;
 
-                if (stat === 'Zrabowane dobra') {
+                // Podsumowanie opiera się teraz na PRAWDZIWYM ZŁOCIE
+                if (stat === 'Zrabowane złoto') {
                     summary[gracz].zloto += przyrost;
                 } else if (stat === 'Poziom') {
                     summary[gracz].poziomy += przyrost;
                 }
             });
 
-            // Sortujemy graczy od tego, który nakradł dziś najwięcej złota
             let posortowaniGracze = Object.keys(summary).sort((a, b) => summary[b].zloto - summary[a].zloto);
 
             let html = `<h2>Podsumowanie Dzisiejsze (${todayString})</h2>`;
@@ -152,8 +147,6 @@
             posortowaniGracze.forEach(gracz => {
                 let data = summary[gracz];
                 let zlotoStr = data.zloto > 0 ? data.zloto.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
-                
-                // Jak wbił poziom, dajemy rzucający się w oczy kolorowy napis np. "+1"
                 let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
 
                 html += `<tr>
@@ -178,15 +171,12 @@
             const populate = (id, set, txt, storageKey) => {
                 const s = document.getElementById(id);
                 let targetVal = localStorage.getItem(storageKey) || s.value;
-                
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
-                
                 Array.from(set).sort().forEach(o => {
                     let el = document.createElement('option'); el.value = o; el.textContent = o;
                     if(o === targetVal) el.selected = true; 
                     s.appendChild(el);
                 });
-
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
             
@@ -199,26 +189,28 @@
             const fD = document.getElementById('filterDate').value, fP = document.getElementById('filterPlayer').value, fS = document.getElementById('filterStat').value;
             let filtered = globalData.filter(w => (fD==='ALL'||w[0].startsWith(fD)) && (fP==='ALL'||w[1]===fP) && (fS==='ALL'||w[2]===fS));
 
-            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Suma od skilla</th></tr></thead><tbody>";
+            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Złoto od skilla</th></tr></thead><tbody>";
             
             filtered.forEach(w => {
                 html += "<tr>";
-                let isZrabowane = (w[2] === 'Zrabowane dobra');
-                let isPoziom = (w[2] === 'Poziom'); // Sprawdzamy, czy to wiersz z levelem
+                let isPoziom = (w[2] === 'Poziom'); 
+                // Zmienna dla dużych liczb ułatwiających czytanie kropek
+                let requiresDots = (w[2] === 'Zrabowane dobra' || w[2] === 'Zrabowane złoto' || w[2] === 'Stracone złoto');
 
                 for(let j = 0; j < w.length; j++) {
                     let klasa = "";
-                    if (j === 5 && isZrabowane) klasa = ' class="przyrost-col"';
-                    if (j === 5 && isPoziom) klasa = ' class="level-col"'; // Jasnoniebieski kolor dla wbitego levela w logach
+                    if (j === 5 && requiresDots) klasa = ' class="przyrost-col"';
+                    if (j === 5 && w[2] === 'Stracone złoto') klasa = ' class="strata-col"'; // Strata świeci na czerwono
+                    if (j === 5 && isPoziom) klasa = ' class="level-col"'; 
                     if (j === 6) klasa = ' class="suma-col"';
                     
                     let val = w[j];
                     
-                    if (j === 5 && isZrabowane && val !== "") {
+                    if (j === 5 && requiresDots && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                     if (j === 6) {
-                        val = isZrabowane ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
+                        val = requiresDots ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
                     }
 
                     html += `<td${klasa}>${val}</td>`;
