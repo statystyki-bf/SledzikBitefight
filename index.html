@@ -13,16 +13,17 @@
         #status { color: #888; font-size: 14px; margin-bottom: 20px;}
         .filter-container { margin-bottom: 25px; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         select { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; }
-        table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1300px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
+        table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1400px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
         th, td { border: 1px solid #600000; padding: 10px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; }
         tr:nth-child(even) { background-color: #381e1e; }
         tr:hover { background-color: #4a2727; }
+        
         .przyrost-col { color: #55ff55; font-weight: bold; }
         .strata-col { color: #ff5555; font-weight: bold; }
         .suma-col { color: #ffcc00; font-weight: bold; }
         .level-col { color: #00e5ff; font-weight: bold; font-size: 16px; }
-        .separator { border: 1px solid #600000; width: 95%; max-width: 1300px; margin: 40px auto; }
+        .separator { border: 1px solid #600000; width: 95%; max-width: 1400px; margin: 40px auto; }
     </style>
 </head>
 <body>
@@ -87,7 +88,6 @@
                     if (atrybuty.includes(stat)) {
                         playerAccumulator[gracz] = 0;
                     } 
-                    // Nowa logika: Zrabowane dobra (mięso/krew) + Zrabowane złoto (PvP) - Strata (PvP)
                     else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") {
                         playerAccumulator[gracz] += przyrost;
                     }
@@ -118,7 +118,7 @@
             let summary = {};
             
             globalData.forEach(w => {
-                if(w[1] && !summary[w[1]]) summary[w[1]] = { zloto: 0, poziomy: 0, walki: 0 };
+                if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, poziomy: 0, walki: 0 };
             });
 
             let dzisiejszeWpisy = globalData.filter(w => w[0] && w[0].startsWith(todayString));
@@ -128,10 +128,12 @@
                 let stat = w[2];
                 let przyrost = parseInt(w[5]) || 0;
 
-                if (stat === 'Zrabowane złoto' || stat === 'Zrabowane dobra') {
-                    summary[gracz].zloto += przyrost;
+                if (stat === 'Zrabowane dobra') {
+                    summary[gracz].dobra += przyrost;
+                } else if (stat === 'Zrabowane złoto') {
+                    summary[gracz].zlotoPvP += przyrost;
                 } else if (stat === 'Stracone złoto') {
-                    summary[gracz].zloto -= przyrost;
+                    summary[gracz].zlotoPvP -= przyrost;
                 } else if (stat === 'Poziom') {
                     summary[gracz].poziomy += przyrost;
                 } else if (stat === 'Walki') {
@@ -139,19 +141,26 @@
                 }
             });
 
-            let posortowaniGracze = Object.keys(summary).sort((a, b) => summary[b].zloto - summary[a].zloto);
+            // Sortowanie po łącznym zysku z polowań i walk
+            let posortowaniGracze = Object.keys(summary).sort((a, b) => (summary[b].dobra + summary[b].zlotoPvP) - (summary[a].dobra + summary[a].zlotoPvP));
 
             let html = `<h2>Podsumowanie Dzisiejsze (${todayString})</h2>`;
-            html += `<table><thead><tr><th>Gracz</th><th>Zysk Złota Dziś (Netto)</th><th>Stoczone Walki Dziś</th><th>Wbite Poziomy Dziś</th></tr></thead><tbody>`;
+            html += `<table><thead><tr><th>Gracz</th><th>Zdobyte Dobra (Krew/Mięso)</th><th>Bilans Walk PvP (Złoto)</th><th>Stoczone Walki</th><th>Wbite Poziomy</th></tr></thead><tbody>`;
 
             posortowaniGracze.forEach(gracz => {
                 let data = summary[gracz];
-                let zlotoStr = data.zloto.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+
+                let klasaPvP = "";
+                if (data.zlotoPvP > 0) klasaPvP = "przyrost-col";
+                else if (data.zlotoPvP < 0) klasaPvP = "strata-col";
 
                 html += `<tr>
                             <td><strong>${gracz}</strong></td>
-                            <td class="${data.zloto >= 0 ? 'suma-col' : 'strata-col'}">${zlotoStr}</td>
+                            <td class="suma-col">${dobraStr}</td>
+                            <td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td>
                             <td>${data.walki}</td>
                             <td>${poziomStr}</td>
                          </tr>`;
@@ -190,32 +199,44 @@
             const fD = document.getElementById('filterDate').value, fP = document.getElementById('filterPlayer').value, fS = document.getElementById('filterStat').value;
             let filtered = globalData.filter(w => (fD==='ALL'||w[0].startsWith(fD)) && (fP==='ALL'||w[1]===fP) && (fS==='ALL'||w[2]===fS));
 
-            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Sakiewka od skilla</th></tr></thead><tbody>";
+            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th></tr></thead><tbody>";
             
             filtered.forEach(w => {
                 html += "<tr>";
-                let isPoziom = (w[2] === 'Poziom'); 
-                let isLoot = (w[2] === 'Zrabowane dobra' || w[2] === 'Zrabowane złoto' || w[2] === 'Stracone złoto');
+                let stat = w[2];
+                let isPoziom = (stat === 'Poziom'); 
+                let requiresDots = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
 
                 for(let j = 0; j < w.length; j++) {
                     let klasa = "";
-                    if (j === 5 && (isLoot || w[2] === 'Walki')) klasa = ' class="przyrost-col"';
-                    if (j === 5 && w[2] === 'Stracone złoto') klasa = ' class="strata-col"';
+                    if (j === 5 && (requiresDots || stat === 'Walki')) klasa = ' class="przyrost-col"';
+                    if (j === 5 && stat === 'Stracone złoto') klasa = ' class="strata-col"';
                     if (j === 5 && isPoziom) klasa = ' class="level-col"'; 
                     if (j === 6) klasa = ' class="suma-col"';
                     
                     let val = w[j];
                     
-                    if (j === 5 && isLoot && val !== "") {
+                    if (j === 5 && requiresDots && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                     if (j === 6) {
-                        // Sakiewka sumuje się teraz dla każdego wiersza, gdzie wpada krew lub złoto
-                        val = isLoot ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
+                        val = requiresDots ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; 
                     }
 
                     html += `<td${klasa}>${val}</td>`;
                 }
+                
+                // Nowa kolumna na końcu wiersza: Wynik PvP
+                let pvpResult = "";
+                let przyrostZlota = w[5] ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                
+                if (stat === 'Zrabowane złoto') {
+                    pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
+                } else if (stat === 'Stracone złoto') {
+                    pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
+                }
+                
+                html += `<td><strong>${pvpResult}</strong></td>`;
                 html += "</tr>";
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
