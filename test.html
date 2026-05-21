@@ -13,7 +13,7 @@
         #status { color: #888; font-size: 14px; margin-bottom: 20px;}
         .filter-container { margin-bottom: 25px; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; align-items: center; }
         select { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; }
-        table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1500px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
+        table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1550px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
         th, td { border: 1px solid #600000; padding: 10px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; }
         tr:nth-child(even) { background-color: #381e1e; }
@@ -24,8 +24,8 @@
         .suma-col { color: #ffcc00; font-weight: bold; }
         .wystajace-col { color: #ff3333; font-weight: bold; }
         .level-col { color: #00e5ff; font-weight: bold; font-size: 16px; }
-        .separator { border: 1px solid #600000; width: 95%; max-width: 1500px; margin: 40px auto; }
-        .summary-box { background: #231212; padding: 15px; border-radius: 10px; border: 1px solid #4a0d0d; margin: 0 auto 20px auto; width: 95%; max-width: 1500px; }
+        .separator { border: 1px solid #600000; width: 95%; max-width: 1550px; margin: 40px auto; }
+        .summary-box { background: #231212; padding: 15px; border-radius: 10px; border: 1px solid #4a0d0d; margin: 0 auto 20px auto; width: 95%; max-width: 1550px; }
     </style>
 </head>
 <body>
@@ -95,15 +95,10 @@
         });
         document.getElementById('specificDateSelect').addEventListener('change', renderSummaryTable);
 
+        // Niezawodne parsowanie daty dla obu formatów (z przecinkiem i bez)
         function parseLogDate(dateStr) {
             if(!dateStr) return new Date(0);
-            if (dateStr.startsWith("ARCHIWUM_DZIEŃ: ")) {
-                const dStr = dateStr.replace("ARCHIWUM_DZIEŃ: ", "").trim();
-                const dParts = dStr.split('.');
-                return new Date(dParts[2], dParts[1] - 1, dParts[0], 0, 0, 0);
-            }
-            const cleanStr = dateStr.replace('"', '').replace('"', '').replace(',', '');
-            const parts = cleanStr.trim().split(/\s+/);
+            const parts = dateStr.trim().split(/\s+/);
             if(parts.length < 2) return new Date(0);
             const dParts = parts[0].split('.');
             const tParts = parts[1].split(':');
@@ -134,12 +129,20 @@
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
-                    let line = wiersze[i];
+                    let line = wiersze[i].trim();
+                    if (!line) continue;
+
+                    // BŁYSKAWICZNA NAPRAWA STAREGO FORMATU DATY (Zamiast wolnego Regexu)
                     if (line.startsWith('"')) {
-                        line = line.replace(/,/, ' '); // Optymalizacja usuwająca zator przecinkowy w datach
+                        let nextQuote = line.indexOf('"', 1);
+                        if (nextQuote !== -1) {
+                            let datePart = line.substring(1, nextQuote).replace(',', '');
+                            line = datePart + line.substring(nextQuote + 1);
+                        }
                     }
+
                     const komorki = line.split(',');
-                    if (komorki.length < 2) continue;
+                    if (komorki.length < 6) continue;
                     rawData.push(komorki.map(k => k.replace(/(^"|"$)/g, '').trim()));
                 }
 
@@ -153,7 +156,6 @@
                 globalData = [];
 
                 rawData.forEach(row => {
-                    let dateCell = row[0];
                     let gracz = row[1];
                     let stat = row[2];
                     let przyrost = parseInt(row[5]) || 0;
@@ -177,7 +179,7 @@
                     }
 
                     let lvl = playerLevel[gracz] || 0;
-                    let exposed = "?";
+                    let exposed = 0;
                     if (lvl > 0) {
                         let safeGold = lvl * 12000;
                         exposed = playerAccumulator[gracz] - safeGold;
@@ -205,8 +207,7 @@
                 const row = globalData[i];
                 if (!row[0]) continue;
                 
-                let dayStr = row[0].startsWith("ARCHIWUM_DZIEŃ: ") ? row[0].replace("ARCHIWUM_DZIEŃ: ", "").trim() : row[0].split(/[ ,]/)[0].trim();
-                
+                let dayStr = row[0].split(/\s+/)[0].trim();
                 if (dayStr && dayStr.split('.').length === 3) {
                     daysSet.add(dayStr);
                     const p = dayStr.split('.');
@@ -342,8 +343,8 @@
         function updateFilters() {
             const dni = new Set(), gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
-                if(w[0] && !w[0].startsWith("ARCHIWUM_DZIEŃ: ")) {
-                    dni.add(w[0].split(/[ ,]/)[0].trim());
+                if(w[0]) {
+                    dni.add(w[0].split(/\s+/)[0].trim());
                     if(w[1]) gracze.add(w[1]);
                     if(w[2]) statystyki.add(w[2]);
                 }
@@ -369,7 +370,6 @@
             const fD = document.getElementById('filterDate').value, fP = document.getElementById('filterPlayer').value, fS = document.getElementById('filterStat').value;
             
             let filtered = globalData.filter(w => {
-                if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; // Ukrywamy wiersze podsumowań w logach szczegółowych
                 let dMatch = (fD==='ALL'||w[0].startsWith(fD));
                 let pMatch = (fP==='ALL'||w[1]===fP);
                 let sMatch = false;
@@ -406,8 +406,7 @@
                 
                 let wystajaceVal = "";
                 if (isLoot && w[7] !== undefined) {
-                    if (w[7] === "?") wystajaceVal = "?";
-                    else wystajaceVal = w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") ;
+                    wystajaceVal = w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") ;
                 }
                 html += `<td class="wystajace-col">${wystajaceVal}</td></tr>`;
             });
