@@ -9,7 +9,6 @@
         h1 { font-size: 36px; color: #c00c0c; margin-bottom: 5px; }
         h2 { font-size: 26px; color: #ffcc00; margin-top: 30px; margin-bottom: 15px; text-transform: uppercase; }
         
-        /* Stylizacja zakładek (Tabs) */
         .tabs { display: flex; justify-content: center; gap: 20px; margin-top: 20px; margin-bottom: 30px; }
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 15px 40px; font-size: 22px; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
@@ -35,11 +34,9 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1550px; margin: 40px auto; }
         .summary-box { background: #231212; padding: 15px; border-radius: 10px; border: 1px solid #4a0d0d; margin: 0 auto 20px auto; width: 95%; max-width: 1550px; }
         
-        /* Kontenery sekcji */
         #sectionTracker, #sectionRanking { display: none; }
         #sectionTracker.active, #sectionRanking.active { display: block; }
         
-        /* Podświetlenie Rasy w Rankingu */
         .rasa-wampir { color: #ff4444; font-weight: bold; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; }
         .rank-num { font-size: 18px; color: #ffcc00; font-weight: bold; }
@@ -102,10 +99,9 @@
     </div>
 
     <script>
-        // === KONFIGURACJA LINKÓW ===
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         
-        // Twój zaktualizowany i gotowy link do zakładki z Rankingiem:
+        // Zintegrowany prawidłowo Twój link:
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         
         const BLACKLIST = ["Kark23"]; 
@@ -113,7 +109,6 @@
         let uniqueDaysList = [];
         let uniqueWeeksList = [];
 
-        // Obsługa zakładek
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
@@ -130,9 +125,6 @@
             }
         }
 
-        // ==========================================
-        //         MODUŁ 1: TWOI GRACZE (TRACKER)
-        // ==========================================
         function handleFilterChange() {
             const fD = document.getElementById('filterDate').value;
             localStorage.setItem('bf_filterDate', fD);
@@ -198,4 +190,377 @@
             }
             const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
             const parts = cleanStr.trim().split(/\s+/);
-            if(parts.length < 2) return new Date
+            if(parts.length < 2) return new Date(0);
+            const dParts = parts[0].split('.');
+            const tParts = parts[1].split(':');
+            return new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1], tParts[2]);
+        }
+
+        function getMonday(d) {
+            d = new Date(d);
+            let day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1);
+            let mon = new Date(d.setDate(diff));
+            mon.setHours(0,0,0,0);
+            return mon;
+        }
+
+        function formatD(d) {
+            return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear();
+        }
+
+        async function loadTableData() {
+            try {
+                const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
+                const nowInfo = new Date();
+                document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+
+                const text = await response.text();
+                const wiersze = text.trim().split('\n');
+                if (wiersze.length <= 1) return;
+
+                let rawData = [];
+                for (let i = 1; i < wiersze.length; i++) {
+                    let line = wiersze[i].trim();
+                    if (!line) continue;
+                    let komorki = parseCSVLine(line);
+                    if (komorki.length < 6) continue;
+                    
+                    let rawDate = komorki[0].trim();
+                    if (rawDate.includes(',')) rawDate = rawDate.replace(',', '');
+                    komorki[0] = rawDate;
+
+                    rawData.push(komorki.map(k => k.trim()));
+                }
+
+                let playerAccumulator = {}; 
+                let playerLevel = {
+                    "Brahmaparuss": 5299, "Gawron": 4780, "lux": 4333, "XTurek": 8004, 
+                    "Viktor": 5079, "PEON": 5368, "Sam-Wiesz": 4123, "albin": 4492, 
+                    "Darksun": 3564, "misssiek555": 3606, "NecromanceR": 4119, "espablo": 4253
+                };
+
+                globalData = [];
+
+                rawData.forEach(row => {
+                    let gracz = row[1];
+                    if (BLACKLIST.includes(gracz)) return;
+
+                    let stat = row[2];
+                    let przyrost = parseInt(row[5]) || 0;
+
+                    if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
+                    if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
+
+                    const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                    if (atrybuty.includes(stat)) playerAccumulator[gracz] = 0;
+                    else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") playerAccumulator[gracz] += przyrost;
+                    else if (stat === "Stracone złoto") {
+                        playerAccumulator[gracz] -= przyrost;
+                        if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0;
+                    }
+
+                    let lvl = playerLevel[gracz] || 0;
+                    let exposed = 0;
+                    if (lvl > 0) {
+                        let safeGold = lvl * 12000;
+                        exposed = playerAccumulator[gracz] - safeGold;
+                        if (exposed < 0) exposed = 0;
+                    }
+
+                    globalData.push([...row, playerAccumulator[gracz], exposed]);
+                });
+
+                globalData.reverse(); 
+                buildHistoryDropdowns(); 
+                renderSummaryTable(); 
+                updateFilters();
+                renderTable(); 
+            } catch (e) { console.error(e); }
+        }
+
+        function buildHistoryDropdowns() {
+            const daysSet = new Set();
+            const weeksSet = new Set();
+            for (let i = globalData.length - 1; i >= 0; i--) {
+                const row = globalData[i];
+                if (!row[0]) continue;
+                let dayStr = row[0].startsWith("ARCHIWUM_DZIEŃ: ") ? row[0].replace("ARCHIWUM_DZIEŃ: ", "").trim() : row[0].split(/\s+/)[0].trim();
+                if (dayStr && dayStr.split('.').length === 3) {
+                    daysSet.add(dayStr);
+                    const p = dayStr.split('.');
+                    const dObj = new Date(p[2], p[1] - 1, p[0]);
+                    const mon = getMonday(dObj);
+                    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+                    weeksSet.add(`${formatD(mon)} - ${formatD(sun)}`);
+                }
+            }
+            uniqueDaysList = Array.from(daysSet).reverse();
+            uniqueWeeksList = Array.from(weeksSet).reverse();
+        }
+
+        function populateSpecificOptions(type) {
+            const specSelect = document.getElementById('specificDateSelect');
+            const currentVal = specSelect.value;
+            specSelect.innerHTML = "";
+            const list = (type === 'DAY') ? uniqueDaysList : uniqueWeeksList;
+            list.forEach(item => {
+                let opt = document.createElement('option');
+                opt.value = item; opt.textContent = item;
+                if (item === currentVal) opt.selected = true;
+                specSelect.appendChild(opt);
+            });
+        }
+
+        function getRangeForPeriod(period, specificValue) {
+            const now = new Date();
+            let start = new Date(), end = new Date();
+            if (period === 'TODAY') {
+                start.setHours(0,0,0,0); end.setHours(23,59,59,999);
+                return { start, end, label: start.toLocaleDateString('pl-PL') };
+            }
+            if (period === 'YESTERDAY') {
+                start.setDate(start.getDate() - 1); start.setHours(0,0,0,0);
+                end.setDate(end.getDate() - 1); end.setHours(23,59,59,999);
+                return { start, end, label: start.toLocaleDateString('pl-PL') };
+            }
+            if (period === 'THIS_WEEK') {
+                const mon = getMonday(now);
+                const sun = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
+                return { start: mon, end: sun, label: `Bieżący tydzień (${formatD(mon)} - ${formatD(sun)})` };
+            }
+            if (period === 'LAST_WEEK') {
+                const prevMon = getMonday(now); prevMon.setDate(prevMon.getDate() - 7);
+                const prevSun = new Date(prevMon); prevSun.setDate(prevMon.getDate() + 6); prevSun.setHours(23,59,59,999);
+                return { start: prevMon, end: prevSun, label: `Poprzedni tydzień (${formatD(prevMon)} - ${formatD(prevSun)})` };
+            }
+            if (period === 'SPECIFIC_DAY' && specificValue) {
+                const p = specificValue.split('.');
+                const d = new Date(p[2], p[1]-1, p[0]);
+                const s = new Date(d); s.setHours(0,0,0,0);
+                const e = new Date(d); e.setHours(23,59,59,999);
+                return { start: s, end: e, label: specificValue };
+            }
+            if (period === 'SPECIFIC_WEEK' && specificValue) {
+                const p = specificValue.split(' - ');
+                const pStart = p[0].split('.'), pEnd = p[1].split('.');
+                const s = new Date(pStart[2], pStart[1]-1, pStart[0]); s.setHours(0,0,0,0);
+                const e = new Date(pEnd[2], pEnd[1]-1, pEnd[0]); e.setHours(23,59,59,999);
+                return { start: s, end: e, label: `Tydzień ${specificValue}` };
+            }
+            return null;
+        }
+
+        function renderSummaryTable() {
+            const period = document.getElementById('summaryPeriodSelect').value;
+            const specVal = document.getElementById('specificDateSelect').value;
+            const range = getRangeForPeriod(period, specVal);
+            if (!range) return;
+
+            let summary = {};
+            globalData.forEach(w => {
+                if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, poziomy: 0, walki: 0 };
+            });
+
+            globalData.forEach(w => {
+                if (!w[0]) return;
+                const logDate = parseLogDate(w[0]);
+                if (logDate >= range.start && logDate <= range.end) {
+                    let gracz = w[1], stat = w[2], przyrost = parseInt(w[5]) || 0;
+                    if (stat === 'Zrabowane dobra') summary[gracz].dobra += przyrost;
+                    else if (stat === 'Zrabowane złoto') summary[gracz].zlotoPvP += przyrost;
+                    else if (stat === 'Stracone złoto') summary[gracz].zlotoPvP -= przyrost;
+                    else if (stat === 'Poziom') summary[gracz].poziomy += przyrost;
+                    else if (stat === 'Walki') summary[gracz].walki += przyrost;
+                }
+            });
+
+            let posortowaniGracze = Object.keys(summary).sort((a, b) => (summary[b].dobra + summary[b].zlotoPvP) - (summary[a].dobra + summary[a].zlotoPvP));
+
+            let html = `<h2>Podsumowanie Raportu: ${range.label}</h2>`;
+            html += `<table><thead><tr><th>Gracz</th><th>Zdobyte Dobra (Krew/Mięso)</th><th>Bilans Walk PvP (Złoto)</th><th>Stoczone Walki</th><th>Wbite Poziomy</th></tr></thead><tbody>`;
+
+            posortowaniGracze.forEach(gracz => {
+                let data = summary[gracz];
+                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
+
+                html += `<tr>
+                            <td><strong>${gracz}</strong></td>
+                            <td class="suma-col">${dobraStr}</td>
+                            <td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td>
+                            <td>${data.walki}</td>
+                            <td>${poziomStr}</td>
+                         </tr>`;
+            });
+            html += "</tbody></table>";
+            document.getElementById('summaryContainer').innerHTML = html;
+        }
+
+        function updateFilters() {
+            const dni = new Set(), gracze = new Set(), statystyki = new Set();
+            globalData.forEach(w => {
+                if(w[0] && !w[0].startsWith("ARCHIWUM_DZIEŃ: ")) {
+                    dni.add(w[0].split(/\s+/)[0].trim());
+                    if(w[1]) gracze.add(w[1]);
+                    if(w[2]) statystyki.add(w[2]);
+                }
+            });
+            
+            const populateDateFilter = (id, set, storageKey) => {
+                const s = document.getElementById(id);
+                let targetVal = localStorage.getItem(storageKey) || 'LAST_3_DAYS';
+                s.innerHTML = `<option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
+                               <option value="ALL">Cała historia bazy</option>
+                               <option value="CUSTOM_RANGE">Własny zakres dat...</option>`;
+                Array.from(set).sort().forEach(o => {
+                    let el = document.createElement('option'); el.value = o; el.textContent = o;
+                    if(o === targetVal) el.selected = true; s.appendChild(el);
+                });
+                if (!['LAST_3_DAYS', 'ALL', 'CUSTOM_RANGE', ...Array.from(set)].includes(targetVal)) targetVal = 'LAST_3_DAYS';
+                s.value = targetVal;
+                localStorage.setItem(storageKey, targetVal);
+
+                if (targetVal === 'CUSTOM_RANGE') {
+                    document.getElementById('customDateContainer').style.display = 'flex';
+                    document.getElementById('customStartDate').value = localStorage.getItem('bf_customStart') || '';
+                    document.getElementById('customEndDate').value = localStorage.getItem('bf_customEnd') || '';
+                } else {
+                    document.getElementById('customDateContainer').style.display = 'none';
+                }
+            };
+            
+            const populateGeneric = (id, set, txt, storageKey) => {
+                const s = document.getElementById(id);
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                s.innerHTML = `<option value="ALL">${txt}</option>`;
+                Array.from(set).sort().forEach(o => {
+                    let el = document.createElement('option'); el.value = o; el.textContent = o;
+                    if(o === targetVal) el.selected = true; s.appendChild(el);
+                });
+                if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
+            };
+
+            const populateStatSelect = (id, set, txt, storageKey) => {
+                const s = document.getElementById(id);
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                s.innerHTML = `<option value="ALL">${txt}</option>
+                               <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
+                Array.from(set).sort().forEach(o => {
+                    let el = document.createElement('option'); el.value = o; el.textContent = o;
+                    if(o === targetVal) el.selected = true; s.appendChild(el);
+                });
+                if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
+            }
+            
+            populateDateFilter('filterDate', dni, 'bf_filterDate');
+            populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
+            populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
+        }
+
+        function renderTable() {
+            const fD = document.getElementById('filterDate').value;
+            const fP = document.getElementById('filterPlayer').value;
+            const fS = document.getElementById('filterStat').value;
+            
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 3);
+            cutoffDate.setHours(0, 0, 0, 0);
+
+            let customStartStr = document.getElementById('customStartDate').value;
+            let customEndStr = document.getElementById('customEndDate').value;
+            let customStart = customStartStr ? new Date(customStartStr) : new Date(0); customStart.setHours(0,0,0,0);
+            let customEnd = customEndStr ? new Date(customEndStr) : new Date(8640000000000000); customEnd.setHours(23,59,59,999);
+            
+            let filtered = globalData.filter(w => {
+                if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; 
+                let logDate = parseLogDate(w[0]);
+                if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) return false;
+                if (fD === 'CUSTOM_RANGE' && (logDate < customStart || logDate > customEnd)) return false;
+
+                let dMatch = (fD === 'ALL' || fD === 'LAST_3_DAYS' || fD === 'CUSTOM_RANGE' || w[0].startsWith(fD));
+                let pMatch = (fP === 'ALL' || w[1] === fP);
+                let sMatch = false;
+                if (fS === 'ALL') sMatch = true;
+                else if (fS === 'SKILLS') sMatch = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(w[2]);
+                else sMatch = (w[2] === fS);
+                
+                return dMatch && pMatch && sMatch;
+            });
+
+            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
+            
+            filtered.forEach(w => {
+                html += "<tr>";
+                let stat = w[2], isPoziom = (stat === 'Poziom'), isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
+                for(let j = 0; j <= 5; j++) {
+                    let klasa = "";
+                    if (j === 5 && (isLoot || stat === 'Walki')) klasa = ' class="przyrost-col"';
+                    if (j === 5 && stat === 'Stracone złoto') klasa = ' class="strata-col"';
+                    if (j === 5 && isPoziom) klasa = ' class="level-col"'; 
+                    let val = w[j];
+                    if (j === 5 && isLoot && val !== "") val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    html += `<td${klasa}>${val}</td>`;
+                }
+                
+                let pvpResult = "", przyrostZlota = w[5] ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                if (stat === 'Zrabowane złoto') pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
+                else if (stat === 'Stracone złoto') pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
+                html += `<td><strong>${pvpResult}</strong></td>`;
+
+                let sakiewkaVal = (isLoot && w[6] !== undefined) ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                html += `<td class="suma-col">${sakiewkaVal}</td>`;
+                
+                let wystajaceVal = (isLoot && w[7] !== undefined) ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                html += `<td class="wystajace-col">${wystajaceVal}</td></tr>`;
+            });
+            document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
+        }
+
+        async function loadRankingData() {
+            try {
+                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime());
+                const text = await response.text();
+                const wiersze = text.trim().split('\n');
+                
+                if (wiersze.length <= 1) {
+                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w arkuszu Rankingu. Skrypt Google uruchomi się w nocy.</p>";
+                    return;
+                }
+
+                let html = "<table><thead><tr><th>LP</th><th>RASA</th><th>NICK</th><th>POZIOM (LVL)</th><th>ŁUP</th><th>WARTOŚĆ BOJOWA</th><th>WALKI WYGRANE</th><th>WALKI PRZEGRANE</th><th>ZDOBYTE ZŁOTO</th><th>STRACONE ZŁOTO</th></tr></thead><tbody>";
+                
+                for (let i = 1; i < wiersze.length; i++) {
+                    let komorki = parseCSVLine(wiersze[i].trim());
+                    if (komorki.length < 10) continue;
+
+                    html += "<tr>";
+                    html += `<td class="rank-num">${komorki[0]}</td>`;
+                    
+                    let rasaClass = komorki[1] === "Wampir" ? "rasa-wampir" : (komorki[1] === "Wilkołak" ? "rasa-wilkolak" : "");
+                    html += `<td class="${rasaClass}">${komorki[1]}</td>`;
+                    
+                    html += `<td><strong>${komorki[2]}</strong></td>`;
+                    html += `<td class="level-col">${komorki[3]}</td>`;
+                    html += `<td class="suma-col">${komorki[4].replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>`; 
+                    html += `<td>${komorki[5].replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>`; 
+                    html += `<td class="przyrost-col">${komorki[6]}</td>`;
+                    html += `<td class="strata-col">${komorki[7]}</td>`;
+                    html += `<td class="przyrost-col">${komorki[8].replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>`; 
+                    html += `<td class="strata-col">${komorki[9].replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>`;
+                    html += "</tr>";
+                }
+                
+                html += "</tbody></table>";
+                document.getElementById('rankingTableContainer').innerHTML = html;
+            } catch (e) {
+                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania rankingu. Skrypt z Google nie pobrał jeszcze pierwszych statystyk.</p>";
+            }
+        }
+
+        loadTableData();
+        setInterval(loadTableData, 300000);
+    </script>
+</body>
+</html>
