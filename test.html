@@ -12,7 +12,7 @@
         button:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 14px; margin-bottom: 20px;}
         .filter-container { margin-bottom: 25px; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; align-items: center; }
-        select { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; }
+        select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 10px 15px; font-size: 16px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         table { margin: 0 auto; border-collapse: collapse; width: 95%; max-width: 1550px; background-color: #2b1717; box-shadow: 0 0 15px rgba(0,0,0,0.8); font-size: 14px; }
         th, td { border: 1px solid #600000; padding: 10px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; }
@@ -55,9 +55,17 @@
     <h2>Pełny log operacji (Z filtrami)</h2>
     <div class="filter-container">
         <select id="filterDate">
-            <option value="LAST_7_DAYS">Ostatnie 7 dni (Domyślnie)</option>
+            <option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
             <option value="ALL">Cała historia bazy</option>
+            <option value="CUSTOM_RANGE">Własny zakres dat...</option>
         </select>
+        
+        <div id="customDateContainer" style="display: none; align-items: center; gap: 10px;">
+            <input type="date" id="customStartDate" title="Data początkowa">
+            <span style="font-weight: bold;">-</span>
+            <input type="date" id="customEndDate" title="Data końcowa">
+        </div>
+
         <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
         <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
     </div>
@@ -73,15 +81,27 @@
         document.getElementById('downloadBtn').addEventListener('click', () => window.location.href = urlGoogleSheet);
         
         function handleFilterChange() {
-            localStorage.setItem('bf_filterDate', document.getElementById('filterDate').value);
+            const fD = document.getElementById('filterDate').value;
+            localStorage.setItem('bf_filterDate', fD);
             localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
             localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
+            
+            if (fD === 'CUSTOM_RANGE') {
+                document.getElementById('customDateContainer').style.display = 'flex';
+                localStorage.setItem('bf_customStart', document.getElementById('customStartDate').value);
+                localStorage.setItem('bf_customEnd', document.getElementById('customEndDate').value);
+            } else {
+                document.getElementById('customDateContainer').style.display = 'none';
+            }
+            
             renderTable();
         }
 
         document.getElementById('filterDate').addEventListener('change', handleFilterChange);
         document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
         document.getElementById('filterStat').addEventListener('change', handleFilterChange);
+        document.getElementById('customStartDate').addEventListener('change', handleFilterChange);
+        document.getElementById('customEndDate').addEventListener('change', handleFilterChange);
 
         document.getElementById('summaryPeriodSelect').addEventListener('change', function() {
             const specSelect = document.getElementById('specificDateSelect');
@@ -98,7 +118,6 @@
         });
         document.getElementById('specificDateSelect').addEventListener('change', renderSummaryTable);
 
-        // BEZBŁĘDNY PARSER CSV - Niestraszne mu przecinki wewnątrz tekstu!
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
             for (let i = 0; i < text.length; i++) {
@@ -163,7 +182,6 @@
                     let komorki = parseCSVLine(line);
                     if (komorki.length < 6) continue;
                     
-                    // Bezpieczne usuwanie przecinka z formatu daty
                     let rawDate = komorki[0].trim();
                     if (rawDate.includes(',')) rawDate = rawDate.replace(',', '');
                     komorki[0] = rawDate;
@@ -378,16 +396,31 @@
             
             const populateDateFilter = (id, set, storageKey) => {
                 const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || 'LAST_7_DAYS';
+                let targetVal = localStorage.getItem(storageKey) || 'LAST_3_DAYS';
                 
-                s.innerHTML = `<option value="LAST_7_DAYS">Ostatnie 7 dni (Domyślnie)</option>`;
+                s.innerHTML = `<option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>`;
                 s.innerHTML += `<option value="ALL">Cała historia bazy</option>`;
+                s.innerHTML += `<option value="CUSTOM_RANGE">Własny zakres dat...</option>`;
                 
                 Array.from(set).sort().forEach(o => {
                     let el = document.createElement('option'); el.value = o; el.textContent = o;
                     if(o === targetVal) el.selected = true; s.appendChild(el);
                 });
-                if (s.value !== targetVal) { s.value = 'LAST_7_DAYS'; localStorage.setItem(storageKey, 'LAST_7_DAYS'); }
+
+                if (!['LAST_3_DAYS', 'ALL', 'CUSTOM_RANGE', ...Array.from(set)].includes(targetVal)) {
+                    targetVal = 'LAST_3_DAYS';
+                }
+                
+                s.value = targetVal;
+                localStorage.setItem(storageKey, targetVal);
+
+                if (targetVal === 'CUSTOM_RANGE') {
+                    document.getElementById('customDateContainer').style.display = 'flex';
+                    document.getElementById('customStartDate').value = localStorage.getItem('bf_customStart') || '';
+                    document.getElementById('customEndDate').value = localStorage.getItem('bf_customEnd') || '';
+                } else {
+                    document.getElementById('customDateContainer').style.display = 'none';
+                }
             };
             
             const populateGeneric = (id, set, txt, storageKey) => {
@@ -411,22 +444,33 @@
             const fP = document.getElementById('filterPlayer').value;
             const fS = document.getElementById('filterStat').value;
             
-            // Punkt odcięcia: 7 dni wstecz o godzinie 00:00
             const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - 7);
+            cutoffDate.setDate(cutoffDate.getDate() - 3);
             cutoffDate.setHours(0, 0, 0, 0);
+
+            let customStartStr = document.getElementById('customStartDate').value;
+            let customEndStr = document.getElementById('customEndDate').value;
+            
+            let customStart = customStartStr ? new Date(customStartStr) : new Date(0);
+            customStart.setHours(0,0,0,0);
+            
+            let customEnd = customEndStr ? new Date(customEndStr) : new Date(8640000000000000); // daleka przyszlosc jesli brak
+            customEnd.setHours(23,59,59,999);
             
             let filtered = globalData.filter(w => {
                 if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; 
                 
                 let logDate = parseLogDate(w[0]);
                 
-                // Magia filtru 7 dni
-                if (fD === 'LAST_7_DAYS' && logDate < cutoffDate) {
+                if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) {
                     return false;
                 }
 
-                let dMatch = (fD === 'ALL' || fD === 'LAST_7_DAYS' || w[0].startsWith(fD));
+                if (fD === 'CUSTOM_RANGE' && (logDate < customStart || logDate > customEnd)) {
+                    return false;
+                }
+
+                let dMatch = (fD === 'ALL' || fD === 'LAST_3_DAYS' || fD === 'CUSTOM_RANGE' || w[0].startsWith(fD));
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
                 
