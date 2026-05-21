@@ -22,10 +22,9 @@
         .przyrost-col { color: #55ff55; font-weight: bold; }
         .strata-col { color: #ff5555; font-weight: bold; }
         .suma-col { color: #ffcc00; font-weight: bold; }
-        .wystajace-col { color: #ff3333; font-weight: bold; } /* Mocny czerwony dla złota do kradzieży */
+        .wystajace-col { color: #ff3333; font-weight: bold; }
         .level-col { color: #00e5ff; font-weight: bold; font-size: 16px; }
         .separator { border: 1px solid #600000; width: 95%; max-width: 1500px; margin: 40px auto; }
-        
         .summary-box { background: #231212; padding: 15px; border-radius: 10px; border: 1px solid #4a0d0d; margin: 0 auto 20px auto; width: 95%; max-width: 1500px; }
     </style>
 </head>
@@ -98,7 +97,13 @@
 
         function parseLogDate(dateStr) {
             if(!dateStr) return new Date(0);
-            const parts = dateStr.split(', ');
+            if (dateStr.startsWith("ARCHIWUM_DZIEŃ: ")) {
+                const dStr = dateStr.replace("ARCHIWUM_DZIEŃ: ", "").trim();
+                const dParts = dStr.split('.');
+                return new Date(dParts[2], dParts[1] - 1, dParts[0], 0, 0, 0);
+            }
+            const cleanStr = dateStr.replace('"', '').replace('"', '').replace(',', '');
+            const parts = cleanStr.trim().split(/\s+/);
             if(parts.length < 2) return new Date(0);
             const dParts = parts[0].split('.');
             const tParts = parts[1].split(':');
@@ -120,8 +125,6 @@
         async function loadTableData() {
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
-                
-                // Aktualizacja czasu odświeżenia
                 const nowInfo = new Date();
                 document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
 
@@ -131,13 +134,16 @@
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
-                    const komorki = wiersze[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    let line = wiersze[i];
+                    if (line.startsWith('"')) {
+                        line = line.replace(/,/, ' '); // Optymalizacja usuwająca zator przecinkowy w datach
+                    }
+                    const komorki = line.split(',');
                     if (komorki.length < 2) continue;
                     rawData.push(komorki.map(k => k.replace(/(^"|"$)/g, '').trim()));
                 }
 
                 let playerAccumulator = {}; 
-                // Zastępcza baza poziomów na wypadek, gdyby gracz jeszcze nie wbił poziomu w logach
                 let playerLevel = {
                     "Brahmaparuss": 5299, "Gawron": 4780, "lux": 4333, "XTurek": 8004, 
                     "Viktor": 5079, "PEON": 5368, "Sam-Wiesz": 4123, "albin": 4492, 
@@ -147,11 +153,11 @@
                 globalData = [];
 
                 rawData.forEach(row => {
+                    let dateCell = row[0];
                     let gracz = row[1];
                     let stat = row[2];
                     let przyrost = parseInt(row[5]) || 0;
 
-                    // Aktualizacja poziomu z logów
                     if (stat === "Poziom") {
                         playerLevel[gracz] = parseInt(row[4]); 
                     }
@@ -170,16 +176,14 @@
                         if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0;
                     }
 
-                    // Obliczenie złota wystającego ze skrzynki
                     let lvl = playerLevel[gracz] || 0;
                     let exposed = "?";
                     if (lvl > 0) {
                         let safeGold = lvl * 12000;
                         exposed = playerAccumulator[gracz] - safeGold;
-                        if (exposed < 0) exposed = 0; // Jeśli bezpieczne, to 0 wystaje
+                        if (exposed < 0) exposed = 0;
                     }
 
-                    // Index 6: Sakiewka, Index 7: Wystające złoto
                     let rowWithSum = [...row, playerAccumulator[gracz], exposed];
                     globalData.push(rowWithSum);
                 });
@@ -200,14 +204,17 @@
             for (let i = globalData.length - 1; i >= 0; i--) {
                 const row = globalData[i];
                 if (!row[0]) continue;
-                const dayStr = row[0].split(',')[0].trim();
-                daysSet.add(dayStr);
                 
-                const dObj = parseLogDate(row[0]);
-                if (dObj.getTime() === 0) continue;
-                const mon = getMonday(dObj);
-                const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-                weeksSet.add(`${formatD(mon)} - ${formatD(sun)}`);
+                let dayStr = row[0].startsWith("ARCHIWUM_DZIEŃ: ") ? row[0].replace("ARCHIWUM_DZIEŃ: ", "").trim() : row[0].split(/[ ,]/)[0].trim();
+                
+                if (dayStr && dayStr.split('.').length === 3) {
+                    daysSet.add(dayStr);
+                    const p = dayStr.split('.');
+                    const dObj = new Date(p[2], p[1] - 1, p[0]);
+                    const mon = getMonday(dObj);
+                    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+                    weeksSet.add(`${formatD(mon)} - ${formatD(sun)}`);
+                }
             }
             
             uniqueDaysList = Array.from(daysSet).reverse();
@@ -319,7 +326,6 @@
             document.getElementById('summaryContainer').innerHTML = html;
         }
 
-        // Zmieniona funkcja populate dla filtrów - dodaje specjalną opcję Skilli
         function populateStatSelect(id, set, txt, storageKey) {
             const s = document.getElementById(id);
             let targetVal = localStorage.getItem(storageKey) || s.value;
@@ -336,9 +342,11 @@
         function updateFilters() {
             const dni = new Set(), gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
-                if(w[0]) dni.add(w[0].split(',')[0].trim());
-                if(w[1]) gracze.add(w[1]);
-                if(w[2]) statystyki.add(w[2]);
+                if(w[0] && !w[0].startsWith("ARCHIWUM_DZIEŃ: ")) {
+                    dni.add(w[0].split(/[ ,]/)[0].trim());
+                    if(w[1]) gracze.add(w[1]);
+                    if(w[2]) statystyki.add(w[2]);
+                }
             });
             
             const populate = (id, set, txt, storageKey) => {
@@ -361,6 +369,7 @@
             const fD = document.getElementById('filterDate').value, fP = document.getElementById('filterPlayer').value, fS = document.getElementById('filterStat').value;
             
             let filtered = globalData.filter(w => {
+                if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; // Ukrywamy wiersze podsumowań w logach szczegółowych
                 let dMatch = (fD==='ALL'||w[0].startsWith(fD));
                 let pMatch = (fP==='ALL'||w[1]===fP);
                 let sMatch = false;
@@ -398,7 +407,7 @@
                 let wystajaceVal = "";
                 if (isLoot && w[7] !== undefined) {
                     if (w[7] === "?") wystajaceVal = "?";
-                    else wystajaceVal = w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    else wystajaceVal = w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") ;
                 }
                 html += `<td class="wystajace-col">${wystajaceVal}</td></tr>`;
             });
