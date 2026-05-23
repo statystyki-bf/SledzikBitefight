@@ -114,9 +114,9 @@
         let globalData = [];
 
         let globalRankingData = [];
-        let computedRankingRows = []; // Tu przechowujemy przetworzone delty do łatwego sortowania
-        let currentSortCol = 3; // Domyślnie sortujemy po kolumnie POZIOM (index 3)
-        let currentSortAsc = false; // Od największego przyrostu poziomu w dół
+        let computedRankingRows = []; 
+        let currentSortCol = 3; 
+        let currentSortAsc = false; 
 
         let currentSummarySortCol = 1; 
         let currentSummarySortAsc = false; 
@@ -154,7 +154,6 @@
             renderSummaryTable();
         });
 
-        // AKCJA DLA FILTRÓW RANKINGU
         document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
             const specSelect = document.getElementById('rankingSpecificDaySelect');
             if (this.value === 'SPECIFIC_DAY') {
@@ -490,11 +489,6 @@
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
 
-
-        // ==========================================
-        //  SILNIK ANALITYCZNY DLA RANKINGU TOP 100
-        // ==========================================
-
         async function loadRankingData() {
             try {
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime());
@@ -509,7 +503,7 @@
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) {
                     let komorki = parseCSVLine(wiersze[i].trim());
-                    if (komorki.length >= 11) { // 1 data + 10 statystyk
+                    if (komorki.length >= 11) { 
                         globalRankingData.push(komorki);
                     }
                 }
@@ -524,7 +518,7 @@
             globalRankingData.forEach(row => {
                 if (row[0]) datesSet.add(row[0]);
             });
-            return Array.from(datesSet); // Zwraca uporządkowane chronologicznie daty
+            return Array.from(datesSet);
         }
 
         function populateRankingSpecificDays() {
@@ -533,7 +527,6 @@
             specSelect.innerHTML = "";
             
             let dates = getUniqueRankingDates();
-            // Do wyboru pojedynczego dnia potrzebujemy przynajmniej dnia poprzedniego do wyliczenia różnicy
             let validDays = dates.slice(1).reverse(); 
             
             if(validDays.length === 0) {
@@ -561,8 +554,8 @@
                 return;
             }
             
-            let endDateStr = uniqueDates[uniqueDates.length - 1]; // Domyślnie najnowszy snapshot
-            let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; // Domyślnie 24h wcześniej
+            let endDateStr = uniqueDates[uniqueDates.length - 1]; 
+            let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
             
             if (period === 'LAST_24H') {
                 endDateStr = uniqueDates[uniqueDates.length - 1];
@@ -577,7 +570,6 @@
                 endDateStr = uniqueDates[uniqueDates.length - 1];
                 let targetMonth = endDateStr.split('.')[1];
                 let targetYear = endDateStr.split('.')[2];
-                // Szukamy pierwszego zapisanego dnia z tego samego miesiąca i roku
                 let firstOfM = uniqueDates.find(d => d.split('.')[1] === targetMonth && d.split('.')[2] === targetYear);
                 startDateStr = firstOfM || uniqueDates[0];
             } else if (period === 'SPECIFIC_DAY' && specDay) {
@@ -590,7 +582,7 @@
             let startRecords = globalRankingData.filter(r => r[0] === startDateStr);
             
             let startMap = {};
-            startRecords.forEach(r => { startMap[r[3]] = r; }); // Mapujemy po nicku (index 3)
+            startRecords.forEach(r => { startMap[r[3]] = r; }); 
 
             computedRankingRows = [];
             
@@ -639,7 +631,6 @@
                 currentSortAsc = !currentSortAsc;
             } else {
                 currentSortCol = colIndex;
-                // Tekst domyślnie rosnąco (A-Z), liczby malejąco (największe przyrosty na górze)
                 currentSortAsc = (colIndex === 1 || colIndex === 2) ? true : false; 
             }
             sortAndRenderRankingTable();
@@ -673,6 +664,7 @@
             
             headers.forEach((h, i) => {
                 let arrow = "⇕";
+                if (currentSortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; // Zachowane oryginalne zachowanie strzałek
                 if (currentSortCol === i) arrow = currentSortAsc ? "↑" : "↓";
                 html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
             });
