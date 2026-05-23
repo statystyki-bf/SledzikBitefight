@@ -56,41 +56,30 @@
 
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.</div>
+        <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut. Cykl: Pon-Ndz.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
 
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Historia przyrostów:</span>
+                <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Podsumowanie przyrostów:</span>
                 <select id="summaryPeriodSelect">
-                    <option value="TODAY">Dzisiaj</option>
-                    <option value="YESTERDAY">Wczoraj</option>
+                    <option value="THIS_WEEK">Bieżący tydzień (od Poniedziałku)</option>
+                    <option value="TODAY">Tylko Dzisiaj</option>
+                    <option value="YESTERDAY">Tylko Wczoraj</option>
                     <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
-                    <option value="THIS_WEEK">Bieżący tydzień (Pon - Ned)</option>
-                    <option value="LAST_WEEK">Poprzedni tydzień (Pon - Ned)</option>
-                    <option value="ALL_TIME">Od początku (Cała baza)</option>
-                    <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień...</option>
-                    <option value="SPECIFIC_WEEK">Archiwum: Konkretny tydzień...</option>
                 </select>
-                <select id="specificDateSelect" style="display: none;"></select>
             </div>
             <div id="summaryContainer"></div>
         </div>
 
         <hr class="separator">
         
-        <h2>Pełny log operacji (Z filtrami)</h2>
+        <h2>Pełny log z tego tygodnia</h2>
         <div class="filter-container">
             <select id="filterDate">
-                <option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
-                <option value="ALL">Cała historia bazy</option>
-                <option value="CUSTOM_RANGE">Własny zakres dat...</option>
+                <option value="ALL">Cały bieżący tydzień (Domyślnie)</option>
+                <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
             </select>
-            <div id="customDateContainer" style="display: none; align-items: center; gap: 8px;">
-                <input type="date" id="customStartDate" title="Data początkowa">
-                <span style="font-weight: bold;">-</span>
-                <input type="date" id="customEndDate" title="Data końcowa">
-            </div>
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
         </div>
@@ -110,8 +99,6 @@
         
         const BLACKLIST = ["Kark23"]; 
         let globalData = [];
-        let uniqueDaysList = [];
-        let uniqueWeeksList = [];
 
         let globalRankingData = [];
         let currentSortCol = 0; 
@@ -141,37 +128,16 @@
             localStorage.setItem('bf_filterDate', fD);
             localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
             localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
-            
-            if (fD === 'CUSTOM_RANGE') {
-                document.getElementById('customDateContainer').style.display = 'flex';
-                localStorage.setItem('bf_customStart', document.getElementById('customStartDate').value);
-                localStorage.setItem('bf_customEnd', document.getElementById('customEndDate').value);
-            } else {
-                document.getElementById('customDateContainer').style.display = 'none';
-            }
             renderTable();
         }
 
         document.getElementById('filterDate').addEventListener('change', handleFilterChange);
         document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
         document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('customStartDate').addEventListener('change', handleFilterChange);
-        document.getElementById('customEndDate').addEventListener('change', handleFilterChange);
 
         document.getElementById('summaryPeriodSelect').addEventListener('change', function() {
-            const specSelect = document.getElementById('specificDateSelect');
-            if (this.value === 'SPECIFIC_DAY') {
-                specSelect.style.display = 'inline-block';
-                populateSpecificOptions('DAY');
-            } else if (this.value === 'SPECIFIC_WEEK') {
-                specSelect.style.display = 'inline-block';
-                populateSpecificOptions('WEEK');
-            } else {
-                specSelect.style.display = 'none';
-            }
             renderSummaryTable();
         });
-        document.getElementById('specificDateSelect').addEventListener('change', renderSummaryTable);
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
@@ -194,11 +160,6 @@
 
         function parseLogDate(dateStr) {
             if(!dateStr) return new Date(0);
-            if (dateStr.startsWith("ARCHIWUM_DZIEŃ: ")) {
-                const dStr = dateStr.replace("ARCHIWUM_DZIEŃ: ", "").trim();
-                const dParts = dStr.split('.');
-                return new Date(dParts[2], dParts[1] - 1, dParts[0], 0, 0, 0);
-            }
             const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
             const parts = cleanStr.trim().split(/\s+/);
             if(parts.length < 2) return new Date(0);
@@ -227,7 +188,10 @@
 
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) return;
+                if (wiersze.length <= 1) {
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak danych w tym tygodniu. Tabela jest pusta.</p>";
+                    return;
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -282,47 +246,13 @@
                 });
 
                 globalData.reverse(); 
-                buildHistoryDropdowns(); 
                 renderSummaryTable(); 
                 updateFilters();
                 renderTable(); 
             } catch (e) { console.error(e); }
         }
 
-        function buildHistoryDropdowns() {
-            const daysSet = new Set();
-            const weeksSet = new Set();
-            for (let i = globalData.length - 1; i >= 0; i--) {
-                const row = globalData[i];
-                if (!row[0]) continue;
-                let dayStr = row[0].startsWith("ARCHIWUM_DZIEŃ: ") ? row[0].replace("ARCHIWUM_DZIEŃ: ", "").trim() : row[0].split(/\s+/)[0].trim();
-                if (dayStr && dayStr.split('.').length === 3) {
-                    daysSet.add(dayStr);
-                    const p = dayStr.split('.');
-                    const dObj = new Date(p[2], p[1] - 1, p[0]);
-                    const mon = getMonday(dObj);
-                    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-                    weeksSet.add(`${formatD(mon)} - ${formatD(sun)}`);
-                }
-            }
-            uniqueDaysList = Array.from(daysSet).reverse();
-            uniqueWeeksList = Array.from(weeksSet).reverse();
-        }
-
-        function populateSpecificOptions(type) {
-            const specSelect = document.getElementById('specificDateSelect');
-            const currentVal = specSelect.value;
-            specSelect.innerHTML = "";
-            const list = (type === 'DAY') ? uniqueDaysList : uniqueWeeksList;
-            list.forEach(item => {
-                let opt = document.createElement('option');
-                opt.value = item; opt.textContent = item;
-                if (item === currentVal) opt.selected = true;
-                specSelect.appendChild(opt);
-            });
-        }
-
-        function getRangeForPeriod(period, specificValue) {
+        function getRangeForPeriod(period) {
             const now = new Date();
             let start = new Date(), end = new Date();
             if (period === 'TODAY') {
@@ -342,31 +272,7 @@
             if (period === 'THIS_WEEK') {
                 const mon = getMonday(now);
                 const sun = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
-                return { start: mon, end: sun, label: `Bieżący tydzień (${formatD(mon)} - ${formatD(sun)})` };
-            }
-            if (period === 'LAST_WEEK') {
-                const prevMon = getMonday(now); prevMon.setDate(prevMon.getDate() - 7);
-                const prevSun = new Date(prevMon); prevSun.setDate(prevMon.getDate() + 6); prevSun.setHours(23,59,59,999);
-                return { start: prevMon, end: prevSun, label: `Poprzedni tydzień (${formatD(prevMon)} - ${formatD(prevSun)})` };
-            }
-            if (period === 'ALL_TIME') {
-                start = new Date(0);
-                end.setHours(23,59,59,999);
-                return { start, end, label: "Od początku (Cała baza)" };
-            }
-            if (period === 'SPECIFIC_DAY' && specificValue) {
-                const p = specificValue.split('.');
-                const d = new Date(p[2], p[1]-1, p[0]);
-                const s = new Date(d); s.setHours(0,0,0,0);
-                const e = new Date(d); e.setHours(23,59,59,999);
-                return { start: s, end: e, label: specificValue };
-            }
-            if (period === 'SPECIFIC_WEEK' && specificValue) {
-                const p = specificValue.split(' - ');
-                const pStart = p[0].split('.'), pEnd = p[1].split('.');
-                const s = new Date(pStart[2], pStart[1]-1, pStart[0]); s.setHours(0,0,0,0);
-                const e = new Date(pEnd[2], pEnd[1]-1, pEnd[0]); e.setHours(23,59,59,999);
-                return { start: s, end: e, label: `Tydzień ${specificValue}` };
+                return { start: mon, end: sun, label: `Ten tydzień (${formatD(mon)} - ${formatD(sun)})` };
             }
             return null;
         }
@@ -383,8 +289,7 @@
 
         function renderSummaryTable() {
             const period = document.getElementById('summaryPeriodSelect').value;
-            const specVal = document.getElementById('specificDateSelect').value;
-            const range = getRangeForPeriod(period, specVal);
+            const range = getRangeForPeriod(period);
             if (!range) return;
 
             let summary = {};
@@ -475,7 +380,7 @@
         function updateFilters() {
             const dni = new Set(), gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
-                if(w[0] && !w[0].startsWith("ARCHIWUM_DZIEŃ: ")) {
+                if(w[0]) {
                     dni.add(w[0].split(/\s+/)[0].trim());
                     if(w[1]) gracze.add(w[1]);
                     if(w[2]) statystyki.add(w[2]);
@@ -484,25 +389,15 @@
             
             const populateDateFilter = (id, set, storageKey) => {
                 const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || 'LAST_3_DAYS';
-                s.innerHTML = `<option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
-                               <option value="ALL">Cała historia bazy</option>
-                               <option value="CUSTOM_RANGE">Własny zakres dat...</option>`;
+                let targetVal = localStorage.getItem(storageKey) || 'ALL';
+                s.innerHTML = `<option value="ALL">Cały bieżący tydzień (Domyślnie)</option>
+                               <option value="LAST_3_DAYS">Ostatnie 3 dni</option>`;
                 Array.from(set).sort().forEach(o => {
                     let el = document.createElement('option'); el.value = o; el.textContent = o;
                     if(o === targetVal) el.selected = true; s.appendChild(el);
                 });
-                if (!['LAST_3_DAYS', 'ALL', 'CUSTOM_RANGE', ...Array.from(set)].includes(targetVal)) targetVal = 'LAST_3_DAYS';
                 s.value = targetVal;
                 localStorage.setItem(storageKey, targetVal);
-
-                if (targetVal === 'CUSTOM_RANGE') {
-                    document.getElementById('customDateContainer').style.display = 'flex';
-                    document.getElementById('customStartDate').value = localStorage.getItem('bf_customStart') || '';
-                    document.getElementById('customEndDate').value = localStorage.getItem('bf_customEnd') || '';
-                } else {
-                    document.getElementById('customDateContainer').style.display = 'none';
-                }
             };
             
             const populateGeneric = (id, set, txt, storageKey) => {
@@ -541,19 +436,12 @@
             const cutoffDate = new Date();
             cutoffDate.setDate(cutoffDate.getDate() - 3);
             cutoffDate.setHours(0, 0, 0, 0);
-
-            let customStartStr = document.getElementById('customStartDate').value;
-            let customEndStr = document.getElementById('customEndDate').value;
-            let customStart = customStartStr ? new Date(customStartStr) : new Date(0); customStart.setHours(0,0,0,0);
-            let customEnd = customEndStr ? new Date(customEndStr) : new Date(8640000000000000); customEnd.setHours(23,59,59,999);
             
             let filtered = globalData.filter(w => {
-                if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; 
                 let logDate = parseLogDate(w[0]);
                 if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) return false;
-                if (fD === 'CUSTOM_RANGE' && (logDate < customStart || logDate > customEnd)) return false;
 
-                let dMatch = (fD === 'ALL' || fD === 'LAST_3_DAYS' || fD === 'CUSTOM_RANGE' || w[0].startsWith(fD));
+                let dMatch = (fD === 'ALL' || fD === 'LAST_3_DAYS' || w[0].startsWith(fD));
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
                 if (fS === 'ALL') sMatch = true;
@@ -599,7 +487,7 @@
                 const wiersze = text.trim().split('\n');
                 
                 if (wiersze.length <= 1) {
-                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w arkuszu Rankingu. Skrypt Google uruchomi się w nocy.</p>";
+                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w arkuszu Rankingu.</p>";
                     return;
                 }
 
@@ -612,7 +500,7 @@
                 }
                 renderRankingTable(currentSortCol, currentSortAsc);
             } catch (e) {
-                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania rankingu. Skrypt z Google nie pobrał jeszcze pierwszych statystyk.</p>";
+                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania rankingu.</p>";
             }
         }
 
