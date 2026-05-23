@@ -56,7 +56,7 @@
 
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Strona ładuje wyłącznie 3 ostatnie dni dla maksymalnej płynności działania.</div>
+        <div id="status">Skrypt pobiera dane z lekkiego, tygodniowego arkusza dla płynności działania.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
 
         <div class="summary-box">
@@ -66,6 +66,7 @@
                     <option value="LAST_3_DAYS">Ostatnie 3 dni (Wszystko)</option>
                     <option value="TODAY">Tylko Dzisiaj</option>
                     <option value="YESTERDAY">Tylko Wczoraj</option>
+                    <option value="ALL">Cały zebrany tydzień</option>
                 </select>
             </div>
             <div id="summaryContainer"></div>
@@ -73,10 +74,11 @@
 
         <hr class="separator">
         
-        <h2>Pełny log operacji (Ostatnie 3 dni)</h2>
+        <h2>Pełny log operacji</h2>
         <div class="filter-container">
             <select id="filterDate">
-                <option value="ALL">Ostatnie 3 dni (Wszystko)</option>
+                <option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
+                <option value="ALL">Cały zebrany tydzień</option>
             </select>
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
@@ -160,10 +162,19 @@
             if(!dateStr) return new Date(0);
             const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
             const parts = cleanStr.trim().split(/\s+/);
-            if(parts.length < 2) return new Date(0);
-            const dParts = parts[0].split('.');
+            if(parts.length < 2) {
+                let d = new Date(cleanStr);
+                return isNaN(d) ? new Date(0) : d;
+            }
+            const dParts = parts[0].split(/[\.\-\/]/); 
             const tParts = parts[1].split(':');
-            return new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1], tParts[2]);
+            if (dParts.length === 3) {
+                let year = dParts[2].length === 4 ? dParts[2] : dParts[0];
+                let day = dParts[2].length === 4 ? dParts[0] : dParts[2];
+                let month = dParts[1];
+                return new Date(year, month - 1, day, tParts[0], tParts[1], tParts[2] || 0);
+            }
+            return new Date(0);
         }
 
         async function loadTableData() {
@@ -175,14 +186,9 @@
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 if (wiersze.length <= 1) {
-                    document.getElementById('tableContainer').innerHTML = "<p>Brak danych z ostatnich 3 dni.</p>";
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>";
                     return;
                 }
-
-                // Definiujemy granicę 3 dni wstecz od teraz
-                const cutoffDate = new Date();
-                cutoffDate.setDate(cutoffDate.getDate() - 3);
-                cutoffDate.setHours(0, 0, 0, 0);
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -195,16 +201,7 @@
                     if (rawDate.includes(',')) rawDate = rawDate.replace(',', '');
                     komorki[0] = rawDate;
 
-                    // EKSTREMALNE PRZYSPIESZENIE: Odrzucamy stare dane zanim trafią do pamięci RAM przeglądarki
-                    let logDate = parseLogDate(rawDate);
-                    if (logDate < cutoffDate) continue;
-
                     rawData.push(komorki.map(k => k.trim()));
-                }
-
-                if(rawData.length === 0) {
-                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów z ostatnich 3 dni.</p>";
-                    return;
                 }
 
                 let playerAccumulator = {}; 
@@ -268,6 +265,11 @@
                 start.setDate(start.getDate() - 3); start.setHours(0,0,0,0);
                 end.setHours(23,59,59,999);
                 return { start, end, label: "Ostatnie 3 dni" };
+            }
+            if (period === 'ALL') {
+                start = new Date(0); 
+                end.setHours(23,59,59,999);
+                return { start, end, label: "Cały zapisany tydzień" };
             }
             return null;
         }
@@ -373,26 +375,13 @@
         }
 
         function updateFilters() {
-            const dni = new Set(), gracze = new Set(), statystyki = new Set();
+            const gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
                 if(w[0]) {
-                    dni.add(w[0].split(/\s+/)[0].trim());
                     if(w[1]) gracze.add(w[1]);
                     if(w[2]) statystyki.add(w[2]);
                 }
             });
-            
-            const populateDateFilter = (id, set, storageKey) => {
-                const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || 'ALL';
-                s.innerHTML = `<option value="ALL">Ostatnie 3 dni (Wszystko)</option>`;
-                Array.from(set).sort().forEach(o => {
-                    let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === targetVal) el.selected = true; s.appendChild(el);
-                });
-                s.value = targetVal;
-                localStorage.setItem(storageKey, targetVal);
-            };
             
             const populateGeneric = (id, set, txt, storageKey) => {
                 const s = document.getElementById(id);
@@ -417,7 +406,6 @@
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             }
             
-            populateDateFilter('filterDate', dni, 'bf_filterDate');
             populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
             populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
         }
@@ -427,8 +415,15 @@
             const fP = document.getElementById('filterPlayer').value;
             const fS = document.getElementById('filterStat').value;
             
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 3);
+            cutoffDate.setHours(0, 0, 0, 0);
+
             let filtered = globalData.filter(w => {
-                let dMatch = (fD === 'ALL' || w[0].startsWith(fD));
+                let logDate = parseLogDate(w[0]);
+                let dMatch = true;
+                if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) dMatch = false;
+
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
                 if (fS === 'ALL') sMatch = true;
