@@ -88,9 +88,22 @@
     </div>
 
     <div id="sectionRanking">
-        <h2>Aktualny Ranking TOP 100</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Tabela TOP 100 pokazuje łączny wynik konta. Możesz sortować tabelę klikając na nagłówki!</div>
-        <div id="rankingTableContainer"><p>Ładowanie rankingu...</p></div>
+        <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Tabela prezentuje przyrosty statystyk kont w wybranym okresie czasu. Kliknij nagłówek, aby sortować wyniki!</div>
+        
+        <div class="filter-container">
+            <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Wybierz zakres przyrostów:</span>
+            <select id="rankingPeriodSelect">
+                <option value="LAST_24H">Ostatnie 24h (Ostatni dzień)</option>
+                <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
+                <option value="LAST_WEEK">Ostatni tydzień (7 dni)</option>
+                <option value="THIS_MONTH">Bieżący miesiąc (od 1-go dnia miesiąca)</option>
+                <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień (24h)...</option>
+            </select>
+            <select id="rankingSpecificDaySelect" style="display: none;"></select>
+        </div>
+
+        <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
     <script>
@@ -101,8 +114,9 @@
         let globalData = [];
 
         let globalRankingData = [];
-        let currentSortCol = 0; 
-        let currentSortAsc = true;
+        let computedRankingRows = []; // Tu przechowujemy przetworzone delty do łatwego sortowania
+        let currentSortCol = 3; // Domyślnie sortujemy po kolumnie POZIOM (index 3)
+        let currentSortAsc = false; // Od największego przyrostu poziomu w dół
 
         let currentSummarySortCol = 1; 
         let currentSummarySortAsc = false; 
@@ -120,6 +134,7 @@
                 document.getElementById('tabRankingBtn').classList.add('active');
                 document.getElementById('sectionRanking').classList.add('active');
                 if (globalRankingData.length === 0) loadRankingData();
+                else calculateAndRenderRanking();
             }
         }
 
@@ -138,6 +153,19 @@
         document.getElementById('summaryPeriodSelect').addEventListener('change', function() {
             renderSummaryTable();
         });
+
+        // AKCJA DLA FILTRÓW RANKINGU
+        document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect');
+            if (this.value === 'SPECIFIC_DAY') {
+                specSelect.style.display = 'inline-block';
+                populateRankingSpecificDays();
+            } else {
+                specSelect.style.display = 'none';
+            }
+            calculateAndRenderRanking();
+        });
+        document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
@@ -462,6 +490,11 @@
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
 
+
+        // ==========================================
+        //  SILNIK ANALITYCZNY DLA RANKINGU TOP 100
+        // ==========================================
+
         async function loadRankingData() {
             try {
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime());
@@ -469,21 +502,136 @@
                 const wiersze = text.trim().split('\n');
                 
                 if (wiersze.length <= 1) {
-                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w rankingu.</p>";
+                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu. Poczekaj na pierwszy snapshot po północy.</p>";
                     return;
                 }
 
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) {
                     let komorki = parseCSVLine(wiersze[i].trim());
-                    if (komorki.length >= 10) {
+                    if (komorki.length >= 11) { // 1 data + 10 statystyk
                         globalRankingData.push(komorki);
                     }
                 }
-                renderRankingTable(currentSortCol, currentSortAsc);
+                calculateAndRenderRanking();
             } catch (e) {
-                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania rankingu.</p>";
+                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>";
             }
+        }
+
+        function getUniqueRankingDates() {
+            const datesSet = new Set();
+            globalRankingData.forEach(row => {
+                if (row[0]) datesSet.add(row[0]);
+            });
+            return Array.from(datesSet); // Zwraca uporządkowane chronologicznie daty
+        }
+
+        function populateRankingSpecificDays() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect');
+            const currentVal = specSelect.value;
+            specSelect.innerHTML = "";
+            
+            let dates = getUniqueRankingDates();
+            // Do wyboru pojedynczego dnia potrzebujemy przynajmniej dnia poprzedniego do wyliczenia różnicy
+            let validDays = dates.slice(1).reverse(); 
+            
+            if(validDays.length === 0) {
+                specSelect.innerHTML = "<option>Brak archiwalnych dni</option>";
+                return;
+            }
+
+            validDays.forEach(item => {
+                let opt = document.createElement('option');
+                opt.value = item; opt.textContent = item;
+                if (item === currentVal) opt.selected = true;
+                specSelect.appendChild(opt);
+            });
+        }
+
+        function calculateAndRenderRanking() {
+            if (globalRankingData.length === 0) return;
+            
+            const period = document.getElementById('rankingPeriodSelect').value;
+            const specDay = document.getElementById('rankingSpecificDaySelect').value;
+            
+            let uniqueDates = getUniqueRankingDates();
+            if (uniqueDates.length === 0) {
+                document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>";
+                return;
+            }
+            
+            let endDateStr = uniqueDates[uniqueDates.length - 1]; // Domyślnie najnowszy snapshot
+            let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; // Domyślnie 24h wcześniej
+            
+            if (period === 'LAST_24H') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)];
+            } else if (period === 'LAST_3_DAYS') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            } else if (period === 'LAST_WEEK') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
+            } else if (period === 'THIS_MONTH') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                let targetMonth = endDateStr.split('.')[1];
+                let targetYear = endDateStr.split('.')[2];
+                // Szukamy pierwszego zapisanego dnia z tego samego miesiąca i roku
+                let firstOfM = uniqueDates.find(d => d.split('.')[1] === targetMonth && d.split('.')[2] === targetYear);
+                startDateStr = firstOfM || uniqueDates[0];
+            } else if (period === 'SPECIFIC_DAY' && specDay) {
+                endDateStr = specDay;
+                let idx = uniqueDates.indexOf(specDay);
+                startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0];
+            }
+            
+            let endRecords = globalRankingData.filter(r => r[0] === endDateStr);
+            let startRecords = globalRankingData.filter(r => r[0] === startDateStr);
+            
+            let startMap = {};
+            startRecords.forEach(r => { startMap[r[3]] = r; }); // Mapujemy po nicku (index 3)
+
+            computedRankingRows = [];
+            
+            function cleanNum(val) {
+                if (!val) return 0;
+                let clean = String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '');
+                let num = parseInt(clean);
+                return isNaN(num) ? 0 : num;
+            }
+            
+            endRecords.forEach(endRow => {
+                let lp = parseInt(endRow[1]) || 0;
+                let rasa = endRow[2];
+                let nick = endRow[3];
+                let startRow = startMap[nick];
+                
+                let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
+                
+                if (startRow) {
+                    dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0);
+                    dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]);
+                    dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]);
+                    dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]);
+                    dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]);
+                    dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]);
+                    dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
+                }
+                
+                computedRankingRows.push({
+                    lp, rasa, nick,
+                    poziom: dPoziom,
+                    lup: dLup,
+                    wartosc: dWartosc,
+                    wygrane: dWygrane,
+                    przegrane: dPrzegrane,
+                    zdobyte: dZdobyte,
+                    stracone: dStracone
+                });
+            });
+            
+            sortAndRenderRankingTable();
         }
 
         function sortRanking(colIndex) {
@@ -491,61 +639,82 @@
                 currentSortAsc = !currentSortAsc;
             } else {
                 currentSortCol = colIndex;
-                currentSortAsc = (colIndex === 0 || colIndex === 1 || colIndex === 2) ? true : false;
+                // Tekst domyślnie rosnąco (A-Z), liczby malejąco (największe przyrosty na górze)
+                currentSortAsc = (colIndex === 1 || colIndex === 2) ? true : false; 
             }
-
-            globalRankingData.sort((a, b) => {
-                let valA = a[colIndex] || "";
-                let valB = b[colIndex] || "";
-
-                if (valA === "?") valA = "-1";
-                if (valB === "?") valB = "-1";
-
-                let cleanA = valA.replace(/\./g, '').replace(/[^\d-]/g, '');
-                let cleanB = valB.replace(/\./g, '').replace(/[^\d-]/g, '');
-
-                let numA = parseInt(cleanA);
-                let numB = parseInt(cleanB);
-
-                if (!isNaN(numA) && !isNaN(numB) && colIndex !== 1 && colIndex !== 2) {
-                    return currentSortAsc ? numA - numB : numB - numA;
-                } else {
-                    return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }
-            });
-
-            renderRankingTable(currentSortCol, currentSortAsc);
+            sortAndRenderRankingTable();
         }
 
-        function renderRankingTable(sortCol, asc) {
+        function sortAndRenderRankingTable() {
+            if (computedRankingRows.length === 0) return;
+            
+            computedRankingRows.sort((a, b) => {
+                let valA, valB;
+                if (currentSortCol === 0) { valA = a.lp; valB = b.lp; }
+                else if (currentSortCol === 1) { valA = a.rasa; valB = b.rasa; }
+                else if (currentSortCol === 2) { valA = a.nick; valB = b.nick; }
+                else if (currentSortCol === 3) { valA = a.poziom; valB = b.poziom; }
+                else if (currentSortCol === 4) { valA = a.lup; valB = b.lup; }
+                else if (currentSortCol === 5) { valA = a.wartosc; valB = b.wartosc; }
+                else if (currentSortCol === 6) { valA = a.wygrane; valB = b.wygrane; }
+                else if (currentSortCol === 7) { valA = a.przegrane; valB = b.przegrane; }
+                else if (currentSortCol === 8) { valA = a.zdobyte; valB = b.zdobyte; }
+                else if (currentSortCol === 9) { valA = a.stracone; valB = b.stracone; }
+                
+                if (currentSortCol === 1 || currentSortCol === 2) {
+                    return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return currentSortAsc ? valA - valB : valB - valA;
+                }
+            });
+            
             let html = "<table><thead><tr>";
-            let headers = ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"];
+            let headers = ["LP (Aktualna)", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"];
             
             headers.forEach((h, i) => {
                 let arrow = "⇕";
-                if (sortCol === i) arrow = asc ? "↑" : "↓";
+                if (currentSortCol === i) arrow = currentSortAsc ? "↑" : "↓";
                 html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
             });
             html += "</tr></thead><tbody>";
             
-            globalRankingData.forEach(row => {
+            function formatDelta(num, suffix = "") {
+                if (!num) return "0" + (suffix ? " " + suffix : "");
+                let sign = num > 0 ? "+" : "";
+                let formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                return `${sign}${formatted}${suffix ? " " + suffix : ""}`;
+            }
+            
+            computedRankingRows.forEach(row => {
                 html += "<tr>";
-                html += `<td class="rank-num">${row[0]}</td>`;
+                html += `<td class="rank-num">${row.lp}</td>`;
                 
-                let rasaClass = row[1] === "Wampir" ? "rasa-wampir" : (row[1] === "Wilkołak" ? "rasa-wilkolak" : "");
-                html += `<td class="${rasaClass}">${row[1]}</td>`;
+                let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
+                html += `<td class="${rasaClass}">${row.rasa}</td>`;
+                html += `<td><strong>${row.nick}</strong></td>`;
                 
-                html += `<td><strong>${row[2]}</strong></td>`;
-                html += `<td class="level-col">${row[3]}</td>`;
+                let pClass = row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '');
+                html += `<td${pClass}>${formatDelta(row.poziom)}</td>`;
                 
-                let safeVal = (v) => v === "?" ? `<span class="hidden-stat">Ukryte</span>` : v;
-
-                html += `<td class="suma-col">${row[4]}</td>`; 
-                html += `<td>${safeVal(row[5])}</td>`; 
-                html += `<td class="przyrost-col">${safeVal(row[6])}</td>`;
-                html += `<td class="strata-col">${safeVal(row[7])}</td>`;
-                html += `<td class="przyrost-col">${safeVal(row[8])}</td>`; 
-                html += `<td class="strata-col">${safeVal(row[9])}</td>`;
+                let suffix = row.rasa === "Wampir" ? "krwi" : "mięsa";
+                let lClass = row.lup > 0 ? ' class="suma-col"' : (row.lup < 0 ? ' class="strata-col"' : '');
+                html += `<td${lClass}>${formatDelta(row.lup, suffix)}</td>`;
+                
+                let vClass = row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '');
+                html += `<td${vClass}>${formatDelta(row.wartosc)}</td>`;
+                
+                let wClass = row.wygrane > 0 ? ' class="przyrost-col"' : '';
+                html += `<td${wClass}>${formatDelta(row.wygrane)}</td>`;
+                
+                let prClass = row.przegrane > 0 ? ' class="strata-col"' : '';
+                html += `<td${prClass}>${formatDelta(row.przegrane)}</td>`;
+                
+                let zClass = row.zdobyte > 0 ? ' class="przyrost-col"' : '';
+                html += `<td${zClass}>${formatDelta(row.zdobyte)}</td>`;
+                
+                let sClass = row.stracone > 0 ? ' class="strata-col"' : '';
+                html += `<td${sClass}>${formatDelta(row.stracone)}</td>`;
+                
                 html += "</tr>";
             });
             
