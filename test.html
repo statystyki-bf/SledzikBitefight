@@ -664,7 +664,6 @@
             
             headers.forEach((h, i) => {
                 let arrow = "⇕";
-                if (currentSortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; // Zachowane oryginalne zachowanie strzałek
                 if (currentSortCol === i) arrow = currentSortAsc ? "↑" : "↓";
                 html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
             });
