@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "153.737.689 / 153.740.670",
+        "Doswiadczenie": "153.782.855 / 153.796.125",
         "Sila": "3940",
         "Obrona": "3651",
         "Zwinnosc": "3469",
         "Wytrzymalosc": "3198",
         "Charyzma": "3940",
-        "Walki": "94.988",
-        "Zrabowane dobra": "249.047.407.104 krwi"
+        "Walki": "94.991",
+        "Zrabowane dobra": "249.084.476.897 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "115.967.031 / 115.974.095",
@@ -16,7 +16,7 @@
         "Zwinnosc": "2253",
         "Wytrzymalosc": "1978",
         "Charyzma": "1549",
-        "Walki": "56.778",
+        "Walki": "56.779",
         "Zrabowane dobra": "182.851.622.474 krwi"
     },
     "lux": {
@@ -26,31 +26,31 @@
         "Zwinnosc": "2085",
         "Wytrzymalosc": "2505",
         "Charyzma": "1860",
-        "Walki": "103.756",
+        "Walki": "103.757",
         "Zrabowane dobra": "167.397.677.529 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "339.301.892 / 339.331.455",
+        "Doswiadczenie": "339.367.994 / 339.413.840",
         "Sila": "4311",
         "Obrona": "3071",
         "Zwinnosc": "3813",
-        "Wytrzymalosc": "3719",
+        "Wytrzymalosc": "3720",
         "Charyzma": "2836",
         "Walki": "115.613",
-        "Zrabowane dobra": "749.750.634.423 mięsa"
+        "Zrabowane dobra": "749.813.169.775 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "134.696.915 / 134.737.595",
+        "Doswiadczenie": "134.739.187 / 134.789.510",
         "Sila": "2996",
         "Obrona": "2982",
-        "Zwinnosc": "2591",
+        "Zwinnosc": "2592",
         "Wytrzymalosc": "2383",
         "Charyzma": "1553",
-        "Walki": "49.358",
-        "Zrabowane dobra": "242.199.297.060 krwi"
+        "Walki": "49.360",
+        "Zrabowane dobra": "242.232.415.909 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "144.484.117 / 144.512.255",
+        "Doswiadczenie": "144.489.493 / 144.512.255",
         "Sila": "4790",
         "Obrona": "3282",
         "Zwinnosc": "2994",
