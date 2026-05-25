@@ -121,6 +121,7 @@
         let currentSummarySortCol = 1; 
         let currentSummarySortAsc = false; 
 
+        // POPRAWKA BŁĘDU: Używamy classList.add() zamiast jQuery .addClass()
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
@@ -128,17 +129,21 @@
             document.getElementById('sectionRanking').classList.remove('active');
 
             if (tabId === 'tracker') {
-                document.getElementById('tabTrackerBtn').addClass('active');
-                document.getElementById('sectionTracker').addClass('active');
+                document.getElementById('tabTrackerBtn').classList.add('active');
+                document.getElementById('sectionTracker').classList.add('active');
             } else if (tabId === 'ranking') {
-                document.getElementById('tabRankingBtn').addClass('active');
-                document.getElementById('sectionRanking').addClass('active');
+                document.getElementById('tabRankingBtn').classList.add('active');
+                document.getElementById('sectionRanking').classList.add('active');
                 if (globalRankingData.length === 0) loadRankingData();
                 else calculateAndRenderRanking();
             }
         }
 
         function handleFilterChange() {
+            const fD = document.getElementById('filterDate').value;
+            localStorage.setItem('bf_filterDate', fD);
+            localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
+            localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
             renderTable();
         }
 
@@ -397,7 +402,6 @@
             document.getElementById('summaryContainer').innerHTML = html;
         }
 
-        // POPRAWIONA FUNKCJA - USUNIĘTO BŁĄD ZMIENNEJ "DNI"
         function updateFilters() {
             const gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
@@ -585,7 +589,6 @@
                 startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0];
             }
             
-            // INTELIGENTNA OCHRONA: Jeśli mamy tylko 1 punkt pomiarowy, przełączamy na widok wartości bezwzględnych konta
             if (startDateStr === endDateStr) {
                 startDateStr = null;
             }
@@ -624,7 +627,6 @@
                     dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]);
                     dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
                 } else {
-                    // Pierwszy snapshot = wartości absolutne kont
                     dPoziom = parseInt(endRow[4]) || 0;
                     dLup = cleanNum(endRow[5]);
                     dWartosc = cleanNum(endRow[6]);
@@ -656,7 +658,6 @@
                 currentSortCol = colIndex;
                 currentSortAsc = (colIndex === 1 || colIndex === 2) ? true : false; 
             }
-            // Pobieramy aktualny stan trybu przyrostów przed sortowaniem
             let uniqueDates = getUniqueRankingDates();
             let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
             sortAndRenderRankingTable(isDelta);
@@ -687,7 +688,6 @@
             
             let html = "<table><thead><tr>";
             
-            // Dynamicznie dopasowujemy nagłówki do trybu (PRZYROST vs OGÓLNY STAN)
             let headers = isDelta ? 
                 ["LP (Aktualna)", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] :
                 ["LP (Aktualna)", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
