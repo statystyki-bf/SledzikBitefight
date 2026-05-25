@@ -213,7 +213,7 @@
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 if (wiersze.length <= 1) {
-                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>";
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu. Zostaną tu wyświetlone gdy tylko gracze rozpoczną działania.</p>";
                     return;
                 }
 
@@ -450,6 +450,9 @@
                 let logDate = parseLogDate(w[0]);
                 let dMatch = true;
                 if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) dMatch = false;
+                
+                // POPRAWKA: Filtrowanie po konkretnych dniach, jeśli wybrane ze schowka
+                if (fD !== 'ALL' && fD !== 'LAST_3_DAYS' && !w[0].startsWith(fD)) dMatch = false;
 
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
@@ -459,6 +462,11 @@
                 
                 return dMatch && pMatch && sMatch;
             });
+
+            if(filtered.length === 0) {
+                 document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów.</p>";
+                 return;
+            }
 
             let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
             
@@ -475,7 +483,7 @@
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
-                let pvpResult = "", przyrostZlota = w[5] ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let pvpResult = "", przyrostZlota = (w[5] !== undefined && w[5] !== "") ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 if (stat === 'Zrabowane złoto') pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
                 else if (stat === 'Stracone złoto') pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
                 html += `<td><strong>${pvpResult}</strong></td>`;
@@ -488,6 +496,11 @@
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
+
+
+        // ==========================================
+        //  SILNIK ANALITYCZNY DLA RANKINGU TOP 100
+        // ==========================================
 
         async function loadRankingData() {
             try {
@@ -518,7 +531,7 @@
             globalRankingData.forEach(row => {
                 if (row[0]) datesSet.add(row[0]);
             });
-            return Array.from(datesSet);
+            return Array.from(datesSet); 
         }
 
         function populateRankingSpecificDays() {
@@ -578,8 +591,13 @@
                 startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0];
             }
             
+            // POPRAWKA RANKINGU: Ochrona przed zerami na początku zbierania danych
+            if (startDateStr === endDateStr) {
+                startDateStr = null;
+            }
+
             let endRecords = globalRankingData.filter(r => r[0] === endDateStr);
-            let startRecords = globalRankingData.filter(r => r[0] === startDateStr);
+            let startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
             
             let startMap = {};
             startRecords.forEach(r => { startMap[r[3]] = r; }); 
@@ -609,6 +627,15 @@
                     dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]);
                     dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]);
                     dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
+                } else {
+                    // Jeśli to pierwszy dzień (brak bazy startowej), pokażmy chociaż aktualne cyfry zamiast samych zer
+                    dPoziom = parseInt(endRow[4]) || 0;
+                    dLup = cleanNum(endRow[5]);
+                    dWartosc = cleanNum(endRow[6]);
+                    dWygrane = cleanNum(endRow[7]);
+                    dPrzegrane = cleanNum(endRow[8]);
+                    dZdobyte = cleanNum(endRow[9]);
+                    dStracone = cleanNum(endRow[10]);
                 }
                 
                 computedRankingRows.push({
@@ -670,7 +697,7 @@
             html += "</tr></thead><tbody>";
             
             function formatDelta(num, suffix = "") {
-                if (!num) return "0" + (suffix ? " " + suffix : "");
+                if (!num && num !== 0) return "0" + (suffix ? " " + suffix : "");
                 let sign = num > 0 ? "+" : "";
                 let formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 return `${sign}${formatted}${suffix ? " " + suffix : ""}`;
