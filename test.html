@@ -128,21 +128,17 @@
             document.getElementById('sectionRanking').classList.remove('active');
 
             if (tabId === 'tracker') {
-                document.getElementById('tabTrackerBtn').classList.add('active');
-                document.getElementById('sectionTracker').classList.add('active');
+                document.getElementById('tabTrackerBtn').addClass('active');
+                document.getElementById('sectionTracker').addClass('active');
             } else if (tabId === 'ranking') {
-                document.getElementById('tabRankingBtn').classList.add('active');
-                document.getElementById('sectionRanking').classList.add('active');
+                document.getElementById('tabRankingBtn').addClass('active');
+                document.getElementById('sectionRanking').addClass('active');
                 if (globalRankingData.length === 0) loadRankingData();
                 else calculateAndRenderRanking();
             }
         }
 
         function handleFilterChange() {
-            const fD = document.getElementById('filterDate').value;
-            localStorage.setItem('bf_filterDate', fD);
-            localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
-            localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
             renderTable();
         }
 
@@ -296,7 +292,7 @@
             if (period === 'ALL') {
                 start = new Date(0); 
                 end.setHours(23,59,59,999);
-                return { start, end, label: "Cały zapisany tydzień" };
+                return { start, end, label: "Cały zebrany tydzień" };
             }
             return null;
         }
@@ -401,6 +397,7 @@
             document.getElementById('summaryContainer').innerHTML = html;
         }
 
+        // POPRAWIONA FUNKCJA - USUNIĘTO BŁĄD ZMIENNEJ "DNI"
         function updateFilters() {
             const gracze = new Set(), statystyki = new Set();
             globalData.forEach(w => {
@@ -450,9 +447,6 @@
                 let logDate = parseLogDate(w[0]);
                 let dMatch = true;
                 if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) dMatch = false;
-                
-                // POPRAWKA: Filtrowanie po konkretnych dniach, jeśli wybrane ze schowka
-                if (fD !== 'ALL' && fD !== 'LAST_3_DAYS' && !w[0].startsWith(fD)) dMatch = false;
 
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
@@ -483,7 +477,7 @@
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
-                let pvpResult = "", przyrostZlota = (w[5] !== undefined && w[5] !== "") ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let pvpResult = "", przyrostZlota = (w[5] !== undefined && w[5] !== "") ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 if (stat === 'Zrabowane złoto') pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
                 else if (stat === 'Stracone złoto') pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
                 html += `<td><strong>${pvpResult}</strong></td>`;
@@ -531,7 +525,7 @@
             globalRankingData.forEach(row => {
                 if (row[0]) datesSet.add(row[0]);
             });
-            return Array.from(datesSet); 
+            return Array.from(datesSet);
         }
 
         function populateRankingSpecificDays() {
@@ -591,10 +585,12 @@
                 startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0];
             }
             
-            // POPRAWKA RANKINGU: Ochrona przed zerami na początku zbierania danych
+            // INTELIGENTNA OCHRONA: Jeśli mamy tylko 1 punkt pomiarowy, przełączamy na widok wartości bezwzględnych konta
             if (startDateStr === endDateStr) {
                 startDateStr = null;
             }
+
+            let isDelta = (startDateStr !== null);
 
             let endRecords = globalRankingData.filter(r => r[0] === endDateStr);
             let startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
@@ -619,7 +615,7 @@
                 
                 let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
                 
-                if (startRow) {
+                if (startRow && isDelta) {
                     dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0);
                     dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]);
                     dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]);
@@ -628,7 +624,7 @@
                     dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]);
                     dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
                 } else {
-                    // Jeśli to pierwszy dzień (brak bazy startowej), pokażmy chociaż aktualne cyfry zamiast samych zer
+                    // Pierwszy snapshot = wartości absolutne kont
                     dPoziom = parseInt(endRow[4]) || 0;
                     dLup = cleanNum(endRow[5]);
                     dWartosc = cleanNum(endRow[6]);
@@ -650,7 +646,7 @@
                 });
             });
             
-            sortAndRenderRankingTable();
+            sortAndRenderRankingTable(isDelta);
         }
 
         function sortRanking(colIndex) {
@@ -660,10 +656,13 @@
                 currentSortCol = colIndex;
                 currentSortAsc = (colIndex === 1 || colIndex === 2) ? true : false; 
             }
-            sortAndRenderRankingTable();
+            // Pobieramy aktualny stan trybu przyrostów przed sortowaniem
+            let uniqueDates = getUniqueRankingDates();
+            let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
+            sortAndRenderRankingTable(isDelta);
         }
 
-        function sortAndRenderRankingTable() {
+        function sortAndRenderRankingTable(isDelta) {
             if (computedRankingRows.length === 0) return;
             
             computedRankingRows.sort((a, b) => {
@@ -687,7 +686,11 @@
             });
             
             let html = "<table><thead><tr>";
-            let headers = ["LP (Aktualna)", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"];
+            
+            // Dynamicznie dopasowujemy nagłówki do trybu (PRZYROST vs OGÓLNY STAN)
+            let headers = isDelta ? 
+                ["LP (Aktualna)", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] :
+                ["LP (Aktualna)", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
             
             headers.forEach((h, i) => {
                 let arrow = "⇕";
@@ -698,7 +701,7 @@
             
             function formatDelta(num, suffix = "") {
                 if (!num && num !== 0) return "0" + (suffix ? " " + suffix : "");
-                let sign = num > 0 ? "+" : "";
+                let sign = (isDelta && num > 0) ? "+" : "";
                 let formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 return `${sign}${formatted}${suffix ? " " + suffix : ""}`;
             }
