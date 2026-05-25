@@ -56,17 +56,17 @@
 
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt pobiera dane z lekkiego, tygodniowego arkusza dla płynności działania.</div>
+        <div id="status">Skrypt pobiera z arkusza maksymalnie 3 dni logów, by strona działała błyskawicznie. Domyślny widok: Dzisiaj.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
 
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
                 <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Podsumowanie przyrostów:</span>
                 <select id="summaryPeriodSelect">
-                    <option value="LAST_3_DAYS">Ostatnie 3 dni (Wszystko)</option>
-                    <option value="TODAY">Tylko Dzisiaj</option>
-                    <option value="YESTERDAY">Tylko Wczoraj</option>
-                    <option value="ALL">Cały zebrany tydzień</option>
+                    <option value="TODAY" selected>Dzisiaj (Od północy)</option>
+                    <option value="YESTERDAY">Wczoraj</option>
+                    <option value="DAY_BEFORE_YESTERDAY">Przedwczoraj</option>
+                    <option value="LAST_3_DAYS">Łącznie z 3 ostatnich dni</option>
                 </select>
             </div>
             <div id="summaryContainer"></div>
@@ -77,8 +77,10 @@
         <h2>Pełny log operacji</h2>
         <div class="filter-container">
             <select id="filterDate">
-                <option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
-                <option value="ALL">Cały zebrany tydzień</option>
+                <option value="TODAY" selected>Tylko Dzisiaj</option>
+                <option value="YESTERDAY">Tylko Wczoraj</option>
+                <option value="DAY_BEFORE_YESTERDAY">Tylko Przedwczoraj</option>
+                <option value="LAST_3_DAYS">Wszystko (Ostatnie 3 dni)</option>
             </select>
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
@@ -121,7 +123,6 @@
         let currentSummarySortCol = 1; 
         let currentSummarySortAsc = false; 
 
-        // POPRAWKA BŁĘDU: Używamy classList.add() zamiast jQuery .addClass()
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
@@ -140,10 +141,6 @@
         }
 
         function handleFilterChange() {
-            const fD = document.getElementById('filterDate').value;
-            localStorage.setItem('bf_filterDate', fD);
-            localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
-            localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
             renderTable();
         }
 
@@ -214,7 +211,7 @@
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 if (wiersze.length <= 1) {
-                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu. Zostaną tu wyświetlone gdy tylko gracze rozpoczną działania.</p>";
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu z ostatnich 3 dni. Zostaną tu wyświetlone gdy tylko gracze rozpoczną działania.</p>";
                     return;
                 }
 
@@ -280,6 +277,7 @@
         function getRangeForPeriod(period) {
             const now = new Date();
             let start = new Date(), end = new Date();
+            
             if (period === 'TODAY') {
                 start.setHours(0,0,0,0); end.setHours(23,59,59,999);
                 return { start, end, label: start.toLocaleDateString('pl-PL') };
@@ -289,15 +287,15 @@
                 end.setDate(end.getDate() - 1); end.setHours(23,59,59,999);
                 return { start, end, label: start.toLocaleDateString('pl-PL') };
             }
-            if (period === 'LAST_3_DAYS') {
-                start.setDate(start.getDate() - 3); start.setHours(0,0,0,0);
+            if (period === 'DAY_BEFORE_YESTERDAY') {
+                start.setDate(start.getDate() - 2); start.setHours(0,0,0,0);
+                end.setDate(end.getDate() - 2); end.setHours(23,59,59,999);
+                return { start, end, label: start.toLocaleDateString('pl-PL') };
+            }
+            if (period === 'LAST_3_DAYS' || period === 'ALL') {
+                start.setDate(start.getDate() - 2); start.setHours(0,0,0,0);
                 end.setHours(23,59,59,999);
                 return { start, end, label: "Ostatnie 3 dni" };
-            }
-            if (period === 'ALL') {
-                start = new Date(0); 
-                end.setHours(23,59,59,999);
-                return { start, end, label: "Cały zebrany tydzień" };
             }
             return null;
         }
@@ -443,14 +441,15 @@
             const fP = document.getElementById('filterPlayer').value;
             const fS = document.getElementById('filterStat').value;
             
-            const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - 3);
-            cutoffDate.setHours(0, 0, 0, 0);
+            let range = getRangeForPeriod(fD);
 
             let filtered = globalData.filter(w => {
                 let logDate = parseLogDate(w[0]);
-                let dMatch = true;
-                if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) dMatch = false;
+                
+                let dMatch = false;
+                if (range && logDate >= range.start && logDate <= range.end) {
+                    dMatch = true;
+                }
 
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
@@ -462,7 +461,7 @@
             });
 
             if(filtered.length === 0) {
-                 document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów.</p>";
+                 document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>";
                  return;
             }
 
