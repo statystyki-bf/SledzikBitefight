@@ -24,7 +24,6 @@
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
         select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
-        /* KOMPAKTOWE TABELE */
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; user-select: none; font-size: 11px; }
@@ -214,7 +213,7 @@
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 if (wiersze.length <= 1) {
-                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu z ostatnich 3 dni. Zostaną tu wyświetlone gdy tylko gracze rozpoczną działania.</p>";
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu z ostatnich 3 dni.</p>";
                     return;
                 }
 
@@ -606,14 +605,13 @@
             computedRankingRows = [];
             
             function cleanNum(val) {
-                if (!val) return 0;
+                if (!val || val === "?" || val === "Ukryte") return 0;
                 let clean = String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '');
                 let num = parseInt(clean);
                 return isNaN(num) ? 0 : num;
             }
             
             endRecords.forEach(endRow => {
-                let lp = parseInt(endRow[1]) || 0;
                 let rasa = endRow[2];
                 let nick = endRow[3];
                 let startRow = startMap[nick];
@@ -639,7 +637,7 @@
                 }
                 
                 computedRankingRows.push({
-                    lp, rasa, nick,
+                    rasa, nick,
                     poziom: dPoziom,
                     lup: dLup,
                     wartosc: dWartosc,
@@ -654,11 +652,13 @@
         }
 
         function sortRanking(colIndex) {
-            if (currentSortCol === colIndex) {
+            let dataKeyIndex = colIndex - 1; 
+
+            if (currentSortCol === dataKeyIndex) {
                 currentSortAsc = !currentSortAsc;
             } else {
-                currentSortCol = colIndex;
-                currentSortAsc = (colIndex === 1 || colIndex === 2) ? true : false; 
+                currentSortCol = dataKeyIndex;
+                currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; 
             }
             let uniqueDates = getUniqueRankingDates();
             let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
@@ -670,18 +670,19 @@
             
             computedRankingRows.sort((a, b) => {
                 let valA, valB;
-                if (currentSortCol === 0) { valA = a.lp; valB = b.lp; }
-                else if (currentSortCol === 1) { valA = a.rasa; valB = b.rasa; }
-                else if (currentSortCol === 2) { valA = a.nick; valB = b.nick; }
-                else if (currentSortCol === 3) { valA = a.poziom; valB = b.poziom; }
-                else if (currentSortCol === 4) { valA = a.lup; valB = b.lup; }
-                else if (currentSortCol === 5) { valA = a.wartosc; valB = b.wartosc; }
-                else if (currentSortCol === 6) { valA = a.wygrane; valB = b.wygrane; }
-                else if (currentSortCol === 7) { valA = a.przegrane; valB = b.przegrane; }
-                else if (currentSortCol === 8) { valA = a.zdobyte; valB = b.zdobyte; }
-                else if (currentSortCol === 9) { valA = a.stracone; valB = b.stracone; }
+                if (currentSortCol === -1) return 0; 
                 
-                if (currentSortCol === 1 || currentSortCol === 2) {
+                if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; }
+                else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; }
+                else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; }
+                else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; }
+                else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; }
+                else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; }
+                else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; }
+                else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; }
+                else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
+                
+                if (currentSortCol === 0 || currentSortCol === 1) {
                     return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
                 } else {
                     return currentSortAsc ? valA - valB : valB - valA;
@@ -691,13 +692,14 @@
             let html = "<table><thead><tr>";
             
             let headers = isDelta ? 
-                ["LP (Aktualna)", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] :
-                ["LP (Aktualna)", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+                ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] :
+                ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
             
             headers.forEach((h, i) => {
-                let arrow = "⇕";
-                if (currentSortCol === i) arrow = currentSortAsc ? "↑" : "↓";
-                html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
+                let arrow = "";
+                if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓";
+                let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : '';
+                html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`;
             });
             html += "</tr></thead><tbody>";
             
@@ -708,9 +710,10 @@
                 return `${sign}${formatted}${suffix ? " " + suffix : ""}`;
             }
             
-            computedRankingRows.forEach(row => {
+            // Renderowanie Dynamicznego LP 
+            computedRankingRows.forEach((row, idx) => {
                 html += "<tr>";
-                html += `<td class="rank-num">${row.lp}</td>`;
+                html += `<td class="rank-num">${idx + 1}</td>`;
                 
                 let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
                 html += `<td class="${rasaClass}">${row.rasa}</td>`;
