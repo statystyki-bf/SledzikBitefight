@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "157.191.202 / 157.197.850",
+        "Doswiadczenie": "157.368.532 / 157.422.215",
         "Sila": "3940",
         "Obrona": "3651",
         "Zwinnosc": "3469",
-        "Wytrzymalosc": "3211",
+        "Wytrzymalosc": "3212",
         "Charyzma": "3940",
-        "Walki": "95.110",
-        "Zrabowane dobra": "252.080.052.116 krwi"
+        "Walki": "95.120",
+        "Zrabowane dobra": "252.232.067.985 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "116.079.619 / 116.118.620",
@@ -20,34 +20,34 @@
         "Zrabowane dobra": "182.943.195.131 krwi"
     },
     "lux": {
-        "Doswiadczenie": "100.127.642 / 100.132.600",
-        "Sila": "2362",
+        "Doswiadczenie": "100.193.327 / 100.222.120",
+        "Sila": "2363",
         "Obrona": "2845",
         "Zwinnosc": "2091",
         "Wytrzymalosc": "2506",
         "Charyzma": "1864",
-        "Walki": "103.840",
-        "Zrabowane dobra": "168.431.575.026 krwi"
+        "Walki": "103.857",
+        "Zrabowane dobra": "168.536.825.380 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "345.404.939 / 345.455.030",
+        "Doswiadczenie": "345.670.421 / 345.704.440",
         "Sila": "4311",
         "Obrona": "3071",
-        "Zwinnosc": "3818",
+        "Zwinnosc": "3819",
         "Wytrzymalosc": "3732",
         "Charyzma": "2836",
         "Walki": "115.613",
-        "Zrabowane dobra": "755.390.179.713 mięsa"
+        "Zrabowane dobra": "755.681.886.366 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "136.374.650 / 136.403.865",
+        "Doswiadczenie": "136.439.249 / 136.456.100",
         "Sila": "2997",
         "Obrona": "2982",
-        "Zwinnosc": "2598",
+        "Zwinnosc": "2599",
         "Wytrzymalosc": "2390",
         "Charyzma": "1554",
-        "Walki": "49.467",
-        "Zrabowane dobra": "243.755.233.696 krwi"
+        "Walki": "49.469",
+        "Zrabowane dobra": "243.874.291.367 krwi"
     },
     "PEON": {
         "Doswiadczenie": "144.661.262 / 144.673.580",
