@@ -6,7 +6,6 @@
     <title>BiteFight - Centrum Dowodzenia</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
     
-    <!-- BIBLIOTEKA DO WYKRESÓW -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -44,7 +43,6 @@
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
-        /* STYLIZACJA KONTENERA WYKRESU */
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
     </style>
 </head>
@@ -52,7 +50,7 @@
     <h1>Statystyki BiteFight</h1>
     <div class="tabs">
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
-        <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (10-min)</button>
+        <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
 
@@ -88,10 +86,10 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
-    <!-- NOWA ZAKŁADKA: WYKRES RUTYNY -->
+    <!-- NOWA ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
-        <h2>Precyzyjny Wykres Aktywności (Interwały 10-minutowe)</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań. Wyższe słupki oznaczają częstszą grę w danej godzinie.</div>
+        <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
         <div class="filter-container">
             <select id="heatmapPlayerSelect" onchange="renderChart()">
                 <option value="ALL">Wybierz gracza...</option>
@@ -136,7 +134,7 @@
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         
         // PAMIĘTAJ WKLEIĆ PRAWIDŁOWY LINK DO ZAKŁADKI RUTYNA W FORMACIE CSV:
-        const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
+        const urlRutynaSheet = "TUTAJ_WKLEJ_NOWY_LINK_CSV_DO_ZAKLADKI_RUTYNA"; 
         // =========================================================
         
         const BLACKLIST = ["Kark23"]; 
@@ -149,7 +147,7 @@
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         
-        let routineChartInstance = null; // Instancja wykresu
+        let routineChartInstance = null;
 
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
@@ -224,7 +222,6 @@
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 
-                // Ładujemy dane Rutyny
                 if (urlRutynaSheet.includes("docs.google.com")) {
                     try {
                         const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
@@ -294,21 +291,8 @@
             renderSummaryTable();
         }
 
-        function formatLastSeen(dateObj) {
-            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
-            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
-            let diffMins = Math.floor(diffMs / 60000);
-            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
-            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
-            else {
-                let diffHours = Math.floor(diffMins / 60);
-                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
-                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
-            }
-        }
-
         // ==========================================
-        //  NOWA FUNKCJA: RENDEROWANIE WYKRESU CHART.JS
+        //  RENDEROWANIE WYKRESU (CO 2 MINUTY)
         // ==========================================
         function renderChart() {
             const player = document.getElementById('heatmapPlayerSelect').value;
@@ -319,33 +303,30 @@
                 return;
             }
 
-            // Generujemy 144 etykiety czasu (co 10 minut: 00:00, 00:10 ... 23:50)
+            // Generujemy 720 etykiet czasu (co 2 minuty: 00:00, 00:02 ... 23:58)
             let labels = [];
             for (let h = 0; h < 24; h++) {
-                for (let m = 0; m < 60; m += 10) {
+                for (let m = 0; m < 60; m += 2) {
                     let hourStr = h.toString().padStart(2, '0');
                     let minStr = m.toString().padStart(2, '0');
                     labels.push(`${hourStr}:${minStr}`);
                 }
             }
 
-            // Inicjalizujemy tablicę danych zerami (długość 144)
-            let chartData = new Array(144).fill(0);
+            // Inicjalizujemy tablicę danych zerami (długość 720)
+            let chartData = new Array(720).fill(0);
 
-            // Zliczamy aktywność z globalRutynaData
             globalRutynaData.forEach(r => {
                 if (r[0] === player) {
-                    // r[1] format: "Dzien_Godzina_Minuta" (np. "1_14_30")
                     let parts = r[1].split('_');
                     if (parts.length === 3) {
                         let day = parts[0];
                         let hour = parseInt(parts[1]);
                         let minute = parseInt(parts[2]);
                         
-                        // Obliczamy index tablicy (0-143)
-                        let index = (hour * 6) + (minute / 10);
+                        // Zmieniony index na bazujący na interwałach 2-minutowych
+                        let index = (hour * 30) + (minute / 2);
                         
-                        // Sprawdzamy filtr dni
                         if (dayFilter === 'ALL' || dayFilter === day) {
                             chartData[index] += parseInt(r[2]);
                         }
@@ -353,20 +334,18 @@
                 }
             });
 
-            // Usuwamy poprzedni wykres, żeby nie nakładały się na siebie
             if (routineChartInstance) {
                 routineChartInstance.destroy();
             }
 
             const ctx = document.getElementById('routineChart').getContext('2d');
             
-            // Konfiguracja wykresu słupkowego
             routineChartInstance = new Chart(ctx, {
-                type: 'bar', // Wykres słupkowy wygląda najlepiej dla uderzeń aktywności
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Poziom Aktywności (kliknięcia)',
+                        label: 'Aktywność (kliknięcia)',
                         data: chartData,
                         backgroundColor: 'rgba(255, 51, 51, 0.7)',
                         borderColor: 'rgba(192, 12, 12, 1)',
@@ -382,9 +361,8 @@
                         x: {
                             ticks: { 
                                 color: '#aaa',
-                                maxTicksLimit: 24, // Pokazuje 1 tick na godzinę by nie robić śmietnika z etykiet
+                                maxTicksLimit: 24, 
                                 callback: function(value, index, values) {
-                                    // Pokaż etykietę tylko dla równych godzin "XX:00"
                                     let label = this.getLabelForValue(value);
                                     return label.endsWith(':00') ? label : '';
                                 }
@@ -395,7 +373,7 @@
                             beginAtZero: true,
                             ticks: { 
                                 color: '#ffcc00', 
-                                precision: 0 // Tylko liczby całkowite
+                                precision: 0 
                             },
                             grid: { color: '#333' }
                         }
@@ -409,16 +387,29 @@
                             displayColors: false,
                             callbacks: {
                                 title: function(context) {
-                                    return `Godzina: ${context[0].label}`;
+                                    return `Czas: ${context[0].label}`;
                                 },
                                 label: function(context) {
-                                    return `Akcje manualne: ${context.raw}`;
+                                    return `Potwierdzone akcje: ${context.raw}`;
                                 }
                             }
                         }
                     }
                 }
             });
+        }
+
+        function formatLastSeen(dateObj) {
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
+            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
+            let diffMins = Math.floor(diffMs / 60000);
+            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
+            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
+            else {
+                let diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
+                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
+            }
         }
 
         function renderSummaryTable() {
