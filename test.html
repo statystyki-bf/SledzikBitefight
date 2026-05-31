@@ -110,7 +110,7 @@
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 7; // Domyślnie sortujemy po Ostatniej Aktywności (Najświeżsi na górze)
+        let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
 
         function switchTab(tabId) {
@@ -218,7 +218,12 @@
                 }
 
                 let playerAccumulator = {}; 
-                let playerLevel = {};
+                let playerLevel = {
+                    "Brahmaparuss": 5299, "Gawron": 4780, "lux": 4333, "XTurek": 8004, 
+                    "Viktor": 5079, "PEON": 5368, "Sam-Wiesz": 4123, "albin": 4492, 
+                    "Darksun": 3564, "misssiek555": 3606, "NecromanceR": 4119, "espablo": 4253
+                };
+
                 globalData = [];
 
                 rawData.forEach(row => {
@@ -290,14 +295,13 @@
                 currentSummarySortAsc = !currentSummarySortAsc; 
             } else { 
                 currentSummarySortCol = colIndex; 
-                // Domyślnie nowe sortowanie: jeśli data, to od najnowszych, reszta standardowo
                 currentSummarySortAsc = (colIndex === 0 || colIndex === 7) ? true : false; 
             }
             renderSummaryTable();
         }
 
         function formatLastSeen(dateObj) {
-            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak</span>';
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
             let diffMs = new Date() - dateObj;
             if (diffMs < 0) diffMs = 0;
             let diffMins = Math.floor(diffMs / 60000);
@@ -324,16 +328,47 @@
 
             let summary = {};
             let absoluteLastSeen = {};
+            let fightTimestamps = {};
 
-            // NAJPIERW: Znajdujemy absolutnie ostatnią aktywność graczy, bez względu na wybrany filtr
+            // 1. Zbieramy logi 100% pewnej aktywności oraz logi walk do oceny klastrowej
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
-                let gracz = w[1];
+                let gracz = w[1]; 
+                let stat = w[2]; 
                 let logDate = parseLogDate(w[0]);
-                if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) {
-                    absoluteLastSeen[gracz] = logDate;
+                
+                const aktywneStatystyki = ["Zrabowane dobra", "Poziom", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
+                
+                if (aktywneStatystyki.includes(stat)) {
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { 
+                        absoluteLastSeen[gracz] = logDate; 
+                    }
+                } else if (walkiStatystyki.includes(stat)) {
+                    // Set automatycznie odrzuca duplikaty tego samego stempla czasowego (różne statystyki w tej samej minucie)
+                    if (!fightTimestamps[gracz]) fightTimestamps[gracz] = new Set();
+                    fightTimestamps[gracz].add(logDate.getTime());
                 }
             });
+
+            // 2. Analizujemy klastry walk (jeśli między logami < 30 min = gracz gra aktywnie)
+            for (let gracz in fightTimestamps) {
+                let times = Array.from(fightTimestamps[gracz]).sort((a, b) => b - a); // Sort malejący
+                for (let i = 0; i < times.length - 1; i++) {
+                    let t1 = times[i];
+                    let t2 = times[i+1];
+                    
+                    // Jeśli odstęp między dwiema stoczonymi walkami wynosi 29 min (lub mniej),
+                    // to ze względu na limit gry przynajmniej jedną gracz zainicjował sam. Oznaczamy go jako Online.
+                    if ((t1 - t2) <= 29 * 60 * 1000) {
+                        let inferredDate = new Date(t1);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) {
+                            absoluteLastSeen[gracz] = inferredDate;
+                        }
+                        break; // Znaleziono najświeższy dowód aktywności z walk, przerywamy pętlę
+                    }
+                }
+            }
 
             globalData.forEach(w => { 
                 if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 }; 
