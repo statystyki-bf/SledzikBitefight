@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BiteFight - Centrum Dowodzenia</title>
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
+    
     <style>
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
@@ -41,14 +43,17 @@
 </head>
 <body>
     <h1>Statystyki BiteFight</h1>
+    
     <div class="tabs">
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
+
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt pobiera z arkusza maksymalnie 3 dni logów, by strona działała błyskawicznie. Domyślny widok: Dzisiaj.</div>
+        <div id="status">Skrypt pobiera z arkusza maksymalnie 3 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
+
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
                 <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Podsumowanie przyrostów:</span>
@@ -61,7 +66,9 @@
             </div>
             <div id="summaryContainer"></div>
         </div>
+
         <hr class="separator">
+        
         <h2>Pełny log operacji</h2>
         <div class="filter-container">
             <select id="filterDate">
@@ -73,8 +80,10 @@
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
         </div>
+
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
+
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -90,18 +99,26 @@
         </div>
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
+
     <script>
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
-        const BLACKLIST = ["Kark23"]; let globalData = [];
-        let globalRankingData = []; let computedRankingRows = []; let currentSortCol = 3; let currentSortAsc = false; 
-        let currentSummarySortCol = 1; let currentSummarySortAsc = false; 
+        
+        const BLACKLIST = ["Kark23"]; 
+        let globalData = [];
+        let globalRankingData = []; 
+        let computedRankingRows = []; 
+        let currentSortCol = 3; 
+        let currentSortAsc = false; 
+        let currentSummarySortCol = 1; 
+        let currentSummarySortAsc = false; 
 
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
             document.getElementById('sectionTracker').classList.remove('active');
             document.getElementById('sectionRanking').classList.remove('active');
+
             if (tabId === 'tracker') {
                 document.getElementById('tabTrackerBtn').classList.add('active');
                 document.getElementById('sectionTracker').classList.add('active');
@@ -112,15 +129,27 @@
                 else calculateAndRenderRanking();
             }
         }
-        function handleFilterChange() { renderTable(); }
+
+        function handleFilterChange() {
+            renderTable();
+        }
+
         document.getElementById('filterDate').addEventListener('change', handleFilterChange);
         document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
         document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('summaryPeriodSelect').addEventListener('change', function() { renderSummaryTable(); });
+
+        document.getElementById('summaryPeriodSelect').addEventListener('change', function() {
+            renderSummaryTable();
+        });
+
         document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
             const specSelect = document.getElementById('rankingSpecificDaySelect');
-            if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
-            else { specSelect.style.display = 'none'; }
+            if (this.value === 'SPECIFIC_DAY') { 
+                specSelect.style.display = 'inline-block'; 
+                populateRankingSpecificDays(); 
+            } else { 
+                specSelect.style.display = 'none'; 
+            }
             calculateAndRenderRanking();
         });
         document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
@@ -130,18 +159,28 @@
             for (let i = 0; i < text.length; i++) {
                 let ch = text[i];
                 if (inQuotes) {
-                    if (ch === '"') { if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; } else { inQuotes = false; } } else { val += ch; }
+                    if (ch === '"') { 
+                        if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; } 
+                        else { inQuotes = false; } 
+                    } else { val += ch; }
                 } else {
-                    if (ch === '"') { inQuotes = true; } else if (ch === ',') { ret.push(val); val = ""; } else { val += ch; }
+                    if (ch === '"') { inQuotes = true; } 
+                    else if (ch === ',') { ret.push(val); val = ""; } 
+                    else { val += ch; }
                 }
             }
-            ret.push(val); return ret;
+            ret.push(val); 
+            return ret;
         }
+
         function parseLogDate(dateStr) {
             if(!dateStr) return new Date(0);
             const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
             const parts = cleanStr.trim().split(/\s+/);
-            if(parts.length < 2) { let d = new Date(cleanStr); return isNaN(d) ? new Date(0) : d; }
+            if(parts.length < 2) { 
+                let d = new Date(cleanStr); 
+                return isNaN(d) ? new Date(0) : d; 
+            }
             const dParts = parts[0].split(/[\.\-\/]/); 
             const tParts = parts[1].split(':');
             if (dParts.length === 3) {
@@ -158,54 +197,107 @@
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
                 const nowInfo = new Date();
                 document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; 
+                    return; 
+                }
+
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
                     let line = wiersze[i].trim();
                     if (!line) continue;
                     let komorki = parseCSVLine(line);
                     if (komorki.length < 6) continue;
+                    
                     let rawDate = komorki[0].trim().replace(',', '');
                     komorki[0] = rawDate;
                     rawData.push(komorki.map(k => k.trim()));
                 }
-                let playerAccumulator = {}; let playerLevel = {};
+
+                let playerAccumulator = {}; 
+                let playerLevel = {
+                    "Brahmaparuss": 5299, "Gawron": 4780, "lux": 4333, "XTurek": 8004, 
+                    "Viktor": 5079, "PEON": 5368, "Sam-Wiesz": 4123, "albin": 4492, 
+                    "Darksun": 3564, "misssiek555": 3606, "NecromanceR": 4119, "espablo": 4253
+                };
+
                 globalData = [];
+
                 rawData.forEach(row => {
                     let gracz = row[1];
                     if (BLACKLIST.includes(gracz)) return;
+
                     let stat = row[2];
                     let przyrost = parseInt(row[5]) || 0;
+
                     if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
+
+                    // POPRAWKA: Jeśli wyłapano Skilla z tej grupy - Sakiewka jest resetowana
                     const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-                    if (!atrybuty.includes(stat)) {
-                        if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") playerAccumulator[gracz] += przyrost;
-                        else if (stat === "Stracone złoto") { playerAccumulator[gracz] -= przyrost; if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0; }
+                    if (atrybuty.includes(stat)) {
+                        playerAccumulator[gracz] = 0; 
+                    } else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") {
+                        playerAccumulator[gracz] += przyrost;
+                    } else if (stat === "Stracone złoto") {
+                        playerAccumulator[gracz] -= przyrost;
+                        if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0;
                     }
+
                     let lvl = playerLevel[gracz] || 0;
-                    let exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
+                    let exposed = 0;
+                    if (lvl > 0) {
+                        let safeGold = lvl * 12000;
+                        exposed = playerAccumulator[gracz] - safeGold;
+                        if (exposed < 0) exposed = 0;
+                    }
+
                     globalData.push([...row, playerAccumulator[gracz], exposed]);
                 });
+
                 globalData.reverse(); 
-                renderSummaryTable(); updateFilters(); renderTable(); 
+                renderSummaryTable(); 
+                updateFilters(); 
+                renderTable(); 
             } catch (e) { console.error(e); }
         }
 
         function getRangeForPeriod(period) {
             const now = new Date();
             let start = new Date(), end = new Date();
-            if (period === 'TODAY') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
-            if (period === 'YESTERDAY') { start.setDate(start.getDate() - 1); start.setHours(0,0,0,0); end.setDate(end.getDate() - 1); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
-            if (period === 'DAY_BEFORE_YESTERDAY') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setDate(end.getDate() - 2); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
-            if (period === 'LAST_3_DAYS' || period === 'ALL') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: "Ostatnie 3 dni" }; }
+            
+            if (period === 'TODAY') { 
+                start.setHours(0,0,0,0); end.setHours(23,59,59,999); 
+                return { start, end, label: start.toLocaleDateString('pl-PL') }; 
+            }
+            if (period === 'YESTERDAY') { 
+                start.setDate(start.getDate() - 1); start.setHours(0,0,0,0); 
+                end.setDate(end.getDate() - 1); end.setHours(23,59,59,999); 
+                return { start, end, label: start.toLocaleDateString('pl-PL') }; 
+            }
+            if (period === 'DAY_BEFORE_YESTERDAY') { 
+                start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); 
+                end.setDate(end.getDate() - 2); end.setHours(23,59,59,999); 
+                return { start, end, label: start.toLocaleDateString('pl-PL') }; 
+            }
+            if (period === 'LAST_3_DAYS' || period === 'ALL') { 
+                start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); 
+                end.setHours(23,59,59,999); 
+                return { start, end, label: "Ostatnie 3 dni" }; 
+            }
             return null;
         }
 
         function sortSummary(colIndex) {
-            if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0) ? true : false; }
+            if (currentSummarySortCol === colIndex) { 
+                currentSummarySortAsc = !currentSummarySortAsc; 
+            } else { 
+                currentSummarySortCol = colIndex; 
+                currentSummarySortAsc = (colIndex === 0) ? true : false; 
+            }
             renderSummaryTable();
         }
 
@@ -213,8 +305,12 @@
             const period = document.getElementById('summaryPeriodSelect').value;
             const range = getRangeForPeriod(period);
             if (!range) return;
+
             let summary = {};
-            globalData.forEach(w => { if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 }; });
+            globalData.forEach(w => { 
+                if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 }; 
+            });
+
             globalData.forEach(w => {
                 if (!w[0]) return;
                 const logDate = parseLogDate(w[0]);
@@ -229,10 +325,16 @@
                     else if (stat === 'Porażki') summary[gracz].przegrane += przyrost;
                 }
             });
+
             let summaryArray = [];
             for (let gracz in summary) {
-                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy });
+                summaryArray.push({ 
+                    gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, 
+                    walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, 
+                    przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy 
+                });
             }
+
             summaryArray.sort((a, b) => {
                 let valA, valB;
                 if (currentSummarySortCol === 0) { valA = a.gracz; valB = b.gracz; }
@@ -242,25 +344,44 @@
                 else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
                 else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
                 else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
-                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
-                else { return currentSummarySortAsc ? valA - valB : valB - valA; }
+
+                if (currentSummarySortCol === 0) { 
+                    return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); 
+                } else { 
+                    return currentSummarySortAsc ? valA - valB : valB - valA; 
+                }
             });
-            let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
+
+            let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div>`;
+            html += `<table><thead><tr>`;
+            
             let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy"];
             headers.forEach((h, i) => {
                 let arrow = "⇕";
                 if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓";
                 html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
             });
+            
             html += `</tr></thead><tbody>`;
+
             summaryArray.forEach(data => {
                 let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
                 let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
+                
                 let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
                 let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
-                html += `<tr><td><strong>${data.gracz}</strong></td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td></tr>`;
+
+                html += `<tr>
+                            <td><strong>${data.gracz}</strong></td>
+                            <td class="suma-col">${dobraStr}</td>
+                            <td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td>
+                            <td>${data.walki}</td>
+                            <td>${wygStr}</td>
+                            <td>${przStr}</td>
+                            <td>${poziomStr}</td>
+                         </tr>`;
             });
             html += "</tbody></table>";
             document.getElementById('summaryContainer').innerHTML = html;
@@ -268,19 +389,36 @@
 
         function updateFilters() {
             const gracze = new Set(), statystyki = new Set();
-            globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
+            globalData.forEach(w => { 
+                if(w[0]) { 
+                    if(w[1]) gracze.add(w[1]); 
+                    if(w[2]) statystyki.add(w[2]); 
+                } 
+            });
+            
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
-                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                Array.from(set).sort().forEach(o => { 
+                    let el = document.createElement('option'); el.value = o; el.textContent = o; 
+                    if(o === targetVal) el.selected = true; s.appendChild(el); 
+                });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
+
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
-                s.innerHTML = `<option value="ALL">${txt}</option><option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
-                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                const s = document.getElementById(id); 
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                s.innerHTML = `<option value="ALL">${txt}</option>
+                               <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
+                Array.from(set).sort().forEach(o => { 
+                    let el = document.createElement('option'); el.value = o; el.textContent = o; 
+                    if(o === targetVal) el.selected = true; s.appendChild(el); 
+                });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             }
+            
             populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
             populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
         }
@@ -289,20 +427,33 @@
             const fD = document.getElementById('filterDate').value;
             const fP = document.getElementById('filterPlayer').value;
             const fS = document.getElementById('filterStat').value;
+            
             let range = getRangeForPeriod(fD);
+
             let filtered = globalData.filter(w => {
                 let logDate = parseLogDate(w[0]);
+                
                 let dMatch = false;
-                if (range && logDate >= range.start && logDate <= range.end) dMatch = true;
+                if (range && logDate >= range.start && logDate <= range.end) {
+                    dMatch = true;
+                }
+
                 let pMatch = (fP === 'ALL' || w[1] === fP);
                 let sMatch = false;
                 if (fS === 'ALL') sMatch = true;
                 else if (fS === 'SKILLS') sMatch = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(w[2]);
                 else sMatch = (w[2] === fS);
+                
                 return dMatch && pMatch && sMatch;
             });
-            if(filtered.length === 0) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>"; return; }
+
+            if(filtered.length === 0) {
+                 document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>";
+                 return;
+            }
+
             let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
+            
             filtered.forEach(w => {
                 html += "<tr>";
                 let stat = w[2], isPoziom = (stat === 'Poziom'), isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
@@ -315,17 +466,21 @@
                     if (j === 5 && isLoot && val !== "") val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     html += `<td${klasa}>${val}</td>`;
                 }
+                
                 let pvpResult = "", przyrostZlota = (w[5] !== undefined && w[5] !== "") ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 if (stat === 'Zrabowane złoto') pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
                 else if (stat === 'Stracone złoto') pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
                 html += `<td><strong>${pvpResult}</strong></td>`;
+
                 let sakiewkaVal = (isLoot && w[6] !== undefined) ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 html += `<td class="suma-col">${sakiewkaVal}</td>`;
+                
                 let wystajaceVal = (isLoot && w[7] !== undefined) ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 html += `<td class="wystajace-col">${wystajaceVal}</td></tr>`;
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
+
 
         // ==========================================
         //  SILNIK ANALITYCZNY DLA RANKINGU TOP 100
@@ -336,19 +491,30 @@
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime());
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu. Poczekaj na pierwszy snapshot po północy.</p>"; return; }
+                
+                if (wiersze.length <= 1) {
+                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu. Poczekaj na pierwszy snapshot po północy.</p>";
+                    return;
+                }
+
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) {
                     let komorki = parseCSVLine(wiersze[i].trim());
-                    if (komorki.length >= 11) { globalRankingData.push(komorki); }
+                    if (komorki.length >= 11) { 
+                        globalRankingData.push(komorki);
+                    }
                 }
                 calculateAndRenderRanking();
-            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
+            } catch (e) {
+                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>";
+            }
         }
 
         function getUniqueRankingDates() {
             const datesSet = new Set();
-            globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); });
+            globalRankingData.forEach(row => {
+                if (row[0]) datesSet.add(row[0]);
+            });
             return Array.from(datesSet);
         }
 
@@ -356,9 +522,15 @@
             const specSelect = document.getElementById('rankingSpecificDaySelect');
             const currentVal = specSelect.value;
             specSelect.innerHTML = "";
+            
             let dates = getUniqueRankingDates();
             let validDays = dates.slice(1).reverse(); 
-            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
+            
+            if(validDays.length === 0) {
+                specSelect.innerHTML = "<option>Brak archiwalnych dni</option>";
+                return;
+            }
+
             validDays.forEach(item => {
                 let opt = document.createElement('option');
                 opt.value = item; opt.textContent = item;
@@ -369,38 +541,54 @@
 
         function calculateAndRenderRanking() {
             if (globalRankingData.length === 0) return;
+            
             const period = document.getElementById('rankingPeriodSelect').value;
             const specDay = document.getElementById('rankingSpecificDaySelect').value;
+            
             let uniqueDates = getUniqueRankingDates();
-            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
+            if (uniqueDates.length === 0) {
+                document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>";
+                return;
+            }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1]; 
             let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
             
-            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; } 
-            else if (period === 'LAST_3_DAYS') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)]; } 
-            else if (period === 'LAST_WEEK') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)]; } 
-            else if (period === 'THIS_MONTH') { 
+            if (period === 'LAST_24H') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)];
+            } else if (period === 'LAST_3_DAYS') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            } else if (period === 'LAST_WEEK') {
+                endDateStr = uniqueDates[uniqueDates.length - 1];
+                startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
+            } else if (period === 'THIS_MONTH') {
                 endDateStr = uniqueDates[uniqueDates.length - 1];
                 let targetMonth = endDateStr.split('.')[1];
                 let targetYear = endDateStr.split('.')[2];
                 let firstOfM = uniqueDates.find(d => d.split('.')[1] === targetMonth && d.split('.')[2] === targetYear);
                 startDateStr = firstOfM || uniqueDates[0];
-            } else if (period === 'SPECIFIC_DAY' && specDay) { 
-                endDateStr = specDay; 
-                let idx = uniqueDates.indexOf(specDay); 
-                startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0]; 
+            } else if (period === 'SPECIFIC_DAY' && specDay) {
+                endDateStr = specDay;
+                let idx = uniqueDates.indexOf(specDay);
+                startDateStr = idx > 0 ? uniqueDates[idx - 1] : uniqueDates[0];
             }
             
-            if (startDateStr === endDateStr) startDateStr = null;
+            if (startDateStr === endDateStr) {
+                startDateStr = null;
+            }
+
             let isDelta = (startDateStr !== null);
 
             let endRecords = globalRankingData.filter(r => r[0] === endDateStr);
             let startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
+            
             let startMap = {};
             startRecords.forEach(r => { startMap[r[3]] = r; }); 
 
             computedRankingRows = [];
+            
             function cleanNum(val) {
                 if (!val || val === "?" || val === "Ukryte") return 0;
                 let clean = String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '');
@@ -412,6 +600,7 @@
                 let rasa = endRow[2];
                 let nick = endRow[3];
                 let startRow = startMap[nick];
+                
                 let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
                 
                 if (startRow && isDelta) {
@@ -423,7 +612,6 @@
                     dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]);
                     dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
                 } else if (isDelta) {
-                    // POPRAWKA: Gracz bez historii traktowany jako same zera
                     dPoziom = 0; dLup = 0; dWartosc = 0; dWygrane = 0; dPrzegrane = 0; dZdobyte = 0; dStracone = 0;
                 } else {
                     dPoziom = parseInt(endRow[4]) || 0;
@@ -435,15 +623,30 @@
                     dStracone = cleanNum(endRow[10]);
                 }
                 
-                computedRankingRows.push({ rasa, nick, poziom: dPoziom, lup: dLup, wartosc: dWartosc, wygrane: dWygrane, przegrane: dPrzegrane, zdobyte: dZdobyte, stracone: dStracone });
+                computedRankingRows.push({
+                    rasa, nick,
+                    poziom: dPoziom,
+                    lup: dLup,
+                    wartosc: dWartosc,
+                    wygrane: dWygrane,
+                    przegrane: dPrzegrane,
+                    zdobyte: dZdobyte,
+                    stracone: dStracone
+                });
             });
+            
             sortAndRenderRankingTable(isDelta);
         }
 
         function sortRanking(colIndex) {
             let dataKeyIndex = colIndex - 1; 
-            if (currentSortCol === dataKeyIndex) { currentSortAsc = !currentSortAsc; } 
-            else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false;  }
+
+            if (currentSortCol === dataKeyIndex) {
+                currentSortAsc = !currentSortAsc;
+            } else {
+                currentSortCol = dataKeyIndex;
+                currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; 
+            }
             let uniqueDates = getUniqueRankingDates();
             let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
             sortAndRenderRankingTable(isDelta);
@@ -451,6 +654,7 @@
 
         function sortAndRenderRankingTable(isDelta) {
             if (computedRankingRows.length === 0) return;
+            
             computedRankingRows.sort((a, b) => {
                 let valA, valB;
                 if (currentSortCol === -1) return 0; 
@@ -465,11 +669,15 @@
                 else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; }
                 else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
                 
-                if (currentSortCol === 0 || currentSortCol === 1) { return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
-                else { return currentSortAsc ? valA - valB : valB - valA; }
+                if (currentSortCol === 0 || currentSortCol === 1) {
+                    return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return currentSortAsc ? valA - valB : valB - valA;
+                }
             });
             
             let html = "<table><thead><tr>";
+            
             let headers = isDelta ? 
                 ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] :
                 ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
@@ -492,26 +700,36 @@
             computedRankingRows.forEach((row, idx) => {
                 html += "<tr>";
                 html += `<td class="rank-num">${idx + 1}</td>`;
+                
                 let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
                 html += `<td class="${rasaClass}">${row.rasa}</td>`;
                 html += `<td><strong>${row.nick}</strong></td>`;
+                
                 let pClass = row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '');
                 html += `<td${pClass}>${formatDelta(row.poziom)}</td>`;
+                
                 let suffix = row.rasa === "Wampir" ? "krwi" : "mięsa";
                 let lClass = row.lup > 0 ? ' class="suma-col"' : (row.lup < 0 ? ' class="strata-col"' : '');
                 html += `<td${lClass}>${formatDelta(row.lup, suffix)}</td>`;
+                
                 let vClass = row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '');
                 html += `<td${vClass}>${formatDelta(row.wartosc)}</td>`;
+                
                 let wClass = row.wygrane > 0 ? ' class="przyrost-col"' : '';
                 html += `<td${wClass}>${formatDelta(row.wygrane)}</td>`;
+                
                 let prClass = row.przegrane > 0 ? ' class="strata-col"' : '';
                 html += `<td${prClass}>${formatDelta(row.przegrane)}</td>`;
+                
                 let zClass = row.zdobyte > 0 ? ' class="przyrost-col"' : '';
                 html += `<td${zClass}>${formatDelta(row.zdobyte)}</td>`;
+                
                 let sClass = row.stracone > 0 ? ' class="strata-col"' : '';
                 html += `<td${sClass}>${formatDelta(row.stracone)}</td>`;
+                
                 html += "</tr>";
             });
+            
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
         }
