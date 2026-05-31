@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BiteFight - Centrum Dowodzenia</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
+    
+    <!-- BIBLIOTEKA DO WYKRESÓW -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
@@ -40,19 +44,15 @@
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
-        /* STYLIZACJA DLA HEATMAPY */
-        .heatmap-table { width: 95%; max-width: 1200px; margin: 20px auto; background-color: #1e0e0e; border: none; }
-        .heatmap-table th { background: #4a0d0d; border-bottom: 2px solid #ff3333; font-size: 11px; color: #ffcc00; }
-        .heatmap-table td { width: 3.8%; height: 35px; border: 1px solid #111; cursor: pointer; transition: 0.2s; }
-        .heatmap-table td.day-label { background: #2b1717; border-right: 2px solid #ff3333; color: white; width: 8%; font-size: 12px; }
-        .heatmap-table td:hover { border: 2px solid white; transform: scale(1.1); z-index: 10; position: relative; }
+        /* STYLIZACJA KONTENERA WYKRESU */
+        .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
     <h1>Statystyki BiteFight</h1>
     <div class="tabs">
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
-        <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny</button>
+        <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (10-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
 
@@ -88,16 +88,29 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
-    <!-- NOWA ZAKŁADKA: HEATMAPA / RUTYNA -->
+    <!-- NOWA ZAKŁADKA: WYKRES RUTYNY -->
     <div id="sectionHeatmap">
-        <h2>Mapa Cieplna Aktywności Graczy</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza, aby sprawdzić, w które dni tygodnia i o jakich godzinach loguje się do gry najczęściej.</div>
+        <h2>Precyzyjny Wykres Aktywności (Interwały 10-minutowe)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań. Wyższe słupki oznaczają częstszą grę w danej godzinie.</div>
         <div class="filter-container">
-            <select id="heatmapPlayerSelect" onchange="renderHeatmap()">
-                <option value="ALL">Wybierz gracza z listy...</option>
+            <select id="heatmapPlayerSelect" onchange="renderChart()">
+                <option value="ALL">Wybierz gracza...</option>
+            </select>
+            <select id="heatmapDaySelect" onchange="renderChart()">
+                <option value="ALL" selected>Cały Tydzień (Suma Aktywności)</option>
+                <option value="1">Poniedziałki</option>
+                <option value="2">Wtorki</option>
+                <option value="3">Środy</option>
+                <option value="4">Czwartki</option>
+                <option value="5">Piątki</option>
+                <option value="6">Soboty</option>
+                <option value="7">Niedziele</option>
             </select>
         </div>
-        <div id="heatmapContainer"><p>Trwa ładowanie rutyn graczy...</p></div>
+        
+        <div class="chart-container">
+            <canvas id="routineChart"></canvas>
+        </div>
     </div>
 
     <!-- ZAKŁADKA RANKINGU -->
@@ -118,12 +131,11 @@
     </div>
 
     <script>
-        // LINKI DO ARKUSZY
+        // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         
-        // =========================================================
-        // TUTAJ WKLEJ NOWY LINK CSV ZAKŁADKI RUTYNA!
+        // PAMIĘTAJ WKLEIĆ PRAWIDŁOWY LINK DO ZAKŁADKI RUTYNA W FORMACIE CSV:
         const urlRutynaSheet = "TUTAJ_WKLEJ_NOWY_LINK_CSV_DO_ZAKLADKI_RUTYNA"; 
         // =========================================================
         
@@ -136,6 +148,8 @@
         let currentSortAsc = false; 
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
+        
+        let routineChartInstance = null; // Instancja wykresu
 
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
@@ -156,16 +170,15 @@
             } else if (tabId === 'heatmap') {
                 document.getElementById('tabHeatmapBtn').classList.add('active');
                 document.getElementById('sectionHeatmap').classList.add('active');
-                renderHeatmap();
+                renderChart();
             }
         }
 
-        // ... FUNKCJE OGÓLNE ...
         function handleFilterChange() { renderTable(); }
         document.getElementById('filterDate').addEventListener('change', handleFilterChange);
         document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
         document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('summaryPeriodSelect').addEventListener('change', function() { renderSummaryTable(); });
+        document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
         document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
             const specSelect = document.getElementById('rankingSpecificDaySelect');
             if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
@@ -205,7 +218,6 @@
 
         async function loadTableData() {
             try {
-                // Ładujemy dane Live
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
                 const nowInfo = new Date();
                 document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
@@ -296,62 +308,117 @@
         }
 
         // ==========================================
-        //  NOWA FUNKCJA: RYSOWANIE MAPY CIEPLNEJ
+        //  NOWA FUNKCJA: RENDEROWANIE WYKRESU CHART.JS
         // ==========================================
-        function getHeatmapColor(count, max) {
-            if (count === 0) return '#2b1717'; 
-            let ratio = count / max;
-            if (ratio <= 0.20) return '#4a2727';
-            if (ratio <= 0.40) return '#7a1818';
-            if (ratio <= 0.70) return '#a31111';
-            if (ratio <= 0.90) return '#c00c0c';
-            return '#ff3333';
-        }
-
-        function renderHeatmap() {
+        function renderChart() {
             const player = document.getElementById('heatmapPlayerSelect').value;
+            const dayFilter = document.getElementById('heatmapDaySelect').value;
+
             if (player === 'ALL') {
-                document.getElementById('heatmapContainer').innerHTML = "<p>Wybierz gracza z rozwijanej listy powyżej, aby przeanalizować jego tryb gry.</p>";
-                return;
-            }
-            if (globalRutynaData.length === 0) {
-                document.getElementById('heatmapContainer').innerHTML = "<p>Baza rutyny jest jeszcze pusta (skrypt potrzebuje czasu na zebranie pierwszych logów).</p>";
+                if(routineChartInstance) routineChartInstance.destroy();
                 return;
             }
 
-            let maxActivity = 0;
-            let pData = {};
+            // Generujemy 144 etykiety czasu (co 10 minut: 00:00, 00:10 ... 23:50)
+            let labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 10) {
+                    let hourStr = h.toString().padStart(2, '0');
+                    let minStr = m.toString().padStart(2, '0');
+                    labels.push(`${hourStr}:${minStr}`);
+                }
+            }
+
+            // Inicjalizujemy tablicę danych zerami (długość 144)
+            let chartData = new Array(144).fill(0);
+
+            // Zliczamy aktywność z globalRutynaData
             globalRutynaData.forEach(r => {
                 if (r[0] === player) {
-                    let val = parseInt(r[2]);
-                    pData[r[1]] = val;
-                    if (val > maxActivity) maxActivity = val;
+                    // r[1] format: "Dzien_Godzina_Minuta" (np. "1_14_30")
+                    let parts = r[1].split('_');
+                    if (parts.length === 3) {
+                        let day = parts[0];
+                        let hour = parseInt(parts[1]);
+                        let minute = parseInt(parts[2]);
+                        
+                        // Obliczamy index tablicy (0-143)
+                        let index = (hour * 6) + (minute / 10);
+                        
+                        // Sprawdzamy filtr dni
+                        if (dayFilter === 'ALL' || dayFilter === day) {
+                            chartData[index] += parseInt(r[2]);
+                        }
+                    }
                 }
             });
 
-            if (maxActivity === 0) {
-                document.getElementById('heatmapContainer').innerHTML = "<p>Brak punktów aktywności dla tego gracza.</p>";
-                return;
+            // Usuwamy poprzedni wykres, żeby nie nakładały się na siebie
+            if (routineChartInstance) {
+                routineChartInstance.destroy();
             }
 
-            let dni = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"];
-            let html = '<table class="heatmap-table"><thead><tr><th style="background:#1e0e0e; border:none;"></th>';
-            for(let h=0; h<=23; h++) html += `<th>${h}:00</th>`;
-            html += '</tr></thead><tbody>';
-
-            for (let d=1; d<=7; d++) {
-                html += `<tr><td class="day-label"><strong>${dni[d-1]}</strong></td>`;
-                for(let h=0; h<=23; h++) {
-                    let key = d + "_" + h;
-                    let count = pData[key] || 0;
-                    let color = getHeatmapColor(count, maxActivity);
-                    let tooltip = count > 0 ? `${dni[d-1]} o ${h}:00\\nAktywność: ${count} razy` : 'Brak danych';
-                    html += `<td style="background-color:${color};" title="${tooltip}"></td>`;
+            const ctx = document.getElementById('routineChart').getContext('2d');
+            
+            // Konfiguracja wykresu słupkowego
+            routineChartInstance = new Chart(ctx, {
+                type: 'bar', // Wykres słupkowy wygląda najlepiej dla uderzeń aktywności
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Poziom Aktywności (kliknięcia)',
+                        data: chartData,
+                        backgroundColor: 'rgba(255, 51, 51, 0.7)',
+                        borderColor: 'rgba(192, 12, 12, 1)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        hoverBackgroundColor: 'rgba(255, 204, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#aaa',
+                                maxTicksLimit: 24, // Pokazuje 1 tick na godzinę by nie robić śmietnika z etykiet
+                                callback: function(value, index, values) {
+                                    // Pokaż etykietę tylko dla równych godzin "XX:00"
+                                    let label = this.getLabelForValue(value);
+                                    return label.endsWith(':00') ? label : '';
+                                }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { 
+                                color: '#ffcc00', 
+                                precision: 0 // Tylko liczby całkowite
+                            },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#ffcc00',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return `Godzina: ${context[0].label}`;
+                                },
+                                label: function(context) {
+                                    return `Akcje manualne: ${context.raw}`;
+                                }
+                            }
+                        }
+                    }
                 }
-                html += "</tr>";
-            }
-            html += "</tbody></table>";
-            document.getElementById('heatmapContainer').innerHTML = html;
+            });
         }
 
         function renderSummaryTable() {
@@ -363,7 +430,6 @@
                 if (!w[0] || !w[1]) return;
                 let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
                 
-                // POPRAWKA: Usunięto "Poziom" z aktywnych statystyk
                 const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
                 const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
                 
@@ -458,7 +524,7 @@
             }
             
             populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
-            populateGeneric('heatmapPlayerSelect', gracze, 'Wybierz gracza z listy...', 'bf_heatmapPlayer');
+            populateGeneric('heatmapPlayerSelect', gracze, 'Wybierz gracza...', 'bf_heatmapPlayer');
             populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
         }
 
@@ -517,7 +583,8 @@
             if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1]; let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
-            if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
+            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
             else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
             else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
