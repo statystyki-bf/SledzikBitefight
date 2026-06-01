@@ -54,7 +54,6 @@
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
 
-    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 3 dni logów.</div>
@@ -86,7 +85,6 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
-    <!-- NOWA ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -111,7 +109,6 @@
         </div>
     </div>
 
-    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -133,8 +130,8 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         
-        // PAMIĘTAJ WKLEIĆ PRAWIDŁOWY LINK DO ZAKŁADKI RUTYNA W FORMACIE CSV:
-        const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?output=csv"; 
+        // PRAWIDŁOWY LINK DO ZAKŁADKI RUTYNA:
+        const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         // =========================================================
         
         const BLACKLIST = ["Kark23"]; 
@@ -303,7 +300,6 @@
                 return;
             }
 
-            // Generujemy 720 etykiet czasu (co 2 minuty: 00:00, 00:02 ... 23:58)
             let labels = [];
             for (let h = 0; h < 24; h++) {
                 for (let m = 0; m < 60; m += 2) {
@@ -313,7 +309,6 @@
                 }
             }
 
-            // Inicjalizujemy tablicę danych zerami (długość 720)
             let chartData = new Array(720).fill(0);
 
             globalRutynaData.forEach(r => {
@@ -324,7 +319,6 @@
                         let hour = parseInt(parts[1]);
                         let minute = parseInt(parts[2]);
                         
-                        // Zmieniony index na bazujący na interwałach 2-minutowych
                         let index = (hour * 30) + (minute / 2);
                         
                         if (dayFilter === 'ALL' || dayFilter === day) {
