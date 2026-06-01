@@ -44,6 +44,7 @@
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
     </style>
 </head>
 <body>
@@ -54,10 +55,19 @@
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
+        
+        <!-- NOWY MODUŁ: RADAR CZYSTEJ DROGI -->
+        <div class="summary-box" style="border-color: #1f7244; background: #0d1a12;">
+            <h2 style="color: #55ff55; margin-top: 5px;">🎯 Radar "Czystej Drogi" (Bezpieczne cele)</h2>
+            <div style="color: #888; font-size: 12px; margin-bottom: 15px;">System analizuje obecną godzinę krzyżując ją z historyczną mapą cieplną gracza. Wyświetla osoby, które są aktualnie offline od dłuższego czasu, a w tej godzinie zazwyczaj śpią lub nie grają.</div>
+            <div id="radarContainer"><p>Ładowanie radaru...</p></div>
+        </div>
+
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
                 <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Podsumowanie przyrostów:</span>
@@ -85,6 +95,7 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -109,10 +120,10 @@
         <div class="chart-container">
             <canvas id="routineChart"></canvas>
         </div>
-
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -133,9 +144,23 @@
         // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
-        
-        // PRAWIDŁOWY LINK DO TWOJEJ ZAKŁADKI RUTYNA:
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
+        
+        // MAPOWANIE LINKÓW DO GRACZY (aby móc klikać w nick)
+        const PLAYERS = {
+            "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
+            "Gawron": "https://s60-pl.bitefight.gameforge.com/profile/player/2505390",
+            "lux": "https://s60-pl.bitefight.gameforge.com/profile/player/434236",
+            "XTurek": "https://s60-pl.bitefight.gameforge.com/profile/player/416953",
+            "Viktor": "https://s60-pl.bitefight.gameforge.com/profile/player/2509906",
+            "PEON": "https://s60-pl.bitefight.gameforge.com/profile/player/1532448",
+            "Sam-Wiesz": "https://s60-pl.bitefight.gameforge.com/profile/player/1055184",
+            "albin": "https://s60-pl.bitefight.gameforge.com/profile/player/1305276",
+            "Darksun": "https://s60-pl.bitefight.gameforge.com/profile/player/2168523",
+            "misssiek555": "https://s60-pl.bitefight.gameforge.com/profile/player/815896",
+            "NecromanceR": "https://s60-pl.bitefight.gameforge.com/profile/player/2954971",
+            "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
+        };
         // =========================================================
         
         const BLACKLIST = ["Kark23"]; 
@@ -147,7 +172,6 @@
         let currentSortAsc = false; 
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
-        
         let routineChartInstance = null;
 
         function switchTab(tabId) {
@@ -270,7 +294,8 @@
                 });
 
                 globalData.reverse(); 
-                renderSummaryTable(); 
+                renderSummaryTable();
+                renderRadar(); 
                 updateFilters(); 
                 renderTable(); 
             } catch (e) { console.error(e); }
@@ -293,13 +318,89 @@
         }
 
         // ==========================================
-        //  RENDEROWANIE WYKRESU (CO 2 MINUTY) + FILTRY GRUPOWE
+        //  RADAR "CZYSTEJ DROGI"
         // ==========================================
+        function renderRadar() {
+            let container = document.getElementById('radarContainer');
+            if (!container) return;
+
+            let absoluteLastSeen = {};
+            let fightTimestamps = {};
+
+            globalData.forEach(w => {
+                if (!w[0] || !w[1]) return;
+                let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
+                const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
+                
+                if (aktywneStatystyki.includes(stat)) {
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = logDate; }
+                } else if (walkiStatystyki.includes(stat)) {
+                    if (!fightTimestamps[gracz]) fightTimestamps[gracz] = new Set();
+                    fightTimestamps[gracz].add(logDate.getTime());
+                }
+            });
+
+            for (let gracz in fightTimestamps) {
+                let times = Array.from(fightTimestamps[gracz]).sort((a, b) => b - a);
+                for (let i = 0; i < times.length - 1; i++) {
+                    let t1 = times[i]; let t2 = times[i+1];
+                    if ((t1 - t2) <= 29 * 60 * 1000) {
+                        let inferredDate = new Date(t1);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = inferredDate; }
+                        break; 
+                    }
+                }
+            }
+
+            let now = new Date();
+            let cHour = now.getHours();
+            let safeTargets = [];
+
+            for (let player in PLAYERS) {
+                let lastSeen = absoluteLastSeen[player] || new Date(0);
+                let diffMins = Math.floor((now - lastSeen) / 60000);
+
+                let hourActivity = 0;
+                globalRutynaData.forEach(r => {
+                    if (r[0] === player) {
+                        let parts = r[1].split('_');
+                        if (parts.length === 3 && parseInt(parts[1]) === cHour) {
+                            hourActivity += parseInt(r[2]);
+                        }
+                    }
+                });
+
+                // CEL BEZPIECZNY: Ostatnio widziany min. 45 minut temu + w tej godzinie historycznie ma znikomą rutynę (< 10 akcji)
+                if (diffMins > 45 && hourActivity < 10) {
+                    safeTargets.push({player: player, offlineMins: diffMins, risk: hourActivity});
+                }
+            }
+
+            safeTargets.sort((a,b) => b.offlineMins - a.offlineMins);
+
+            if(safeTargets.length === 0) {
+                container.innerHTML = "<p style='color:#888'>Brak w 100% bezpiecznych celów. Wszyscy są aktywni lub przebywają w swoim okienku szczytowej gry.</p>";
+                return;
+            }
+
+            let html = `<table style="max-width:800px; margin:0 auto; background-color:#102210; border: 1px solid #1f7244;">
+                <thead><tr><th style="background-color:#165231;">Bezpieczny Cel</th><th style="background-color:#165231;">Status Offline</th><th style="background-color:#165231;">Ryzyko o tej godzinie</th></tr></thead><tbody>`;
+            
+            safeTargets.forEach(t => {
+                let pLink = `<a href="${PLAYERS[t.player]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight:bold;">${t.player}</a>`;
+                let offStr = t.offlineMins > 1440 ? `${Math.floor(t.offlineMins/1440)} dni temu` : `${Math.floor(t.offlineMins/60)}h ${t.offlineMins%60}m temu`;
+                let riskStr = t.risk === 0 ? "Brak (Śpi / Offline)" : "Znikome";
+                html += `<tr><td>${pLink}</td><td style="color:#aaa;">💤 ${offStr}</td><td style="color:#55ff55;">${riskStr}</td></tr>`;
+            });
+            html += "</tbody></table>";
+            container.innerHTML = html;
+        }
+
         function renderChart() {
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
-            // Wywołujemy od razu obliczanie przerw dla gracza
             updatePlayerBreaksStats(player);
 
             if (player === 'ALL') {
@@ -325,7 +426,6 @@
                         let minute = parseInt(parts[2]);
                         let index = (hour * 30) + (minute / 2);
                         
-                        // OBSŁUGA FILTRÓW TYGODNIA PRACUJĄCEGO / WEEKENDU
                         let match = false;
                         if (dayFilter === 'ALL') match = true;
                         else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
@@ -394,15 +494,11 @@
             });
         }
 
-        // =========================================================
-        //  NOWA FUNKCJA: DETEKTOR TOP 10 NAJDŁUŻSZYCH PRZERW GRACZA
-        // =========================================================
         function updatePlayerBreaksStats(player) {
             const container = document.getElementById('heatmapStatsContainer');
             if (!container) return;
             if (player === 'ALL') { container.innerHTML = ""; return; }
 
-            // Filtrujemy logi z globalData i odwracamy chronologicznie (od najstarszego do najnowszego)
             let pRows = globalData.filter(r => r[1] === player).map(r => ({
                 time: parseLogDate(r[0]).getTime(),
                 stat: r[2]
@@ -437,7 +533,7 @@
             let breaks = [];
             for (let i = 1; i < activeTimes.length; i++) {
                 let diffMs = activeTimes[i] - activeTimes[i-1];
-                if (diffMs > 20 * 60 * 1000) { // Przerwy dłuższe niż 20 minut
+                if (diffMs > 20 * 60 * 1000) { 
                     breaks.push({ start: activeTimes[i-1], end: activeTimes[i], duration: diffMs });
                 }
             }
@@ -573,13 +669,16 @@
             headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
+                // LINKOWANIE NICKA
+                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;">${data.gracz}</a>` : data.gracz;
+
                 let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
                 let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
                 let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
                 let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
-                html += `<tr><td><strong>${data.gracz}</strong></td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
+                html += `<tr><td><strong>${pLink}</strong></td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
         }
@@ -624,13 +723,30 @@
             filtered.forEach(w => {
                 html += "<tr>";
                 let stat = w[2], isPoziom = (stat === 'Poziom'), isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
+                
                 for(let j = 0; j <= 5; j++) {
                     let klasa = (j === 5 && (isLoot || stat === 'Walki' || stat === 'Zwycięstwa' || stat === 'Porażki')) ? ' class="przyrost-col"' : (j === 5 && (stat === 'Stracone złoto' || stat === 'Porażki') ? ' class="strata-col"' : (j === 5 && isPoziom ? ' class="level-col"' : ''));
-                    let val = w[j]; if (j === 5 && isLoot && val !== "") val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    let val = w[j]; 
+                    
+                    // NICK JAKO LINK W GŁÓWNEJ TABELI
+                    if (j === 1) {
+                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
+                    } else if (j === 5 && isLoot && val !== "") {
+                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
                     html += `<td${klasa}>${val}</td>`;
                 }
+                
                 let pvpResult = (stat === 'Zrabowane złoto') ? `<span class="przyrost-col">+${w[5]}</span>` : (stat === 'Stracone złoto' ? `<span class="strata-col">-${w[5]}</span>` : '0');
-                html += `<td><strong>${pvpResult}</strong></td><td>${isLoot && w[6] !== undefined ? w[6] : ''}</td><td>${isLoot && w[7] !== undefined ? w[7] : ''}</td></tr>`;
+                
+                // KOLOROWANIE I KROPKI DLA SAKIEWKI I WYSTAJĄCEGO ZŁOTA
+                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let sakiewkaHTML = sakiewkaVal ? `<span class="suma-col">${sakiewkaVal}</span>` : "";
+
+                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let wystajaceHTML = wystajaceVal ? `<span class="wystajace-col">${wystajaceVal}</span>` : "";
+
+                html += `<td><strong>${pvpResult}</strong></td><td>${sakiewkaHTML}</td><td>${wystajaceHTML}</td></tr>`;
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
@@ -663,7 +779,8 @@
             if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1]; let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
-            if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
+            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
             else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
             else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
@@ -713,7 +830,8 @@
             function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
             computedRankingRows.forEach((row, idx) => {
                 let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
-                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td><strong>${row.nick}</strong></td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="suma-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup, row.rasa === "Wampir" ? "krwi" : "mięsa")}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
+                let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
+                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="suma-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup, row.rasa === "Wampir" ? "krwi" : "mięsa")}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
             });
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
