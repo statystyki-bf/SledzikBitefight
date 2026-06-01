@@ -56,7 +56,7 @@
 
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt pobiera z arkusza maksymalnie 3 dni logów.</div>
+        <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
@@ -94,6 +94,8 @@
             </select>
             <select id="heatmapDaySelect" onchange="renderChart()">
                 <option value="ALL" selected>Cały Tydzień (Suma Aktywności)</option>
+                <option value="WORKDAYS">Dni robocze (Poniedziałek - Piątek)</option>
+                <option value="WEEKEND">Weekend (Sobota - Niedziela)</option>
                 <option value="1">Poniedziałki</option>
                 <option value="2">Wtorki</option>
                 <option value="3">Środy</option>
@@ -107,6 +109,8 @@
         <div class="chart-container">
             <canvas id="routineChart"></canvas>
         </div>
+
+        <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
     <div id="sectionRanking">
@@ -130,7 +134,7 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         
-        // PRAWIDŁOWY LINK DO ZAKŁADKI RUTYNA:
+        // PRAWIDŁOWY LINK DO TWOJEJ ZAKŁADKI RUTYNA:
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         // =========================================================
         
@@ -289,11 +293,14 @@
         }
 
         // ==========================================
-        //  RENDEROWANIE WYKRESU (CO 2 MINUTY)
+        //  RENDEROWANIE WYKRESU (CO 2 MINUTY) + FILTRY GRUPOWE
         // ==========================================
         function renderChart() {
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
+
+            // Wywołujemy od razu obliczanie przerw dla gracza
+            updatePlayerBreaksStats(player);
 
             if (player === 'ALL') {
                 if(routineChartInstance) routineChartInstance.destroy();
@@ -303,9 +310,7 @@
             let labels = [];
             for (let h = 0; h < 24; h++) {
                 for (let m = 0; m < 60; m += 2) {
-                    let hourStr = h.toString().padStart(2, '0');
-                    let minStr = m.toString().padStart(2, '0');
-                    labels.push(`${hourStr}:${minStr}`);
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
                 }
             }
 
@@ -318,22 +323,25 @@
                         let day = parts[0];
                         let hour = parseInt(parts[1]);
                         let minute = parseInt(parts[2]);
-                        
                         let index = (hour * 30) + (minute / 2);
                         
-                        if (dayFilter === 'ALL' || dayFilter === day) {
+                        // OBSŁUGA FILTRÓW TYGODNIA PRACUJĄCEGO / WEEKENDU
+                        let match = false;
+                        if (dayFilter === 'ALL') match = true;
+                        else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
+                        else if (dayFilter === 'WEEKEND' && ['6','7'].includes(day)) match = true;
+                        else if (dayFilter === day) match = true;
+
+                        if (match) {
                             chartData[index] += parseInt(r[2]);
                         }
                     }
                 }
             });
 
-            if (routineChartInstance) {
-                routineChartInstance.destroy();
-            }
+            if (routineChartInstance) routineChartInstance.destroy();
 
             const ctx = document.getElementById('routineChart').getContext('2d');
-            
             routineChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -356,7 +364,7 @@
                             ticks: { 
                                 color: '#aaa',
                                 maxTicksLimit: 24, 
-                                callback: function(value, index, values) {
+                                callback: function(value) {
                                     let label = this.getLabelForValue(value);
                                     return label.endsWith(':00') ? label : '';
                                 }
@@ -365,10 +373,7 @@
                         },
                         y: {
                             beginAtZero: true,
-                            ticks: { 
-                                color: '#ffcc00', 
-                                precision: 0 
-                            },
+                            ticks: { color: '#ffcc00', precision: 0 },
                             grid: { color: '#333' }
                         }
                     },
@@ -380,17 +385,108 @@
                             bodyColor: '#fff',
                             displayColors: false,
                             callbacks: {
-                                title: function(context) {
-                                    return `Czas: ${context[0].label}`;
-                                },
-                                label: function(context) {
-                                    return `Potwierdzone akcje: ${context.raw}`;
-                                }
+                                title: function(context) { return `Czas: ${context[0].label}`; },
+                                label: function(context) { return `Potwierdzone akcje: ${context.raw}`; }
                             }
                         }
                     }
                 }
             });
+        }
+
+        // =========================================================
+        //  NOWA FUNKCJA: DETEKTOR TOP 10 NAJDŁUŻSZYCH PRZERW GRACZA
+        // =========================================================
+        function updatePlayerBreaksStats(player) {
+            const container = document.getElementById('heatmapStatsContainer');
+            if (!container) return;
+            if (player === 'ALL') { container.innerHTML = ""; return; }
+
+            // Filtrujemy logi z globalData i odwracamy chronologicznie (od najstarszego do najnowszego)
+            let pRows = globalData.filter(r => r[1] === player).map(r => ({
+                time: parseLogDate(r[0]).getTime(),
+                stat: r[2]
+            })).filter(r => r.time > 0);
+
+            pRows.sort((a, b) => a.time - b.time);
+
+            if (pRows.length === 0) {
+                container.innerHTML = "<p style='color:#888;'>Brak surowych logów w zakładce Live do obliczenia przerw dla tego gracza.</p>";
+                return;
+            }
+
+            let activeTimes = [];
+            let lastFightTime = 0;
+            const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+            const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
+
+            pRows.forEach(r => {
+                if (aktywneStatystyki.includes(r.stat)) {
+                    activeTimes.push(r.time);
+                } else if (walkiStatystyki.includes(r.stat)) {
+                    if (lastFightTime > 0) {
+                        let diffMins = (r.time - lastFightTime) / 60000;
+                        if (diffMins > 0 && diffMins <= 29) activeTimes.push(r.time);
+                    }
+                    lastFightTime = r.time;
+                }
+            });
+
+            activeTimes = Array.from(new Set(activeTimes)).sort((a, b) => a - b);
+
+            let breaks = [];
+            for (let i = 1; i < activeTimes.length; i++) {
+                let diffMs = activeTimes[i] - activeTimes[i-1];
+                if (diffMs > 20 * 60 * 1000) { // Przerwy dłuższe niż 20 minut
+                    breaks.push({ start: activeTimes[i-1], end: activeTimes[i], duration: diffMs });
+                }
+            }
+
+            breaks.sort((a, b) => b.duration - a.duration);
+            let topBreaks = breaks.slice(0, 10);
+
+            if (topBreaks.length === 0) {
+                container.innerHTML = "<h2>📊 10 Najdłuższych Przerw w tym Tygodniu</h2><p style='color:#888;'>Za mało punktów pomiarowych dla tego gracza w bazie logów.</p>";
+                return;
+            }
+
+            let html = `<h2>📊 10 Najdłuższych Przerw w tym Tygodniu (Ostatnie 7 dni)</h2>`;
+            html += `<table style="max-width:900px; margin:0 auto; background-color:#231212;">
+                        <thead>
+                            <tr>
+                                <th>LP</th>
+                                <th>Koniec sesji (Wylogowanie)</th>
+                                <th>Powrót do gry (Logowanie)</th>
+                                <th>Czas trwania bezpiecznego okienka</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            topBreaks.forEach((b, idx) => {
+                let startStr = new Date(b.start).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                let endStr = new Date(b.end).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                
+                let diffMins = Math.floor(b.duration / 60000);
+                let hours = Math.floor(diffMins / 60);
+                let mins = diffMins % 60;
+                let durationStr = `${hours}h ${mins}min`;
+                
+                if (hours >= 24) {
+                    let days = Math.floor(hours / 24);
+                    let remHours = hours % 24;
+                    durationStr = `${days} dni, ${remHours}h ${mins}min`;
+                }
+
+                html += `<tr>
+                            <td class="rank-num">${idx + 1}</td>
+                            <td>${startStr}</td>
+                            <td>${endStr}</td>
+                            <td style="color:#55ff55; font-weight:bold; font-size:13px;">${durationStr}</td>
+                         </tr>`;
+            });
+            
+            html += "</tbody></table>";
+            container.innerHTML = html;
         }
 
         function formatLastSeen(dateObj) {
@@ -414,7 +510,6 @@
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
                 let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
-                
                 const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
                 const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
                 
@@ -568,8 +663,7 @@
             if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1]; let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
-            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
-            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
             else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
             else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
