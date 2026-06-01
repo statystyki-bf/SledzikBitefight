@@ -45,8 +45,6 @@
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
-        .btn-attack { background:#c00c0c; color:white !important; padding:3px 8px; border-radius:4px; text-decoration:none; margin-left:10px; font-size:11px; font-weight:bold; border:1px solid #ff3333; display:inline-block; transition:0.2s; }
-        .btn-attack:hover { background:#ff3333; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -57,11 +55,13 @@
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
         
+        <!-- MODUŁ: RADAR CZYSTEJ DROGI -->
         <div class="summary-box" style="border-color: #1f7244; background: #0d1a12;">
             <h2 style="color: #55ff55; margin-top: 5px;">🎯 Radar "Czystej Drogi" (Bezpieczne cele)</h2>
             <div style="color: #888; font-size: 12px; margin-bottom: 15px;">System analizuje obecną godzinę krzyżując ją z historyczną mapą cieplną gracza. Wyświetla osoby, które są aktualnie offline od dłuższego czasu, a w tej godzinie zazwyczaj nie grają.</div>
@@ -95,6 +95,7 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -122,6 +123,7 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -144,7 +146,7 @@
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         
-        // MAPOWANIE LINKÓW DO GRACZY (aby móc klikać w nick oraz używać przycisku ATAK)
+        // MAPOWANIE LINKÓW DO GRACZY
         const PLAYERS = {
             "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
             "Gawron": "https://s60-pl.bitefight.gameforge.com/profile/player/2505390",
@@ -385,11 +387,10 @@
                 <thead><tr><th style="background-color:#165231;">Bezpieczny Cel</th><th style="background-color:#165231;">Status Offline</th><th style="background-color:#165231;">Ryzyko o tej godzinie</th></tr></thead><tbody>`;
             
             safeTargets.forEach(t => {
-                let attackBtn = PLAYERS[t.player] ? `<a href="${PLAYERS[t.player]}" class="btn-attack" target="_blank">⚔️ ATAK</a>` : '';
                 let pLink = `<a href="${PLAYERS[t.player]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight:bold;">${t.player}</a>`;
                 let offStr = t.offlineMins > 1440 ? `${Math.floor(t.offlineMins/1440)} dni temu` : `${Math.floor(t.offlineMins/60)}h ${t.offlineMins%60}m temu`;
                 let riskStr = t.risk === 0 ? "Offline" : "Znikome";
-                html += `<tr><td>${pLink} ${attackBtn}</td><td style="color:#aaa;">🔴 ${offStr}</td><td style="color:#55ff55;">${riskStr}</td></tr>`;
+                html += `<tr><td>${pLink}</td><td style="color:#aaa;">🔴 ${offStr}</td><td style="color:#55ff55;">${riskStr}</td></tr>`;
             });
             html += "</tbody></table>";
             container.innerHTML = html;
@@ -667,8 +668,7 @@
             headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
-                let attackBtn = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="btn-attack" target="_blank">⚔️ ATAK</a>` : '';
-                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${data.gracz}</strong></a>` : data.gracz;
+                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
 
                 let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -676,7 +676,7 @@
                 let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
                 let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
                 let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
-                html += `<tr><td>${pLink} ${attackBtn}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
+                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
         }
@@ -727,8 +727,7 @@
                     let val = w[j]; 
                     
                     if (j === 1) {
-                        let attackBtn = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="btn-attack" target="_blank">⚔️ ATAK</a>` : '';
-                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${val}</strong></a> ${attackBtn}` : `<strong>${val}</strong>`;
+                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
