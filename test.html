@@ -47,12 +47,12 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         
         /* Zmieniony, kompaktowy i w 1 linii styl Pieczęci */
-        .seal-board { display: flex; justify-content: center; gap: 10px; margin: 15px auto; max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
-        .seal-badge { background: #1a0a0a; border: 1px solid #4a0d0d; border-radius: 6px; padding: 6px 10px; min-width: 110px; box-shadow: 0 0 5px rgba(0,0,0,0.8); transition: 0.3s; }
+        .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap; margin: 15px auto; overflow-x: auto; max-width: 100%; }
+        .seal-badge { background: #1a0a0a; border: 1px solid #4a0d0d; border-radius: 4px; padding: 5px; width: 100px; min-width: 90px; box-shadow: 0 0 5px rgba(0,0,0,0.8); transition: 0.3s; }
         .seal-badge:hover { border-color: #c00c0c; transform: scale(1.05); }
-        .seal-icon { font-size: 22px; margin-bottom: 2px; }
-        .seal-name { font-size: 11px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 3px; border-bottom: 1px solid #4a0d0d; padding-bottom: 3px; }
-        .seal-holder { font-size: 11px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .seal-icon { font-size: 20px; margin-bottom: 2px; }
+        .seal-name { font-size: 10px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 2px; border-bottom: 1px solid #4a0d0d; padding-bottom: 2px; }
+        .seal-holder { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .holder-demon { color: #888; }
         .holder-clan { color: #00e5ff; }
     </style>
@@ -66,7 +66,6 @@
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
     </div>
 
-    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
@@ -99,7 +98,6 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
-    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -127,7 +125,6 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
-    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -144,7 +141,6 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
-    <!-- NOWA ZAKŁADKA: KLAN / PIECZĄTKI -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
@@ -169,9 +165,7 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
-        // PAMIĘTAJ WKLEIĆ PRAWIDŁOWY LINK DO ZAKŁADKI KLANÓW W FORMACIE CSV !!!!
-        const urlClansSheet = "TUTAJ_WKLEJ_LINK_DO_ZAKLADKI_KLANY_LOGI_CSV"; 
+        const urlClansSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
         
         const PLAYERS = {
@@ -189,7 +183,6 @@
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
         
-        // Podesłane przez Ciebie klany z ich tagami jako Kluczem
         const CLANS_LINKS = {
             "LYCANS": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
             "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
@@ -395,8 +388,6 @@
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
-            updatePlayerBreaksStats(player);
-
             if (player === 'ALL') {
                 if(routineChartInstance) routineChartInstance.destroy();
                 return;
@@ -486,97 +477,6 @@
                     }
                 }
             });
-        }
-
-        function updatePlayerBreaksStats(player) {
-            const container = document.getElementById('heatmapStatsContainer');
-            if (!container) return;
-            if (player === 'ALL') { container.innerHTML = ""; return; }
-
-            let pRows = globalData.filter(r => r[1] === player).map(r => ({
-                time: parseLogDate(r[0]).getTime(),
-                stat: r[2]
-            })).filter(r => r.time > 0);
-
-            pRows.sort((a, b) => a.time - b.time);
-
-            if (pRows.length === 0) {
-                container.innerHTML = "<p style='color:#888;'>Brak surowych logów w zakładce Live do obliczenia przerw dla tego gracza.</p>";
-                return;
-            }
-
-            let activeTimes = [];
-            let lastFightTime = 0;
-            const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-            const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
-
-            pRows.forEach(r => {
-                if (aktywneStatystyki.includes(r.stat)) {
-                    activeTimes.push(r.time);
-                } else if (walkiStatystyki.includes(r.stat)) {
-                    if (lastFightTime > 0) {
-                        let diffMins = (r.time - lastFightTime) / 60000;
-                        if (diffMins > 0 && diffMins <= 29) activeTimes.push(r.time);
-                    }
-                    lastFightTime = r.time;
-                }
-            });
-
-            activeTimes = Array.from(new Set(activeTimes)).sort((a, b) => a - b);
-
-            let breaks = [];
-            for (let i = 1; i < activeTimes.length; i++) {
-                let diffMs = activeTimes[i] - activeTimes[i-1];
-                if (diffMs > 20 * 60 * 1000) { 
-                    breaks.push({ start: activeTimes[i-1], end: activeTimes[i], duration: diffMs });
-                }
-            }
-
-            breaks.sort((a, b) => b.duration - a.duration);
-            let topBreaks = breaks.slice(0, 10);
-
-            if (topBreaks.length === 0) {
-                container.innerHTML = "<h2>📊 10 Najdłuższych Przerw w tym Tygodniu</h2><p style='color:#888;'>Za mało punktów pomiarowych dla tego gracza w bazie logów.</p>";
-                return;
-            }
-
-            let html = `<h2>📊 10 Najdłuższych Przerw w tym Tygodniu (Ostatnie 7 dni)</h2>`;
-            html += `<table style="max-width:900px; margin:0 auto; background-color:#231212;">
-                        <thead>
-                            <tr>
-                                <th>LP</th>
-                                <th>Koniec sesji (Wylogowanie)</th>
-                                <th>Powrót do gry (Logowanie)</th>
-                                <th>Czas trwania bezpiecznego okienka</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-            
-            topBreaks.forEach((b, idx) => {
-                let startStr = new Date(b.start).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                let endStr = new Date(b.end).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                
-                let diffMins = Math.floor(b.duration / 60000);
-                let hours = Math.floor(diffMins / 60);
-                let mins = diffMins % 60;
-                let durationStr = `${hours}h ${mins}min`;
-                
-                if (hours >= 24) {
-                    let days = Math.floor(hours / 24);
-                    let remHours = hours % 24;
-                    durationStr = `${days} dni, ${remHours}h ${mins}min`;
-                }
-
-                html += `<tr>
-                            <td class="rank-num">${idx + 1}</td>
-                            <td>${startStr}</td>
-                            <td>${endStr}</td>
-                            <td style="color:#55ff55; font-weight:bold; font-size:13px;">${durationStr}</td>
-                         </tr>`;
-            });
-            
-            html += "</tbody></table>";
-            container.innerHTML = html;
         }
 
         function formatLastSeen(dateObj) {
@@ -815,14 +715,14 @@
                 else return currentSortAsc ? valA - valB : valB - valA; 
             });
             let html = "<table><thead><tr>";
-            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "ŁUP (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (SUMA)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
             headers.forEach((h, i) => { let arrow = ""; if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓"; let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += "</tr></thead><tbody>";
             function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
             computedRankingRows.forEach((row, idx) => {
                 let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
                 let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
-                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="suma-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup, row.rasa === "Wampir" ? "krwi" : "mięsa")}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
+                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
             });
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
@@ -847,20 +747,16 @@
                 let oldVal = w[3];
                 let newVal = w[4];
                 
-                // IGNORUJEMY STARE ZAPISY ŁUPU, ŻEBY NIE ŚMIECIŁY NA STRONIE
                 if (stat === "Łup") return; 
 
-                // Inicjalizacja stanu
                 if (!currentClanState[klan]) currentClanState[klan] = {nazwa: klan, majatek: "0", czlonkowie: "?", pieczecie: "Brak", ostatniaAkcja: w[0]};
                 
-                // Szukanie aktualnego statusu klanu (najświeższe logi są na górze)
                 if (stat === "Nazwa" && currentClanState[klan].nazwa === klan) currentClanState[klan].nazwa = newVal;
                 if (stat === "Majątek" && currentClanState[klan].majatek === "0") currentClanState[klan].majatek = newVal;
                 if (stat === "Członkowie" && currentClanState[klan].czlonkowie === "?") currentClanState[klan].czlonkowie = newVal;
                 if (stat === "Pieczęcie" && currentClanState[klan].pieczecie === "Brak") currentClanState[klan].pieczecie = newVal;
 
-                // Łapanie transferów pieczęci
-                if (stat === "Pieczęcie") {
+                if (stat === "Pieczęcie" && oldVal !== "START") {
                     anyTransfer = true;
                     let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
@@ -871,14 +767,15 @@
                     let gStr = gained ? `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>` : "-";
                     let lStr = lost ? `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>` : "-";
                     
-                    let nameLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${currentClanState[klan].nazwa}</strong></a>` : `<strong>${klan}</strong>`;
+                    let actualName = currentClanState[klan].nazwa === klan ? "Klan [" + klan + "]" : currentClanState[klan].nazwa;
+                    let nameLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
 
                     transferLogHtml += `<tr><td>${w[0]}</td><td>${nameLink}</td><td>Wojna klanowa zakończona</td><td>${gStr}</td><td>${lStr}</td></tr>`;
                 }
             });
             transferLogHtml += "</tbody></table>";
             
-            if (!anyTransfer) transferLogHtml = "<p>Brak zarejestrowanych transferów pieczęci w ostatnich 7 dniach.</p>";
+            if (!anyTransfer) transferLogHtml = "<p>Brak zarejestrowanych transferów pieczęci w historii.</p>";
             document.getElementById('sealsTransferLogContainer').innerHTML = transferLogHtml;
 
             // 1. RYSOWANIE 7 PIECZĘCI NA GÓRZE W JEDNYM RZĘDZIE
@@ -899,7 +796,8 @@
                 if (currentClanState[k].pieczecie !== "Brak") {
                     let heldSeals = currentClanState[k].pieczecie.split(", ");
                     heldSeals.forEach(s => {
-                        sealHolders[s] = currentClanState[k].nazwa;
+                        let displayName = currentClanState[k].nazwa === k ? "Klan [" + k + "]" : currentClanState[k].nazwa;
+                        sealHolders[s] = displayName;
                     });
                 }
             }
@@ -937,6 +835,7 @@
             let logHtml = "<table><thead><tr><th>Data i godzina</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansData.forEach(w => {
                 if (w[2] === "Pieczęcie" || w[2] === "Nazwa" || w[2] === "Łup") return; 
+                if (w[3] === "START") return; // Ignorujemy wymuszony log startowy
                 
                 logHtml += "<tr>";
                 let klan = w[1];
