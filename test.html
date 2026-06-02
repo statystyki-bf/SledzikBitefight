@@ -37,14 +37,24 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1600px; margin: 20px auto; }
         .summary-box { background: #231212; padding: 10px; border-radius: 8px; border: 1px solid #4a0d0d; margin: 0 auto 15px auto; width: 98%; max-width: 1600px; }
         
-        #sectionTracker, #sectionRanking, #sectionHeatmap { display: none; }
-        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active { display: block; }
+        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans { display: none; }
+        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active { display: block; }
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
+        
+        /* Styl Pieczęci */
+        .seal-board { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 20px auto; max-width: 1200px; }
+        .seal-badge { background: #1a0a0a; border: 2px solid #4a0d0d; border-radius: 8px; padding: 10px; width: 140px; box-shadow: 0 0 10px rgba(0,0,0,0.8); transition: 0.3s; }
+        .seal-badge:hover { border-color: #c00c0c; transform: scale(1.05); }
+        .seal-icon { font-size: 30px; margin-bottom: 5px; }
+        .seal-name { font-size: 14px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; }
+        .seal-holder { font-size: 12px; color: #fff; font-weight: bold; }
+        .holder-demon { color: #888; }
+        .holder-clan { color: #00e5ff; }
     </style>
 </head>
 <body>
@@ -53,6 +63,7 @@
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
         <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
+        <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
     </div>
 
     <!-- ZAKŁADKA LIVE -->
@@ -133,13 +144,36 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
+    <!-- NOWA ZAKŁADKA: KLAN / PIECZĄTKI -->
+    <div id="sectionClans">
+        <h2>Gdzie są Pieczęcie Podziemi?</h2>
+        <div id="sealsBoardContainer" class="seal-board"></div>
+        
+        <hr class="separator">
+        <h2>Historia Przekazywania Pieczęci</h2>
+        <div id="sealsTransferLogContainer"><p>Trwa ładowanie logów wojen i pieczęci...</p></div>
+
+        <hr class="separator">
+        <h2>Aktualny stan Klanów</h2>
+        <div class="summary-box">
+            <div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div>
+        </div>
+
+        <hr class="separator">
+        <h2>Wszystkie logi i operacje klanowe</h2>
+        <div id="clansLogContainer"><p>Trwa ładowanie historii klanowej...</p></div>
+    </div>
+
     <script>
         // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         
-        // MAPOWANIE LINKÓW DO GRACZY
+        // PAMIĘTAJ WKLEIĆ PRAWIDŁOWY LINK DO ZAKŁADKI KLANÓW W FORMACIE CSV !!!!
+        const urlClansSheet = "TUTAJ_WKLEJ_LINK_DO_ZAKLADKI_KLANY_LOGI_CSV"; 
+        // =========================================================
+        
         const PLAYERS = {
             "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
             "Gawron": "https://s60-pl.bitefight.gameforge.com/profile/player/2505390",
@@ -154,12 +188,38 @@
             "NecromanceR": "https://s60-pl.bitefight.gameforge.com/profile/player/2954971",
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
-        // =========================================================
         
+        const CLANS_LINKS = {
+            "LYCANS": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
+            "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
+            "SA#pl32": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311819",
+            ".wh.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311772",
+            "lowe": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/286243",
+            ".ANT.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/306980",
+            "sol.,+p+v": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848",
+            "s-f.ti+b+r": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406863",
+            ".killers.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/237269",
+            "-SLOW-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/267344",
+            ".VOD": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/265373",
+            "B=A": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264234",
+            "dragons=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/307017",
+            "EL.L": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311509",
+            ".NIE.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311446",
+            "T_V": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/227719",
+            "aDV": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/45783",
+            ".se.seo+.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406870",
+            "bak": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406916",
+            "bot": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406867",
+            "jajo.+by..": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406915",
+            "wycie": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
+            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917"
+        };
+
         const BLACKLIST = ["Kark23"]; 
         let globalData = [];
         let globalRankingData = []; 
         let globalRutynaData = [];
+        let globalClansData = [];
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
@@ -171,9 +231,12 @@
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
             document.getElementById('tabHeatmapBtn').classList.remove('active');
+            document.getElementById('tabClansBtn').classList.remove('active');
+            
             document.getElementById('sectionTracker').classList.remove('active');
             document.getElementById('sectionRanking').classList.remove('active');
             document.getElementById('sectionHeatmap').classList.remove('active');
+            document.getElementById('sectionClans').classList.remove('active');
 
             if (tabId === 'tracker') {
                 document.getElementById('tabTrackerBtn').classList.add('active');
@@ -187,6 +250,10 @@
                 document.getElementById('tabHeatmapBtn').classList.add('active');
                 document.getElementById('sectionHeatmap').classList.add('active');
                 renderChart();
+            } else if (tabId === 'clans') {
+                document.getElementById('tabClansBtn').classList.add('active');
+                document.getElementById('sectionClans').classList.add('active');
+                renderClans();
             }
         }
 
@@ -250,7 +317,21 @@
                             let kom = parseCSVLine(rWiersze[i].trim());
                             if (kom.length >= 3) globalRutynaData.push(kom);
                         }
-                    } catch(ex) { console.log("Rutyna nie wgrana."); }
+                    } catch(ex) {}
+                }
+
+                if (urlClansSheet.includes("docs.google.com")) {
+                    try {
+                        const cRes = await fetch(urlClansSheet + '&t=' + new Date().getTime());
+                        const cText = await cRes.text();
+                        const cWiersze = cText.trim().split('\n');
+                        globalClansData = [];
+                        for (let i = 1; i < cWiersze.length; i++) {
+                            let kom = parseCSVLine(cWiersze[i].trim());
+                            if (kom.length >= 5) globalClansData.push(kom);
+                        }
+                        globalClansData.reverse(); 
+                    } catch(ex) {}
                 }
 
                 if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
@@ -312,8 +393,6 @@
         function renderChart() {
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
-
-            updatePlayerBreaksStats(player);
 
             if (player === 'ALL') {
                 if(routineChartInstance) routineChartInstance.destroy();
@@ -404,97 +483,6 @@
                     }
                 }
             });
-        }
-
-        function updatePlayerBreaksStats(player) {
-            const container = document.getElementById('heatmapStatsContainer');
-            if (!container) return;
-            if (player === 'ALL') { container.innerHTML = ""; return; }
-
-            let pRows = globalData.filter(r => r[1] === player).map(r => ({
-                time: parseLogDate(r[0]).getTime(),
-                stat: r[2]
-            })).filter(r => r.time > 0);
-
-            pRows.sort((a, b) => a.time - b.time);
-
-            if (pRows.length === 0) {
-                container.innerHTML = "<p style='color:#888;'>Brak surowych logów w zakładce Live do obliczenia przerw dla tego gracza.</p>";
-                return;
-            }
-
-            let activeTimes = [];
-            let lastFightTime = 0;
-            const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-            const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
-
-            pRows.forEach(r => {
-                if (aktywneStatystyki.includes(r.stat)) {
-                    activeTimes.push(r.time);
-                } else if (walkiStatystyki.includes(r.stat)) {
-                    if (lastFightTime > 0) {
-                        let diffMins = (r.time - lastFightTime) / 60000;
-                        if (diffMins > 0 && diffMins <= 29) activeTimes.push(r.time);
-                    }
-                    lastFightTime = r.time;
-                }
-            });
-
-            activeTimes = Array.from(new Set(activeTimes)).sort((a, b) => a - b);
-
-            let breaks = [];
-            for (let i = 1; i < activeTimes.length; i++) {
-                let diffMs = activeTimes[i] - activeTimes[i-1];
-                if (diffMs > 20 * 60 * 1000) { 
-                    breaks.push({ start: activeTimes[i-1], end: activeTimes[i], duration: diffMs });
-                }
-            }
-
-            breaks.sort((a, b) => b.duration - a.duration);
-            let topBreaks = breaks.slice(0, 10);
-
-            if (topBreaks.length === 0) {
-                container.innerHTML = "<h2>📊 10 Najdłuższych Przerw w tym Tygodniu</h2><p style='color:#888;'>Za mało punktów pomiarowych dla tego gracza w bazie logów.</p>";
-                return;
-            }
-
-            let html = `<h2>📊 10 Najdłuższych Przerw w tym Tygodniu (Ostatnie 7 dni)</h2>`;
-            html += `<table style="max-width:900px; margin:0 auto; background-color:#231212;">
-                        <thead>
-                            <tr>
-                                <th>LP</th>
-                                <th>Koniec sesji (Wylogowanie)</th>
-                                <th>Powrót do gry (Logowanie)</th>
-                                <th>Czas trwania bezpiecznego okienka</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-            
-            topBreaks.forEach((b, idx) => {
-                let startStr = new Date(b.start).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                let endStr = new Date(b.end).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                
-                let diffMins = Math.floor(b.duration / 60000);
-                let hours = Math.floor(diffMins / 60);
-                let mins = diffMins % 60;
-                let durationStr = `${hours}h ${mins}min`;
-                
-                if (hours >= 24) {
-                    let days = Math.floor(hours / 24);
-                    let remHours = hours % 24;
-                    durationStr = `${days} dni, ${remHours}h ${mins}min`;
-                }
-
-                html += `<tr>
-                            <td class="rank-num">${idx + 1}</td>
-                            <td>${startStr}</td>
-                            <td>${endStr}</td>
-                            <td style="color:#55ff55; font-weight:bold; font-size:13px;">${durationStr}</td>
-                         </tr>`;
-            });
-            
-            html += "</tbody></table>";
-            container.innerHTML = html;
         }
 
         function formatLastSeen(dateObj) {
@@ -744,6 +732,145 @@
             });
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
+        }
+
+        // ==========================================
+        //  RENDEROWANIE KLANÓW I PIECZĘCI
+        // ==========================================
+        function renderClans() {
+            if (globalClansData.length === 0) {
+                document.getElementById('clansLogContainer').innerHTML = "<p>Brak logów klanów. Upewnij się, że opublikowałeś zakładkę Klany_Logi w formacie CSV i dodałeś link w kodzie.</p>";
+                return;
+            }
+
+            let currentClanState = {};
+            let transferLogHtml = "<table><thead><tr><th>Data operacji</th><th>Klan</th><th>Zmiana statusu</th><th>Zyskana pieczęć</th><th>Stracona pieczęć</th></tr></thead><tbody>";
+            let anyTransfer = false;
+
+            globalClansData.forEach(w => {
+                let klan = w[1];
+                let stat = w[2];
+                let oldVal = w[3];
+                let newVal = w[4];
+                
+                // Inicjalizacja stanu
+                if (!currentClanState[klan]) currentClanState[klan] = {nazwa: klan, lup: "0", majatek: "0", czlonkowie: "?", pieczecie: "Brak", ostatniaAkcja: w[0]};
+                
+                // Szukanie aktualnego statusu klanu (pierwsze napotkane, bo najświeższe są na górze)
+                if (stat === "Nazwa" && currentClanState[klan].nazwa === klan) currentClanState[klan].nazwa = newVal;
+                if (stat === "Łup" && currentClanState[klan].lup === "0") currentClanState[klan].lup = newVal;
+                if (stat === "Majątek" && currentClanState[klan].majatek === "0") currentClanState[klan].majatek = newVal;
+                if (stat === "Członkowie" && currentClanState[klan].czlonkowie === "?") currentClanState[klan].czlonkowie = newVal;
+                if (stat === "Pieczęcie" && currentClanState[klan].pieczecie === "Brak") currentClanState[klan].pieczecie = newVal;
+
+                // Łapanie transferów pieczęci
+                if (stat === "Pieczęcie") {
+                    anyTransfer = true;
+                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
+                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
+                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    
+                    let gStr = gained ? `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>` : "-";
+                    let lStr = lost ? `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>` : "-";
+                    
+                    let nameLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${currentClanState[klan].nazwa}</strong></a>` : `<strong>${klan}</strong>`;
+
+                    transferLogHtml += `<tr><td>${w[0]}</td><td>${nameLink}</td><td>Wojna klanowa zakończona</td><td>${gStr}</td><td>${lStr}</td></tr>`;
+                }
+            });
+            transferLogHtml += "</tbody></table>";
+            
+            if (!anyTransfer) transferLogHtml = "<p>Brak zarejestrowanych transferów pieczęci w ostatnich 7 dniach.</p>";
+            document.getElementById('sealsTransferLogContainer').innerHTML = transferLogHtml;
+
+            // 1. RYSOWANIE 7 PIECZĘCI NA GÓRZE (Odznaki)
+            const ALL_SEALS = [
+                { id: "Obżarstwo", icon: "🍔" },
+                { id: "Zazdrość", icon: "👁️" },
+                { id: "Gniew", icon: "😡" },
+                { id: "Chciwość", icon: "💰" },
+                { id: "Pycha", icon: "👑" },
+                { id: "Pożądanie", icon: "💋" },
+                { id: "Lenistwo", icon: "🦥" }
+            ];
+
+            let sealHolders = {};
+            ALL_SEALS.forEach(s => sealHolders[s.id] = "Nieznany (U demonów)");
+
+            for (let k in currentClanState) {
+                if (currentClanState[k].pieczecie !== "Brak") {
+                    let heldSeals = currentClanState[k].pieczecie.split(", ");
+                    heldSeals.forEach(s => {
+                        sealHolders[s] = currentClanState[k].nazwa;
+                    });
+                }
+            }
+
+            let sealsBoardHtml = "";
+            ALL_SEALS.forEach(s => {
+                let holder = sealHolders[s.id];
+                let isDemon = holder === "Nieznany (U demonów)";
+                let cssClass = isDemon ? "holder-demon" : "holder-clan";
+                
+                sealsBoardHtml += `<div class="seal-badge">
+                                     <div class="seal-icon">${s.icon}</div>
+                                     <div class="seal-name">${s.id}</div>
+                                     <div class="seal-holder ${cssClass}">${holder}</div>
+                                   </div>`;
+            });
+            document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
+
+            // 2. BUDOWA TABELI PODSUMOWUJĄCEJ KLANY
+            let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Złoto w skarbcu</th><th>Członkowie</th><th>Ostatnia operacja na skarbcu</th></tr></thead><tbody>";
+            for (let klan in currentClanState) {
+                let data = currentClanState[klan];
+                let kLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${data.nazwa}</strong></a>` : `<strong>${data.nazwa}</strong>`;
+                
+                let majatekStr = parseInt(data.majatek).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
+
+                currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td class="wystajace-col">${majatekStr} <img src="https://s60-pl.bitefight.gameforge.com/img/symbols/res2.gif"></td><td>${data.czlonkowie}</td><td>${data.ostatniaAkcja}</td></tr>`;
+            }
+            currentHtml += "</tbody></table>";
+            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
+
+            // 3. WSZYSTKIE LOGI KLANOWE (Tylko złoto i członkowie, bo transfery pieczęci są wyżej)
+            let logHtml = "<table><thead><tr><th>Data i godzina</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
+            globalClansData.forEach(w => {
+                if (w[2] === "Pieczęcie" || w[2] === "Nazwa") return; // Ukrywamy to, bo jest na dedykowanej liście
+                
+                logHtml += "<tr>";
+                let klan = w[1];
+                let stat = w[2];
+                let diff = w[5];
+                let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+
+                for(let j = 0; j <= 5; j++) {
+                    let val = w[j];
+                    let klasa = "";
+                    
+                    if (j === 1) {
+                        val = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
+                    }
+                    else if (j === 5 && diff !== "") {
+                        if (parseInt(diff) > 0) { klasa = ' class="przyrost-col"'; val = "+" + parseInt(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+                        else if (parseInt(diff) < 0) { klasa = ' class="strata-col"'; val = parseInt(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+                    }
+                    else if (j === 3 || j === 4) {
+                        if (stat === "Majątek" || stat === "Łup") {
+                            let num = parseInt(val);
+                            if(!isNaN(num)) val = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        }
+                    }
+
+                    logHtml += `<td${klasa}>${val}</td>`;
+                }
+                logHtml += "</tr>";
+            });
+            logHtml += "</tbody></table>";
+            document.getElementById('clansLogContainer').innerHTML = logHtml;
         }
 
         loadTableData();
