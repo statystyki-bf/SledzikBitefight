@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; }
+        body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
         .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; }
@@ -44,27 +44,34 @@
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        a.player-link { color: #00e5ff; text-decoration: none; font-weight:bold;}
+        
+        /* PRECYZYJNE PODŚWIETLANIE TYLKO NAZWY KLANU */
+        .clan-text-plain { color: #e0e0e0; font-weight: normal; }
+        a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         
-        /* ORYGINALNE, ANIMOWANE I WYRÓWNANE PIECZĘCIE Z BITEFIGHT */
-        .seal-board { display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap; margin: 15px auto; overflow-x: auto; max-width: 100%; }
-        .seal-badge { background: #0c0000; border: 1px solid #4a0d0d; border-radius: 4px; padding: 8px 6px; width: 115px; box-shadow: 0 0 8px rgba(0,0,0,1); transition: transform 0.2s, border-color 0.2s; display:flex; flex-direction:column; align-items:center; }
-        .seal-badge:hover { border-color: #ff3333; transform: translateY(-5px); }
-        .seal-icon { width: 24px; height: 21px; background-image: url('https://i.postimg.cc/0j0H32xH/2b9206-png.jpg'); background-repeat: no-repeat; margin-bottom: 5px; }
-        .seal-name { font-size: 10px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 4px; border-bottom: 1px solid #4a0d0d; padding-bottom: 3px; width:100%; }
-        .seal-holder { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; margin-bottom: 4px; }
-        .seal-date { font-size: 9px; color: #888; border-top: 1px solid #331111; padding-top: 4px; width: 100%; }
-        .holder-demon { color: #888; }
+        /* NAPRAWIONY PANEL PIECZĘCI - BRAK ROZJEŻDŻANIA I SUWAKÓW */
+        .seal-board { display: flex; justify-content: center; gap: 10px; flex-wrap: nowrap; margin: 15px auto; max-width: 100%; padding: 5px; box-sizing: border-box; }
+        .seal-badge { background: #0f0505; border: 1px solid #4a0d0d; border-radius: 6px; padding: 10px 6px; width: 125px; min-width: 115px; box-shadow: 0 0 8px rgba(0,0,0,1); transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+        .seal-badge:hover { border-color: #ff3333; transform: translateY(-4px); }
         
-        /* Odpowiednie współrzędne dla wycinka każdego obrazka (CSS Sprites) */
-        .ico-Obżarstwo { background-position: -23px -37px; }
-        .ico-Zazdrość { background-position: -136px -37px; }
-        .ico-Gniew { background-position: -247px -37px; }
-        .ico-Skąpstwo { background-position: -359px -37px; }
-        .ico-Pycha { background-position: -471px -37px; }
-        .ico-Pożądanie { background-position: -807px -37px; }
-        .ico-Lenistwo { background-position: -582px -37px; }
+        /* Rdzeniowe Ikony CSS z dynamiczną aurą */
+        .seal-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 6px; background: radial-gradient(circle, #2d0f0f 0%, #0a0202 100%); box-sizing: border-box; }
+        .seal-name { font-size: 10px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #3a0b0b; padding-bottom: 3px; width: 100%; letter-spacing: 0.5px; }
+        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .seal-date { font-size: 9px; color: #777; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
+        
+        .holder-demon { color: #666; font-weight: normal; }
+        .holder-clan { color: #fff; }
+
+        /* Kolorystyka aury dla poszczególnych grzechów */
+        .badge-obzarstwo .seal-icon { border: 2px solid #ff6600; box-shadow: 0 0 8px #ff6600; }
+        .badge-zazdrosc .seal-icon { border: 2px solid #00ff44; box-shadow: 0 0 8px #00ff44; }
+        .badge-gniew .seal-icon { border: 2px solid #ff0000; box-shadow: 0 0 8px #ff0000; }
+        .badge-skapstwo .seal-icon { border: 2px solid #ffcc00; box-shadow: 0 0 8px #ffcc00; }
+        .badge-pycha .seal-icon { border: 2px solid #b300ff; box-shadow: 0 0 8px #b300ff; }
+        .badge-pozadanie .seal-icon { border: 2px solid #ff00b3; box-shadow: 0 0 8px #ff00b3; }
+        .badge-lenistwo .seal-icon { border: 2px solid #00ccff; box-shadow: 0 0 8px #00ccff; }
     </style>
 </head>
 <body>
@@ -157,7 +164,7 @@
         
         <hr class="separator">
         <h2>Historia Przekazywania Pieczęci i Zmian w Klanach</h2>
-        <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
+        <div id="sealsTransferLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
         
         <hr class="separator">
         <h2>Aktualny stan Klanów</h2>
@@ -171,8 +178,6 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
-        // PAMIĘTAJ! PODMIEŃ TEN LINK NA TEN DO ZAKŁADKI Klany_Logi CSV !!
         const urlClansSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
         
@@ -185,20 +190,18 @@
             "PEON": "https://s60-pl.bitefight.gameforge.com/profile/player/1532448",
             "Sam-Wiesz": "https://s60-pl.bitefight.gameforge.com/profile/player/1055184",
             "albin": "https://s60-pl.bitefight.gameforge.com/profile/player/1305276",
-            "Darksun": "https://s60-pl.bitefight.gameforge.com/profile/player/2168523",
             "misssiek555": "https://s60-pl.bitefight.gameforge.com/profile/player/815896",
             "NecromanceR": "https://s60-pl.bitefight.gameforge.com/profile/player/2954971",
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
         
         const CLANS_LINKS = {
-            "LYC": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
             "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
             "SA#pl32": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311819",
             ".wh.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311772",
             "lowe": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/286243",
             ".ANT.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/306980",
-            "sol.,+p": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848",
+            "sol.,+p+v": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848",
             "s-f.ti+b+r": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406863",
             ".killers.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/237269",
             "-SLOW-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/267344",
@@ -573,7 +576,7 @@
             headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
-                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
+                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
 
                 let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -593,7 +596,7 @@
             const populateGeneric = (id, set, txt, storageKey) => {
                 const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
-                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                Array.from(set).sort().forEach(o => { el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
 
@@ -601,7 +604,7 @@
                 const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>
                                <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
-                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                Array.from(set).sort().forEach(o => { el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             }
             
@@ -632,7 +635,7 @@
                     let val = w[j]; 
                     
                     if (j === 1) {
-                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
+                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
                         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
@@ -726,7 +729,7 @@
             });
             let html = "<table><thead><tr>";
             let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
-            headers.forEach((h, i) => { let arrow = ""; if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓"; let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            headers.forEach((h, i) => { arrow = ""; if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓"; let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += "</tr></thead><tbody>";
             function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
             computedRankingRows.forEach((row, idx) => {
@@ -736,6 +739,19 @@
             });
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
+        }
+
+        // ==========================================
+        //  DYNAMICZNE SEPAROWANIE SŁOWA KLAN OD LINKU
+        // ==========================================
+        function formatClanLink(klanTag, rawName) {
+            if (!rawName) return `<span class="clan-text-plain">Klan [${klanTag}]</span>`;
+            let nameStr = String(rawName);
+            if (nameStr.startsWith("Klan ")) {
+                let rest = nameStr.substring(5);
+                return CLANS_LINKS[klanTag] ? `<span class="clan-text-plain">Klan</span> <a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${rest}</a>` : `<span class="clan-text-plain">${nameStr}</span>`;
+            }
+            return CLANS_LINKS[klanTag] ? `<a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${nameStr}</a>` : `<span class="clan-text-plain">${nameStr}</span>`;
         }
 
         // ==========================================
@@ -763,28 +779,26 @@
                 if (stat === "Pieczęcie" && currentClanState[klan].pieczecie === "Brak") currentClanState[klan].pieczecie = newVal;
             });
 
-            // GŁÓWNA TABLICA PIECZĘCI
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI
             const ALL_SEALS = [
-                { id: "Obżarstwo", cls: "ico-Obżarstwo" },
-                { id: "Zazdrość", cls: "ico-Zazdrość" },
-                { id: "Gniew", cls: "ico-Gniew" },
-                { id: "Skąpstwo", cls: "ico-Skąpstwo" },
-                { id: "Pycha", cls: "ico-Pycha" },
-                { id: "Pożądanie", cls: "ico-Pożądanie" },
-                { id: "Lenistwo", cls: "ico-Lenistwo" }
+                { id: "Obżarstwo", cls: "ico-Obżarstwo", badge: "badge-obzarstwo" },
+                { id: "Zazdrość", cls: "ico-Zazdrość", badge: "badge-zazdrosc" },
+                { id: "Gniew", cls: "ico-Gniew", badge: "badge-gniew" },
+                { id: "Skąpstwo", cls: "ico-Skąpstwo", badge: "badge-skapstwo" },
+                { id: "Pycha", cls: "ico-Pycha", badge: "badge-pycha" },
+                { id: "Pożądanie", cls: "ico-Pożądanie", badge: "badge-pozadanie" },
+                { id: "Lenistwo", cls: "ico-Lenistwo", badge: "badge-lenistwo" }
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: "Nieznany (U demonów)", cls: s.cls, klanId: null, date: "" });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-demon">U demonów</span>', cls: s.cls, badge: s.badge, klanId: null, date: "" });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
                     let heldSeals = currentClanState[k].pieczecie.split(", ");
                     heldSeals.forEach(s => {
-                        let actualName = currentClanState[k].nazwa === k ? "Klan [" + k + "]" : currentClanState[k].nazwa;
-                        let kLink = CLANS_LINKS[k] ? `<a href="${CLANS_LINKS[k]}" class="player-link" target="_blank">${actualName}</a>` : actualName;
                         if (sealHolders[s]) {
-                            sealHolders[s].holder = kLink;
+                            sealHolders[s].holder = formatClanLink(k, currentClanState[k].nazwa);
                             sealHolders[s].klanId = k;
                         }
                     });
@@ -807,22 +821,20 @@
             });
 
             let sealsBoardHtml = "";
-            for (let sealName in sealHolders) {
-                let data = sealHolders[sealName];
-                let isDemon = !data.klanId;
-                let cssClass = isDemon ? "holder-demon" : "holder-clan";
-                let dateHtml = data.date ? `<div class="seal-date">${data.date}</div>` : `<div class="seal-date">-</div>`;
+            ALL_SEALS.forEach(s => {
+                let data = sealHolders[s.id];
+                let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
-                sealsBoardHtml += `<div class="seal-badge">
-                                     <div class="seal-icon ${data.cls}"></div>
-                                     <div class="seal-name">${sealName}</div>
-                                     <div class="seal-holder ${cssClass}">${data.holder}</div>
+                sealsBoardHtml += `<div class="seal-badge ${data.badge}">
+                                     <div class="seal-icon"></div>
+                                     <div class="seal-name">${s.id}</div>
+                                     <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
                                    </div>`;
-            }
+            });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-            // HISTORIA ZMIAN KLANOWYCH
+            // HISTORIA ZMIAN W KLANACH
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansData.forEach(w => {
                 if (w[2] === "Nazwa" || w[2] === "Łup" || w[2] === "Majątek") return; 
@@ -836,8 +848,6 @@
                 let diffHtml = w[5];
                 
                 let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
-                if (actualName === klan) actualName = "Klan [" + klan + "]";
-
                 let klasa = "";
 
                 if (stat === "Członkowie") {
@@ -859,7 +869,7 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+${gained}</span> / <span style="color:#ff5555;">-${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
@@ -871,7 +881,7 @@
                     let myKlasa = "";
                     
                     if (j === 1) {
-                        val = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
+                        val = formatClanLink(klan, actualName);
                     }
                     else if (j === 5) {
                         val = diffHtml;
@@ -884,13 +894,11 @@
             logHtml += "</tbody></table>";
             document.getElementById('clansLogContainer').innerHTML = logHtml;
 
-            // AKTUALNY STAN KLANÓW (Bez złota)
+            // TABELA: AKTUALNY STAN KLANÓW
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
-                let actualName = data.nazwa === klan ? "Klan [" + klan + "]" : data.nazwa;
-                let kLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
-                
+                let kLink = formatClanLink(klan, data.nazwa);
                 let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
 
                 currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
