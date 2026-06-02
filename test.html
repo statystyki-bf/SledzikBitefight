@@ -60,13 +60,6 @@
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
-        
-        <!-- MODUŁ: RADAR CZYSTEJ DROGI -->
-        <div class="summary-box" style="border-color: #1f7244; background: #0d1a12;">
-            <h2 style="color: #55ff55; margin-top: 5px;">🎯 Radar "Czystej Drogi" (Bezpieczne cele)</h2>
-            <div style="color: #888; font-size: 12px; margin-bottom: 15px;">System analizuje obecną godzinę krzyżując ją z historyczną mapą cieplną gracza. Wyświetla osoby, które są aktualnie offline od dłuższego czasu, a w tej godzinie zazwyczaj nie grają.</div>
-            <div id="radarContainer"><p>Ładowanie radaru...</p></div>
-        </div>
 
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
@@ -295,7 +288,6 @@
 
                 globalData.reverse(); 
                 renderSummaryTable();
-                renderRadar(); 
                 updateFilters(); 
                 renderTable(); 
             } catch (e) { console.error(e); }
@@ -315,85 +307,6 @@
             if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
             else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 7) ? true : false; }
             renderSummaryTable();
-        }
-
-        // ==========================================
-        //  RADAR "CZYSTEJ DROGI"
-        // ==========================================
-        function renderRadar() {
-            let container = document.getElementById('radarContainer');
-            if (!container) return;
-
-            let absoluteLastSeen = {};
-            let fightTimestamps = {};
-
-            globalData.forEach(w => {
-                if (!w[0] || !w[1]) return;
-                let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
-                const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-                const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
-                
-                if (aktywneStatystyki.includes(stat)) {
-                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = logDate; }
-                } else if (walkiStatystyki.includes(stat)) {
-                    if (!fightTimestamps[gracz]) fightTimestamps[gracz] = new Set();
-                    fightTimestamps[gracz].add(logDate.getTime());
-                }
-            });
-
-            for (let gracz in fightTimestamps) {
-                let times = Array.from(fightTimestamps[gracz]).sort((a, b) => b - a);
-                for (let i = 0; i < times.length - 1; i++) {
-                    let t1 = times[i]; let t2 = times[i+1];
-                    if ((t1 - t2) <= 29 * 60 * 1000) {
-                        let inferredDate = new Date(t1);
-                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = inferredDate; }
-                        break; 
-                    }
-                }
-            }
-
-            let now = new Date();
-            let cHour = now.getHours();
-            let safeTargets = [];
-
-            for (let player in PLAYERS) {
-                let lastSeen = absoluteLastSeen[player] || new Date(0);
-                let diffMins = Math.floor((now - lastSeen) / 60000);
-
-                let hourActivity = 0;
-                globalRutynaData.forEach(r => {
-                    if (r[0] === player) {
-                        let parts = r[1].split('_');
-                        if (parts.length === 3 && parseInt(parts[1]) === cHour) {
-                            hourActivity += parseInt(r[2]);
-                        }
-                    }
-                });
-
-                if (diffMins > 45 && hourActivity < 10) {
-                    safeTargets.push({player: player, offlineMins: diffMins, risk: hourActivity});
-                }
-            }
-
-            safeTargets.sort((a,b) => b.offlineMins - a.offlineMins);
-
-            if(safeTargets.length === 0) {
-                container.innerHTML = "<p style='color:#888'>Brak w 100% bezpiecznych celów. Wszyscy są aktywni lub przebywają w swoim okienku gry.</p>";
-                return;
-            }
-
-            let html = `<table style="max-width:800px; margin:0 auto; background-color:#102210; border: 1px solid #1f7244;">
-                <thead><tr><th style="background-color:#165231;">Bezpieczny Cel</th><th style="background-color:#165231;">Status Offline</th><th style="background-color:#165231;">Ryzyko o tej godzinie</th></tr></thead><tbody>`;
-            
-            safeTargets.forEach(t => {
-                let pLink = `<a href="${PLAYERS[t.player]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight:bold;">${t.player}</a>`;
-                let offStr = t.offlineMins > 1440 ? `${Math.floor(t.offlineMins/1440)} dni temu` : `${Math.floor(t.offlineMins/60)}h ${t.offlineMins%60}m temu`;
-                let riskStr = t.risk === 0 ? "Offline" : "Znikome";
-                html += `<tr><td>${pLink}</td><td style="color:#aaa;">🔴 ${offStr}</td><td style="color:#55ff55;">${riskStr}</td></tr>`;
-            });
-            html += "</tbody></table>";
-            container.innerHTML = html;
         }
 
         function renderChart() {
