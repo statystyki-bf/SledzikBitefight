@@ -46,13 +46,14 @@
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         
-        /* Zmieniony, kompaktowy i w 1 linii styl Pieczęci */
-        .seal-board { display: flex; justify-content: center; gap: 5px; flex-wrap: nowrap; margin: 10px auto; overflow-x: auto; max-width: 100%; }
-        .seal-badge { background: #1a0a0a; border: 1px solid #4a0d0d; border-radius: 4px; padding: 4px 6px; width: auto; min-width: 85px; box-shadow: 0 0 5px rgba(0,0,0,0.8); transition: 0.3s; display:flex; flex-direction:column; align-items:center; }
-        .seal-badge:hover { border-color: #c00c0c; transform: scale(1.05); }
-        .seal-icon { font-size: 16px; margin-bottom: 2px; }
-        .seal-name { font-size: 9px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 2px; border-bottom: 1px solid #4a0d0d; padding-bottom: 2px; width:100%; }
-        .seal-holder { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px; }
+        /* POPRAWIONY STYL PIECZĘCI BEZ SUWAKA */
+        .seal-board { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 25px auto; max-width: 100%; padding-bottom: 10px; }
+        .seal-badge { background: #1a0a0a; border: 1px solid #4a0d0d; border-radius: 6px; padding: 10px; width: 130px; box-shadow: 0 0 5px rgba(0,0,0,0.8); transition: transform 0.2s, border-color 0.2s; display:flex; flex-direction:column; align-items:center; position:relative; }
+        .seal-badge:hover { border-color: #c00c0c; transform: translateY(-5px); z-index: 10; }
+        .seal-icon { font-size: 26px; margin-bottom: 4px; }
+        .seal-name { font-size: 11px; font-weight: bold; color: #ffcc00; text-transform: uppercase; margin-bottom: 4px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; width:100%; }
+        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .seal-date { font-size: 9px; color: #888; border-top: 1px solid #331111; padding-top: 4px; width: 100%; }
         .holder-demon { color: #888; }
         .holder-clan { color: #00e5ff; }
     </style>
@@ -66,6 +67,7 @@
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
@@ -98,6 +100,7 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -125,6 +128,7 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -141,23 +145,20 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
+    <!-- NOWA ZAKŁADKA: KLAN / PIECZĄTKI -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
         
         <hr class="separator">
-        <h2>Historia Przekazywania Pieczęci</h2>
-        <div id="sealsTransferLogContainer"><p>Trwa ładowanie logów wojen i pieczęci...</p></div>
-
+        <h2>Historia Przekazywania Pieczęci i Zmian w Klanach</h2>
+        <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
+        
         <hr class="separator">
         <h2>Aktualny stan Klanów</h2>
         <div class="summary-box">
             <div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div>
         </div>
-
-        <hr class="separator">
-        <h2>Wszystkie logi i operacje klanowe</h2>
-        <div id="clansLogContainer"><p>Trwa ładowanie historii klanowej...</p></div>
     </div>
 
     <script>
@@ -165,6 +166,8 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
+        
+        // WKLEJ SWÓJ PRAWIDŁOWY LINK CSV DO KLANÓW:
         const urlClansSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
         
@@ -183,9 +186,8 @@
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
         
-        // Zaktualizowana lista klanów z poprawnymi tagami z gry
         const CLANS_LINKS = {
-            "LYC": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
+            "LYCANS": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
             "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
             "SA#pl32": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311819",
             ".wh.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311772",
@@ -389,6 +391,8 @@
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
+            updatePlayerBreaksStats(player);
+
             if (player === 'ALL') {
                 if(routineChartInstance) routineChartInstance.destroy();
                 return;
@@ -478,6 +482,97 @@
                     }
                 }
             });
+        }
+
+        function updatePlayerBreaksStats(player) {
+            const container = document.getElementById('heatmapStatsContainer');
+            if (!container) return;
+            if (player === 'ALL') { container.innerHTML = ""; return; }
+
+            let pRows = globalData.filter(r => r[1] === player).map(r => ({
+                time: parseLogDate(r[0]).getTime(),
+                stat: r[2]
+            })).filter(r => r.time > 0);
+
+            pRows.sort((a, b) => a.time - b.time);
+
+            if (pRows.length === 0) {
+                container.innerHTML = "<p style='color:#888;'>Brak surowych logów w zakładce Live do obliczenia przerw dla tego gracza.</p>";
+                return;
+            }
+
+            let activeTimes = [];
+            let lastFightTime = 0;
+            const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+            const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
+
+            pRows.forEach(r => {
+                if (aktywneStatystyki.includes(r.stat)) {
+                    activeTimes.push(r.time);
+                } else if (walkiStatystyki.includes(r.stat)) {
+                    if (lastFightTime > 0) {
+                        let diffMins = (r.time - lastFightTime) / 60000;
+                        if (diffMins > 0 && diffMins <= 29) activeTimes.push(r.time);
+                    }
+                    lastFightTime = r.time;
+                }
+            });
+
+            activeTimes = Array.from(new Set(activeTimes)).sort((a, b) => a - b);
+
+            let breaks = [];
+            for (let i = 1; i < activeTimes.length; i++) {
+                let diffMs = activeTimes[i] - activeTimes[i-1];
+                if (diffMs > 20 * 60 * 1000) { 
+                    breaks.push({ start: activeTimes[i-1], end: activeTimes[i], duration: diffMs });
+                }
+            }
+
+            breaks.sort((a, b) => b.duration - a.duration);
+            let topBreaks = breaks.slice(0, 10);
+
+            if (topBreaks.length === 0) {
+                container.innerHTML = "<h2>📊 10 Najdłuższych Przerw w tym Tygodniu</h2><p style='color:#888;'>Za mało punktów pomiarowych dla tego gracza w bazie logów.</p>";
+                return;
+            }
+
+            let html = `<h2>📊 10 Najdłuższych Przerw w tym Tygodniu (Ostatnie 7 dni)</h2>`;
+            html += `<table style="max-width:900px; margin:0 auto; background-color:#231212;">
+                        <thead>
+                            <tr>
+                                <th>LP</th>
+                                <th>Koniec sesji (Wylogowanie)</th>
+                                <th>Powrót do gry (Logowanie)</th>
+                                <th>Czas trwania bezpiecznego okienka</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            topBreaks.forEach((b, idx) => {
+                let startStr = new Date(b.start).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                let endStr = new Date(b.end).toLocaleString('pl-PL', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                
+                let diffMins = Math.floor(b.duration / 60000);
+                let hours = Math.floor(diffMins / 60);
+                let mins = diffMins % 60;
+                let durationStr = `${hours}h ${mins}min`;
+                
+                if (hours >= 24) {
+                    let days = Math.floor(hours / 24);
+                    let remHours = hours % 24;
+                    durationStr = `${days} dni, ${remHours}h ${mins}min`;
+                }
+
+                html += `<tr>
+                            <td class="rank-num">${idx + 1}</td>
+                            <td>${startStr}</td>
+                            <td>${endStr}</td>
+                            <td style="color:#55ff55; font-weight:bold; font-size:13px;">${durationStr}</td>
+                         </tr>`;
+            });
+            
+            html += "</tbody></table>";
+            container.innerHTML = html;
         }
 
         function formatLastSeen(dateObj) {
@@ -739,142 +834,160 @@
             }
 
             let currentClanState = {};
-            let transferLogHtml = "<table><thead><tr><th>Data operacji</th><th>Klan</th><th>Zmiana statusu</th><th>Zyskana pieczęć</th><th>Stracona pieczęć</th></tr></thead><tbody>";
-            let anyTransfer = false;
-
+            
+            // 1. ZBIERANIE AKTUALNEGO STANU I ŁAPANIE ZMIAN W LOCIE
             globalClansData.forEach(w => {
                 let klan = w[1];
                 let stat = w[2];
-                let oldVal = w[3];
                 let newVal = w[4];
                 
-                if (stat === "Łup") return; 
+                if (stat === "Łup" || stat === "Majątek") return; 
 
-                if (!currentClanState[klan]) currentClanState[klan] = {nazwa: klan, majatek: "0", czlonkowie: "?", pieczecie: "Brak", ostatniaAkcja: w[0]};
+                if (!currentClanState[klan]) currentClanState[klan] = {nazwa: klan, czlonkowie: "?", pieczecie: "Brak", ostatniaAkcja: w[0]};
                 
                 if (stat === "Nazwa" && currentClanState[klan].nazwa === klan) currentClanState[klan].nazwa = newVal;
-                if (stat === "Majątek" && currentClanState[klan].majatek === "0") currentClanState[klan].majatek = newVal;
                 if (stat === "Członkowie" && currentClanState[klan].czlonkowie === "?") currentClanState[klan].czlonkowie = newVal;
                 if (stat === "Pieczęcie" && currentClanState[klan].pieczecie === "Brak") currentClanState[klan].pieczecie = newVal;
-
-                if (stat === "Pieczęcie" && oldVal !== "START") {
-                    anyTransfer = true;
-                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
-                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
-                    
-                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
-                    
-                    let gStr = gained ? `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>` : "-";
-                    let lStr = lost ? `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>` : "-";
-                    
-                    let actualName = currentClanState[klan].nazwa === klan ? "Klan [" + klan + "]" : currentClanState[klan].nazwa;
-                    let nameLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
-
-                    transferLogHtml += `<tr><td>${w[0]}</td><td>${nameLink}</td><td>Wojna klanowa zakończona</td><td>${gStr}</td><td>${lStr}</td></tr>`;
-                }
             });
-            transferLogHtml += "</tbody></table>";
-            
-            if (!anyTransfer) transferLogHtml = "<p>Brak zarejestrowanych transferów pieczęci w historii.</p>";
-            document.getElementById('sealsTransferLogContainer').innerHTML = transferLogHtml;
 
-            // 1. RYSOWANIE 7 PIECZĘCI NA GÓRZE W JEDNYM RZĘDZIE
+            // 2. PRZYZNAWANIE PIECZĘCI DO TABLICY NA GÓRZE I ICH DAT 
             const ALL_SEALS = [
                 { id: "Obżarstwo", icon: "🍔" },
                 { id: "Zazdrość", icon: "👁️" },
                 { id: "Gniew", icon: "😡" },
                 { id: "Skąpstwo", icon: "💰" },
                 { id: "Pycha", icon: "👑" },
-                { id: "Żądza", icon: "💋" },
+                { id: "Pożądanie", icon: "💋" },
                 { id: "Lenistwo", icon: "🦥" }
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: "Nieznany (U demonów)", icon: s.icon });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: "Nieznany (U demonów)", icon: s.icon, klanId: null, date: "" });
 
+            // Ustalamy kto je dzierży na ten moment
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
                     let heldSeals = currentClanState[k].pieczecie.split(", ");
                     heldSeals.forEach(s => {
-                        let displayName = currentClanState[k].nazwa === k ? "Klan [" + k + "]" : currentClanState[k].nazwa;
-                        
-                        // Zabezpieczenie na wypadek używania przez grę innej nazwy np. Pożądanie zamiast Żądza
-                        if (!sealHolders[s]) {
-                            sealHolders[s] = { holder: displayName, icon: "🛡️" };
-                        } else {
-                            sealHolders[s].holder = displayName;
+                        let actualName = currentClanState[k].nazwa === k ? "Klan [" + k + "]" : currentClanState[k].nazwa;
+                        let kLink = CLANS_LINKS[k] ? `<a href="${CLANS_LINKS[k]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;">${actualName}</a>` : actualName;
+                        if (sealHolders[s]) {
+                            sealHolders[s].holder = kLink;
+                            sealHolders[s].klanId = k;
                         }
                     });
                 }
             }
 
+            // Przeszukujemy historię by znaleźć kiedy obecny właściciel ją zdobył
+            globalClansData.forEach(w => {
+                if (w[2] === "Pieczęcie") {
+                    let klan = w[1];
+                    let oldArr = (w[3] === "Brak" || w[3] === "START") ? [] : w[3].split(", ");
+                    let newArr = w[4] === "Brak" ? [] : w[4].split(", ");
+                    let gained = newArr.filter(x => !oldArr.includes(x));
+                    
+                    gained.forEach(s => {
+                        if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) {
+                            sealHolders[s].date = w[0];
+                        }
+                    });
+                }
+            });
+
             let sealsBoardHtml = "";
             for (let sealName in sealHolders) {
                 let data = sealHolders[sealName];
-                let isDemon = data.holder === "Nieznany (U demonów)";
+                let isDemon = !data.klanId;
                 let cssClass = isDemon ? "holder-demon" : "holder-clan";
+                let dateHtml = data.date ? `<div class="seal-date">${data.date}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
                                      <div class="seal-icon">${data.icon}</div>
                                      <div class="seal-name">${sealName}</div>
                                      <div class="seal-holder ${cssClass}">${data.holder}</div>
+                                     ${dateHtml}
                                    </div>`;
             }
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-            // 2. BUDOWA TABELI PODSUMOWUJĄCEJ KLANY
-            let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Złoto w skarbcu</th><th>Członkowie</th><th>Ostatnia operacja na skarbcu</th></tr></thead><tbody>";
-            for (let klan in currentClanState) {
-                let data = currentClanState[klan];
-                let actualName = data.nazwa === klan ? "Klan [" + klan + "]" : data.nazwa;
-                let kLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
-                
-                let majatekStr = parseInt(data.majatek).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
-
-                currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td class="wystajace-col">${majatekStr} <img src="https://s60-pl.bitefight.gameforge.com/img/symbols/res2.gif"></td><td>${data.czlonkowie}</td><td>${data.ostatniaAkcja}</td></tr>`;
-            }
-            currentHtml += "</tbody></table>";
-            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
-
-            // 3. WSZYSTKIE LOGI KLANOWE
-            let logHtml = "<table><thead><tr><th>Data i godzina</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
+            // 3. LOGI TRANSFERÓW (Tylko członkowie i pieczęcie, zero złota)
+            let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansData.forEach(w => {
-                if (w[2] === "Pieczęcie" || w[2] === "Nazwa" || w[2] === "Łup") return; 
-                if (w[3] === "START") return; // Ignorujemy log startowy na stronie
+                if (w[2] === "Nazwa" || w[2] === "Łup" || w[2] === "Majątek") return; 
+                if (w[3] === "START") return; 
                 
                 logHtml += "<tr>";
                 let klan = w[1];
                 let stat = w[2];
-                let diff = w[5];
+                let oldVal = w[3];
+                let newVal = w[4];
+                let diffHtml = w[5];
+                
                 let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
                 if (actualName === klan) actualName = "Klan [" + klan + "]";
 
+                let klasa = "";
+
+                // WYCIĄGANIE MATEMATYCZNE GRACZY W KLANIE (+1 / -2)
+                if (stat === "Członkowie") {
+                    let oldMatch = oldVal.match(/(\d+)/);
+                    let newMatch = newVal.match(/(\d+)/);
+                    if (oldMatch && newMatch) {
+                        let diffNum = parseInt(newMatch[1]) - parseInt(oldMatch[1]);
+                        if (diffNum > 0) {
+                            klasa = ' class="przyrost-col"';
+                            diffHtml = "+" + diffNum + " graczy";
+                        } else if (diffNum < 0) {
+                            klasa = ' class="strata-col"';
+                            diffHtml = diffNum + " graczy";
+                        }
+                    }
+                } 
+                else if (stat === "Pieczęcie") {
+                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
+                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
+                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    
+                    if (gained && lost) diffHtml = `<span style="color:#55ff55;">+${gained}</span> / <span style="color:#ff5555;">-${lost}</span>`;
+                    else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
+                    else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
+                }
+
+                // Generowanie wiersza
                 for(let j = 0; j <= 5; j++) {
                     let val = w[j];
-                    let klasa = "";
+                    let myKlasa = "";
                     
                     if (j === 1) {
                         val = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
                     }
-                    else if (j === 5 && diff !== "") {
-                        if (parseInt(diff) > 0) { klasa = ' class="przyrost-col"'; val = "+" + parseInt(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-                        else if (parseInt(diff) < 0) { klasa = ' class="strata-col"'; val = parseInt(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+                    else if (j === 5) {
+                        val = diffHtml;
+                        myKlasa = klasa;
                     }
-                    else if (j === 3 || j === 4) {
-                        if (stat === "Majątek") {
-                            let num = parseInt(val);
-                            if(!isNaN(num)) val = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                        }
-                    }
-
-                    logHtml += `<td${klasa}>${val}</td>`;
+                    logHtml += `<td${myKlasa}>${val}</td>`;
                 }
                 logHtml += "</tr>";
             });
             logHtml += "</tbody></table>";
             document.getElementById('clansLogContainer').innerHTML = logHtml;
+
+            // 4. AKTUALNY STAN KLANÓW (Tabela)
+            let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
+            for (let klan in currentClanState) {
+                let data = currentClanState[klan];
+                let actualName = data.nazwa === klan ? "Klan [" + klan + "]" : data.nazwa;
+                let kLink = CLANS_LINKS[klan] ? `<a href="${CLANS_LINKS[klan]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${actualName}</strong></a>` : `<strong>${actualName}</strong>`;
+                
+                let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
+
+                currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
+            }
+            currentHtml += "</tbody></table>";
+            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
         }
 
         loadTableData();
