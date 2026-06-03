@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BiteFight - Centrum Dowodzenia</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; }
+        body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
-        
         .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 8px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
-        
         button.action-btn { background: #1f7244; color: white; border: 2px solid #103c23; padding: 6px 15px; font-size: 14px; cursor: pointer; border-radius: 6px; font-weight: bold; margin-bottom: 15px; transition: 0.3s; }
         button.action-btn:hover { background: #165231; transform: scale(1.05); }
-        
         #status { color: #888; font-size: 12px; margin-bottom: 15px;}
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
         select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
-        /* KOMPAKTOWE TABELE */
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
         th { background-color: #600000; color: white; font-weight: bold; text-transform: uppercase; user-select: none; font-size: 11px; }
@@ -37,94 +37,199 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1600px; margin: 20px auto; }
         .summary-box { background: #231212; padding: 10px; border-radius: 8px; border: 1px solid #4a0d0d; margin: 0 auto 15px auto; width: 98%; max-width: 1600px; }
         
-        #sectionTracker, #sectionRanking { display: none; }
-        #sectionTracker.active, #sectionRanking.active { display: block; }
-        
+        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans { display: none; }
+        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active { display: block; }
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
-        .hidden-stat { color: #555; font-style: italic; }
+        
+        .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        
+        a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; position: relative; z-index: 10; pointer-events: auto; }
+        a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
+        .clan-text-plain { color: #ccc; }
+        
+        .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
+        
+        .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
+        .seal-badge { 
+            background: #110505; 
+            border: 1px solid #3a0a0a; 
+            border-radius: 2px; 
+            padding: 8px; 
+            width: 130px; 
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
+            display: flex; flex-direction: column; align-items: center; 
+        }
+
+        .seal-img {
+            width: 44px;
+            height: 44px;
+            border: 2px ridge #808080; 
+            border-radius: 2px;
+            box-shadow: 0 0 6px rgba(0,0,0,1);
+            margin-bottom: 8px;
+        }
+
+        .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
+        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
+        .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
+        
     </style>
 </head>
 <body>
     <h1>Statystyki BiteFight</h1>
-    
     <div class="tabs">
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
+        <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
+        <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt Google Sheets analizuje grę w tle. Tabela odświeża się automatycznie co 5 minut.</div>
+        <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
 
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Historia przyrostów:</span>
+                <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Podsumowanie przyrostów:</span>
                 <select id="summaryPeriodSelect">
-                    <option value="TODAY">Dzisiaj</option>
+                    <option value="TODAY" selected>Dzisiaj (Od północy)</option>
                     <option value="YESTERDAY">Wczoraj</option>
-                    <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
-                    <option value="THIS_WEEK">Bieżący tydzień (Pon - Ned)</option>
-                    <option value="LAST_WEEK">Poprzedni tydzień (Pon - Ned)</option>
-                    <option value="ALL_TIME">Od początku (Cała baza)</option>
-                    <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień...</option>
-                    <option value="SPECIFIC_WEEK">Archiwum: Konkretny tydzień...</option>
+                    <option value="DAY_BEFORE_YESTERDAY">Przedwczoraj</option>
+                    <option value="LAST_3_DAYS">Łącznie z 3 ostatnich dni</option>
                 </select>
-                <select id="specificDateSelect" style="display: none;"></select>
             </div>
             <div id="summaryContainer"></div>
         </div>
-
         <hr class="separator">
-        
-        <h2>Pełny log operacji (Z filtrami)</h2>
+        <h2>Pełny log operacji</h2>
         <div class="filter-container">
             <select id="filterDate">
-                <option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
-                <option value="ALL">Cała historia bazy</option>
-                <option value="CUSTOM_RANGE">Własny zakres dat...</option>
+                <option value="TODAY" selected>Tylko Dzisiaj</option>
+                <option value="YESTERDAY">Tylko Wczoraj</option>
+                <option value="DAY_BEFORE_YESTERDAY">Tylko Przedwczoraj</option>
+                <option value="LAST_3_DAYS">Wszystko (Ostatnie 3 dni)</option>
             </select>
-            <div id="customDateContainer" style="display: none; align-items: center; gap: 8px;">
-                <input type="date" id="customStartDate" title="Data początkowa">
-                <span style="font-weight: bold;">-</span>
-                <input type="date" id="customEndDate" title="Data końcowa">
-            </div>
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
         </div>
-
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
+    <div id="sectionHeatmap">
+        <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
+        <div class="filter-container">
+            <select id="heatmapPlayerSelect" onchange="renderChart()">
+                <option value="ALL">Wybierz gracza...</option>
+            </select>
+            <select id="heatmapDaySelect" onchange="renderChart()">
+                <option value="ALL" selected>Cały Tydzień (Suma Aktywności)</option>
+                <option value="WORKDAYS">Dni robocze (Poniedziałek - Piątek)</option>
+                <option value="WEEKEND">Weekend (Sobota - Niedziela)</option>
+                <option value="1">Poniedziałki</option>
+                <option value="2">Wtorki</option>
+                <option value="3">Środy</option>
+                <option value="4">Czwartki</option>
+                <option value="5">Piątki</option>
+                <option value="6">Soboty</option>
+                <option value="7">Niedziele</option>
+            </select>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="routineChart"></canvas>
+        </div>
+        <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
+    </div>
+
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
-        <h2>Aktualny Ranking TOP 100</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Tabela TOP 100 pokazuje łączny wynik konta. Możesz sortować tabelę klikając na nagłówki!</div>
-        <div id="rankingTableContainer"><p>Ładowanie rankingu...</p></div>
+        <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
+        <div class="filter-container">
+            <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Wybierz zakres przyrostów:</span>
+            <select id="rankingPeriodSelect">
+                <option value="LAST_24H">Ostatnie 24h (Ostatni dzień)</option>
+                <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
+                <option value="LAST_WEEK">Ostatni tydzień (7 dni)</option>
+                <option value="THIS_MONTH">Bieżący miesiąc (od 1-go dnia miesiąca)</option>
+                <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień (24h)...</option>
+            </select>
+            <select id="rankingSpecificDaySelect" style="display: none;"></select>
+        </div>
+        <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
+    </div>
+
+    <!-- ZAKŁADKA PIECZĘCI I WROGÓW -->
+    <div id="sectionClans">
+        <h2>Gdzie są Pieczęcie Podziemi?</h2>
+        <div id="sealsBoardContainer" class="seal-board"></div>
+        
+        <hr class="separator">
+        <h2>Historia Przekazywania Pieczęci i Zmian u wrogów</h2>
+        <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
+        
+        <hr class="separator">
+        <h2>Aktualny stan Klanów Wroga</h2>
+        <div class="summary-box">
+            <div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div>
+        </div>
     </div>
 
     <script>
+        // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
+        const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         
-        const BLACKLIST = ["Kark23"]; 
+        const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
+        const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
+        // =========================================================
+        
+        const PLAYERS = {
+            "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
+            "Gawron": "https://s60-pl.bitefight.gameforge.com/profile/player/2505390",
+            "lux": "https://s60-pl.bitefight.gameforge.com/profile/player/434236",
+            "XTurek": "https://s60-pl.bitefight.gameforge.com/profile/player/416953",
+            "Viktor": "https://s60-pl.bitefight.gameforge.com/profile/player/2509906",
+            "PEON": "https://s60-pl.bitefight.gameforge.com/profile/player/1532448",
+            "Sam-Wiesz": "https://s60-pl.bitefight.gameforge.com/profile/player/1055184",
+            "albin": "https://s60-pl.bitefight.gameforge.com/profile/player/1305276",
+            "misssiek555": "https://s60-pl.bitefight.gameforge.com/profile/player/815896",
+            "NecromanceR": "https://s60-pl.bitefight.gameforge.com/profile/player/2954971",
+            "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
+        };
+        
+        const BLACKLIST = ["Kark23", "Darksun"]; 
+        const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
+
         let globalData = [];
-        let uniqueDaysList = [];
-        let uniqueWeeksList = [];
-
-        let globalRankingData = [];
-        let currentSortCol = 0; 
-        let currentSortAsc = true;
-
-        let currentSummarySortCol = 1; 
-        let currentSummarySortAsc = false; 
+        let globalRankingData = []; 
+        let globalRutynaData = [];
+        let globalClansBaza = []; 
+        let globalClansLogi = []; 
+        
+        let computedRankingRows = []; 
+        let currentSortCol = 3; 
+        let currentSortAsc = false; 
+        let currentSummarySortCol = 7; 
+        let currentSummarySortAsc = true; 
+        let routineChartInstance = null;
 
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
+            document.getElementById('tabHeatmapBtn').classList.remove('active');
+            document.getElementById('tabClansBtn').classList.remove('active');
+            
             document.getElementById('sectionTracker').classList.remove('active');
             document.getElementById('sectionRanking').classList.remove('active');
+            document.getElementById('sectionHeatmap').classList.remove('active');
+            document.getElementById('sectionClans').classList.remove('active');
 
             if (tabId === 'tracker') {
                 document.getElementById('tabTrackerBtn').classList.add('active');
@@ -133,90 +238,58 @@
                 document.getElementById('tabRankingBtn').classList.add('active');
                 document.getElementById('sectionRanking').classList.add('active');
                 if (globalRankingData.length === 0) loadRankingData();
+                else calculateAndRenderRanking();
+            } else if (tabId === 'heatmap') {
+                document.getElementById('tabHeatmapBtn').classList.add('active');
+                document.getElementById('sectionHeatmap').classList.add('active');
+                renderChart();
+            } else if (tabId === 'clans') {
+                document.getElementById('tabClansBtn').classList.add('active');
+                document.getElementById('sectionClans').classList.add('active');
+                renderClans();
             }
         }
 
-        function handleFilterChange() {
-            const fD = document.getElementById('filterDate').value;
-            localStorage.setItem('bf_filterDate', fD);
-            localStorage.setItem('bf_filterPlayer', document.getElementById('filterPlayer').value);
-            localStorage.setItem('bf_filterStat', document.getElementById('filterStat').value);
-            
-            if (fD === 'CUSTOM_RANGE') {
-                document.getElementById('customDateContainer').style.display = 'flex';
-                localStorage.setItem('bf_customStart', document.getElementById('customStartDate').value);
-                localStorage.setItem('bf_customEnd', document.getElementById('customEndDate').value);
-            } else {
-                document.getElementById('customDateContainer').style.display = 'none';
-            }
-            renderTable();
-        }
-
+        function handleFilterChange() { renderTable(); }
         document.getElementById('filterDate').addEventListener('change', handleFilterChange);
         document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
         document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('customStartDate').addEventListener('change', handleFilterChange);
-        document.getElementById('customEndDate').addEventListener('change', handleFilterChange);
-
-        document.getElementById('summaryPeriodSelect').addEventListener('change', function() {
-            const specSelect = document.getElementById('specificDateSelect');
-            if (this.value === 'SPECIFIC_DAY') {
-                specSelect.style.display = 'inline-block';
-                populateSpecificOptions('DAY');
-            } else if (this.value === 'SPECIFIC_WEEK') {
-                specSelect.style.display = 'inline-block';
-                populateSpecificOptions('WEEK');
-            } else {
-                specSelect.style.display = 'none';
-            }
-            renderSummaryTable();
+        document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
+        document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect');
+            if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
+            else { specSelect.style.display = 'none'; }
+            calculateAndRenderRanking();
         });
-        document.getElementById('specificDateSelect').addEventListener('change', renderSummaryTable);
+        document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
             for (let i = 0; i < text.length; i++) {
                 let ch = text[i];
                 if (inQuotes) {
-                    if (ch === '"') {
-                        if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; }
-                        else { inQuotes = false; }
-                    } else { val += ch; }
+                    if (ch === '"') { if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; } else { inQuotes = false; } } else { val += ch; }
                 } else {
-                    if (ch === '"') { inQuotes = true; }
-                    else if (ch === ',') { ret.push(val); val = ""; }
-                    else { val += ch; }
+                    if (ch === '"') { inQuotes = true; } else if (ch === ',') { ret.push(val); val = ""; } else { val += ch; }
                 }
             }
-            ret.push(val);
-            return ret;
+            ret.push(val); return ret;
         }
 
         function parseLogDate(dateStr) {
             if(!dateStr) return new Date(0);
-            if (dateStr.startsWith("ARCHIWUM_DZIEŃ: ")) {
-                const dStr = dateStr.replace("ARCHIWUM_DZIEŃ: ", "").trim();
-                const dParts = dStr.split('.');
-                return new Date(dParts[2], dParts[1] - 1, dParts[0], 0, 0, 0);
-            }
             const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
             const parts = cleanStr.trim().split(/\s+/);
-            if(parts.length < 2) return new Date(0);
-            const dParts = parts[0].split('.');
+            if(parts.length < 2) { let d = new Date(cleanStr); return isNaN(d) ? new Date(0) : d; }
+            const dParts = parts[0].split(/[\.\-\/]/); 
             const tParts = parts[1].split(':');
-            return new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1], tParts[2]);
-        }
-
-        function getMonday(d) {
-            d = new Date(d);
-            let day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1);
-            let mon = new Date(d.setDate(diff));
-            mon.setHours(0,0,0,0);
-            return mon;
-        }
-
-        function formatD(d) {
-            return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear();
+            if (dParts.length === 3) {
+                let year = dParts[2].length === 4 ? dParts[2] : dParts[0];
+                let day = dParts[2].length === 4 ? dParts[0] : dParts[2];
+                let month = dParts[1];
+                return new Date(year, month - 1, day, tParts[0], tParts[1], tParts[2] || 0);
+            }
+            return new Date(0);
         }
 
         async function loadTableData() {
@@ -224,10 +297,62 @@
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
                 const nowInfo = new Date();
                 document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
-
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) return;
+                
+                if (urlRutynaSheet.includes("docs.google.com")) {
+                    try {
+                        const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
+                        const rText = await rRes.text();
+                        const rWiersze = rText.trim().split('\n');
+                        globalRutynaData = [];
+                        for (let i = 1; i < rWiersze.length; i++) {
+                            let line = rWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom);
+                        }
+                    } catch(ex) {}
+                }
+
+                if (urlClansBazaSheet.includes("docs.google.com")) {
+                    try {
+                        const cbRes = await fetch(urlClansBazaSheet + '&t=' + new Date().getTime());
+                        const cbText = await cbRes.text();
+                        const cbWiersze = cbText.trim().split('\n');
+                        globalClansBaza = [];
+                        for (let i = 1; i < cbWiersze.length; i++) {
+                            let line = cbWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                                globalClansBaza.push(kom);
+                            }
+                        }
+                    } catch(ex) {}
+                }
+
+                if (urlClansLogiSheet.includes("docs.google.com")) {
+                    try {
+                        const clRes = await fetch(urlClansLogiSheet + '&t=' + new Date().getTime());
+                        const clText = await clRes.text();
+                        const clWiersze = clText.trim().split('\n');
+                        globalClansLogi = [];
+                        for (let i = 1; i < clWiersze.length; i++) {
+                            let line = clWiersze[i].trim();
+                            if (!line) continue; 
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
+                                if (!CLAN_BLACKLIST.includes(kom[1])) {
+                                    globalClansLogi.push(kom);
+                                }
+                            }
+                        }
+                        globalClansLogi.reverse(); 
+                    } catch(ex) {}
+                }
+
+                if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -235,166 +360,196 @@
                     if (!line) continue;
                     let komorki = parseCSVLine(line);
                     if (komorki.length < 6) continue;
-                    
-                    let rawDate = komorki[0].trim();
-                    if (rawDate.includes(',')) rawDate = rawDate.replace(',', '');
+                    let rawDate = komorki[0].trim().replace(',', '');
                     komorki[0] = rawDate;
-
                     rawData.push(komorki.map(k => k.trim()));
                 }
 
                 let playerAccumulator = {}; 
-                let playerLevel = {
-                    "Brahmaparuss": 5299, "Gawron": 4780, "lux": 4333, "XTurek": 8004, 
-                    "Viktor": 5079, "PEON": 5368, "Sam-Wiesz": 4123, "albin": 4492, 
-                    "Darksun": 3564, "misssiek555": 3606, "NecromanceR": 4119, "espablo": 4253
-                };
-
+                let playerLevel = {};
                 globalData = [];
 
                 rawData.forEach(row => {
                     let gracz = row[1];
                     if (BLACKLIST.includes(gracz)) return;
-
                     let stat = row[2];
                     let przyrost = parseInt(row[5]) || 0;
-
                     if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
-
                     const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-                    if (atrybuty.includes(stat)) playerAccumulator[gracz] = 0;
-                    else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") playerAccumulator[gracz] += przyrost;
-                    else if (stat === "Stracone złoto") {
-                        playerAccumulator[gracz] -= przyrost;
-                        if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0;
-                    }
-
+                    if (atrybuty.includes(stat)) { playerAccumulator[gracz] = 0; } 
+                    else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") { playerAccumulator[gracz] += przyrost; } 
+                    else if (stat === "Stracone złoto") { playerAccumulator[gracz] -= przyrost; if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0; }
                     let lvl = playerLevel[gracz] || 0;
-                    let exposed = 0;
-                    if (lvl > 0) {
-                        let safeGold = lvl * 12000;
-                        exposed = playerAccumulator[gracz] - safeGold;
-                        if (exposed < 0) exposed = 0;
-                    }
-
+                    let exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
                     globalData.push([...row, playerAccumulator[gracz], exposed]);
                 });
 
                 globalData.reverse(); 
-                buildHistoryDropdowns(); 
-                renderSummaryTable(); 
-                updateFilters();
+                renderSummaryTable();
+                updateFilters(); 
                 renderTable(); 
             } catch (e) { console.error(e); }
         }
 
-        function buildHistoryDropdowns() {
-            const daysSet = new Set();
-            const weeksSet = new Set();
-            for (let i = globalData.length - 1; i >= 0; i--) {
-                const row = globalData[i];
-                if (!row[0]) continue;
-                let dayStr = row[0].startsWith("ARCHIWUM_DZIEŃ: ") ? row[0].replace("ARCHIWUM_DZIEŃ: ", "").trim() : row[0].split(/\s+/)[0].trim();
-                if (dayStr && dayStr.split('.').length === 3) {
-                    daysSet.add(dayStr);
-                    const p = dayStr.split('.');
-                    const dObj = new Date(p[2], p[1] - 1, p[0]);
-                    const mon = getMonday(dObj);
-                    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-                    weeksSet.add(`${formatD(mon)} - ${formatD(sun)}`);
-                }
-            }
-            uniqueDaysList = Array.from(daysSet).reverse();
-            uniqueWeeksList = Array.from(weeksSet).reverse();
-        }
-
-        function populateSpecificOptions(type) {
-            const specSelect = document.getElementById('specificDateSelect');
-            const currentVal = specSelect.value;
-            specSelect.innerHTML = "";
-            const list = (type === 'DAY') ? uniqueDaysList : uniqueWeeksList;
-            list.forEach(item => {
-                let opt = document.createElement('option');
-                opt.value = item; opt.textContent = item;
-                if (item === currentVal) opt.selected = true;
-                specSelect.appendChild(opt);
-            });
-        }
-
-        function getRangeForPeriod(period, specificValue) {
+        function getRangeForPeriod(period) {
             const now = new Date();
             let start = new Date(), end = new Date();
-            if (period === 'TODAY') {
-                start.setHours(0,0,0,0); end.setHours(23,59,59,999);
-                return { start, end, label: start.toLocaleDateString('pl-PL') };
-            }
-            if (period === 'YESTERDAY') {
-                start.setDate(start.getDate() - 1); start.setHours(0,0,0,0);
-                end.setDate(end.getDate() - 1); end.setHours(23,59,59,999);
-                return { start, end, label: start.toLocaleDateString('pl-PL') };
-            }
-            if (period === 'LAST_3_DAYS') {
-                start.setDate(start.getDate() - 3); start.setHours(0,0,0,0);
-                end.setHours(23,59,59,999);
-                return { start, end, label: "Ostatnie 3 dni" };
-            }
-            if (period === 'THIS_WEEK') {
-                const mon = getMonday(now);
-                const sun = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
-                return { start: mon, end: sun, label: `Bieżący tydzień (${formatD(mon)} - ${formatD(sun)})` };
-            }
-            if (period === 'LAST_WEEK') {
-                const prevMon = getMonday(now); prevMon.setDate(prevMon.getDate() - 7);
-                const prevSun = new Date(prevMon); prevSun.setDate(prevMon.getDate() + 6); prevSun.setHours(23,59,59,999);
-                return { start: prevMon, end: prevSun, label: `Poprzedni tydzień (${formatD(prevMon)} - ${formatD(prevSun)})` };
-            }
-            if (period === 'ALL_TIME') {
-                start = new Date(0);
-                end.setHours(23,59,59,999);
-                return { start, end, label: "Od początku (Cała baza)" };
-            }
-            if (period === 'SPECIFIC_DAY' && specificValue) {
-                const p = specificValue.split('.');
-                const d = new Date(p[2], p[1]-1, p[0]);
-                const s = new Date(d); s.setHours(0,0,0,0);
-                const e = new Date(d); e.setHours(23,59,59,999);
-                return { start: s, end: e, label: specificValue };
-            }
-            if (period === 'SPECIFIC_WEEK' && specificValue) {
-                const p = specificValue.split(' - ');
-                const pStart = p[0].split('.'), pEnd = p[1].split('.');
-                const s = new Date(pStart[2], pStart[1]-1, pStart[0]); s.setHours(0,0,0,0);
-                const e = new Date(pEnd[2], pEnd[1]-1, pEnd[0]); e.setHours(23,59,59,999);
-                return { start: s, end: e, label: `Tydzień ${specificValue}` };
-            }
+            if (period === 'TODAY') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'YESTERDAY') { start.setDate(start.getDate() - 1); start.setHours(0,0,0,0); end.setDate(end.getDate() - 1); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'DAY_BEFORE_YESTERDAY') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setDate(end.getDate() - 2); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'LAST_3_DAYS' || period === 'ALL') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: "Ostatnie 3 dni" }; }
             return null;
         }
 
         function sortSummary(colIndex) {
-            if (currentSummarySortCol === colIndex) {
-                currentSummarySortAsc = !currentSummarySortAsc;
-            } else {
-                currentSummarySortCol = colIndex;
-                currentSummarySortAsc = (colIndex === 0) ? true : false;
-            }
+            if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
+            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 7) ? true : false; }
             renderSummaryTable();
+        }
+
+        function renderChart() {
+            const player = document.getElementById('heatmapPlayerSelect').value;
+            const dayFilter = document.getElementById('heatmapDaySelect').value;
+
+            if (player === 'ALL') {
+                if(routineChartInstance) routineChartInstance.destroy();
+                return;
+            }
+
+            let labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 2) {
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                }
+            }
+
+            let chartData = new Array(720).fill(0);
+
+            globalRutynaData.forEach(r => {
+                if (r[0] === player) {
+                    let parts = r[1].split('_');
+                    if (parts.length === 3) {
+                        let day = parts[0];
+                        let hour = parseInt(parts[1]);
+                        let minute = parseInt(parts[2]);
+                        let index = (hour * 30) + (minute / 2);
+                        
+                        let match = false;
+                        if (dayFilter === 'ALL') match = true;
+                        else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
+                        else if (dayFilter === 'WEEKEND' && ['6','7'].includes(day)) match = true;
+                        else if (dayFilter === day) match = true;
+
+                        if (match) {
+                            chartData[index] += parseInt(r[2]);
+                        }
+                    }
+                }
+            });
+
+            if (routineChartInstance) routineChartInstance.destroy();
+
+            const ctx = document.getElementById('routineChart').getContext('2d');
+            routineChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aktywność (kliknięcia)',
+                        data: chartData,
+                        backgroundColor: 'rgba(255, 51, 51, 0.7)',
+                        borderColor: 'rgba(192, 12, 12, 1)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        hoverBackgroundColor: 'rgba(255, 204, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#aaa',
+                                maxTicksLimit: 24, 
+                                callback: function(value) {
+                                    let label = this.getLabelForValue(value);
+                                    return label.endsWith(':00') ? label : '';
+                                }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ffcc00', precision: 0 },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#ffcc00',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) { return `Czas: ${context[0].label}`; },
+                                label: function(context) { return `Potwierdzone akcje: ${context.raw}`; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatLastSeen(dateObj) {
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
+            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
+            let diffMins = Math.floor(diffMs / 60000);
+            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
+            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
+            else {
+                let diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
+                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
+            }
         }
 
         function renderSummaryTable() {
             const period = document.getElementById('summaryPeriodSelect').value;
-            const specVal = document.getElementById('specificDateSelect').value;
-            const range = getRangeForPeriod(period, specVal);
-            if (!range) return;
+            const range = getRangeForPeriod(period); if (!range) return;
+            let summary = {}; let absoluteLastSeen = {}; let fightTimestamps = {};
 
-            let summary = {};
             globalData.forEach(w => {
-                if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 };
+                if (!w[0] || !w[1]) return;
+                let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
+                const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
+                
+                if (aktywneStatystyki.includes(stat)) {
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = logDate; }
+                } else if (walkiStatystyki.includes(stat)) {
+                    if (!fightTimestamps[gracz]) fightTimestamps[gracz] = new Set();
+                    fightTimestamps[gracz].add(logDate.getTime());
+                }
             });
 
+            for (let gracz in fightTimestamps) {
+                let times = Array.from(fightTimestamps[gracz]).sort((a, b) => b - a);
+                for (let i = 0; i < times.length - 1; i++) {
+                    let t1 = times[i]; let t2 = times[i+1];
+                    if ((t1 - t2) <= 29 * 60 * 1000) {
+                        let inferredDate = new Date(t1);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = inferredDate; }
+                        break; 
+                    }
+                }
+            }
+
+            globalData.forEach(w => { if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 }; });
             globalData.forEach(w => {
-                if (!w[0]) return;
-                const logDate = parseLogDate(w[0]);
+                if (!w[0]) return; const logDate = parseLogDate(w[0]);
                 if (logDate >= range.start && logDate <= range.end) {
                     let gracz = w[1], stat = w[2], przyrost = parseInt(w[5]) || 0;
                     if (stat === 'Zrabowane dobra') summary[gracz].dobra += przyrost;
@@ -409,15 +564,8 @@
 
             let summaryArray = [];
             for (let gracz in summary) {
-                summaryArray.push({
-                    gracz: gracz,
-                    dobra: summary[gracz].dobra,
-                    zlotoPvP: summary[gracz].zlotoPvP,
-                    walki: summary[gracz].walki,
-                    wygrane: summary[gracz].wygrane,
-                    przegrane: summary[gracz].przegrane,
-                    poziomy: summary[gracz].poziomy
-                });
+                let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
+                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, lastSeen: lSeen });
             }
 
             summaryArray.sort((a, b) => {
@@ -429,258 +577,340 @@
                 else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
                 else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
                 else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
-
-                if (currentSummarySortCol === 0) {
-                    return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                } else {
-                    return currentSummarySortAsc ? valA - valB : valB - valA;
-                }
+                else if (currentSummarySortCol === 7) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
+                else { return currentSummarySortAsc ? valB - valA : valA - valB; }
             });
 
-            let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie Raportu: ${range.label}</div>`;
-            html += `<table><thead><tr>`;
-            
-            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy"];
-            headers.forEach((h, i) => {
-                let arrow = "⇕";
-                if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓";
-                html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
-            });
-            
+            let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
+            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Ostatnia Aktywność"];
+            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
-
             summaryArray.forEach(data => {
+                let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
+
                 let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                 let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
                 let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
-                
                 let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
                 let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
-
-                html += `<tr>
-                            <td><strong>${data.gracz}</strong></td>
-                            <td class="suma-col">${dobraStr}</td>
-                            <td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td>
-                            <td>${data.walki}</td>
-                            <td>${wygStr}</td>
-                            <td>${przStr}</td>
-                            <td>${poziomStr}</td>
-                         </tr>`;
+                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
-            html += "</tbody></table>";
-            document.getElementById('summaryContainer').innerHTML = html;
+            document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
         }
 
         function updateFilters() {
-            const dni = new Set(), gracze = new Set(), statystyki = new Set();
-            globalData.forEach(w => {
-                if(w[0] && !w[0].startsWith("ARCHIWUM_DZIEŃ: ")) {
-                    dni.add(w[0].split(/\s+/)[0].trim());
-                    if(w[1]) gracze.add(w[1]);
-                    if(w[2]) statystyki.add(w[2]);
-                }
-            });
-            
-            const populateDateFilter = (id, set, storageKey) => {
-                const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || 'LAST_3_DAYS';
-                s.innerHTML = `<option value="LAST_3_DAYS">Ostatnie 3 dni (Domyślnie)</option>
-                               <option value="ALL">Cała historia bazy</option>
-                               <option value="CUSTOM_RANGE">Własny zakres dat...</option>`;
-                Array.from(set).sort().forEach(o => {
-                    let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === targetVal) el.selected = true; s.appendChild(el);
-                });
-                if (!['LAST_3_DAYS', 'ALL', 'CUSTOM_RANGE', ...Array.from(set)].includes(targetVal)) targetVal = 'LAST_3_DAYS';
-                s.value = targetVal;
-                localStorage.setItem(storageKey, targetVal);
-
-                if (targetVal === 'CUSTOM_RANGE') {
-                    document.getElementById('customDateContainer').style.display = 'flex';
-                    document.getElementById('customStartDate').value = localStorage.getItem('bf_customStart') || '';
-                    document.getElementById('customEndDate').value = localStorage.getItem('bf_customEnd') || '';
-                } else {
-                    document.getElementById('customDateContainer').style.display = 'none';
-                }
-            };
+            const gracze = new Set(), statystyki = new Set();
+            globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
             
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
-                Array.from(set).sort().forEach(o => {
-                    let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === targetVal) el.selected = true; s.appendChild(el);
-                });
+                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
 
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id);
-                let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>
                                <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
-                Array.from(set).sort().forEach(o => {
-                    let el = document.createElement('option'); el.value = o; el.textContent = o;
-                    if(o === targetVal) el.selected = true; s.appendChild(el);
-                });
+                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             }
             
-            populateDateFilter('filterDate', dni, 'bf_filterDate');
             populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
+            populateGeneric('heatmapPlayerSelect', gracze, 'Wybierz gracza...', 'bf_heatmapPlayer');
             populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
         }
 
         function renderTable() {
-            const fD = document.getElementById('filterDate').value;
-            const fP = document.getElementById('filterPlayer').value;
-            const fS = document.getElementById('filterStat').value;
-            
-            const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - 3);
-            cutoffDate.setHours(0, 0, 0, 0);
-
-            let customStartStr = document.getElementById('customStartDate').value;
-            let customEndStr = document.getElementById('customEndDate').value;
-            let customStart = customStartStr ? new Date(customStartStr) : new Date(0); customStart.setHours(0,0,0,0);
-            let customEnd = customEndStr ? new Date(customEndStr) : new Date(8640000000000000); customEnd.setHours(23,59,59,999);
-            
+            const fD = document.getElementById('filterDate').value; const fP = document.getElementById('filterPlayer').value; const fS = document.getElementById('filterStat').value;
+            let range = getRangeForPeriod(fD);
             let filtered = globalData.filter(w => {
-                if (w[0] && w[0].startsWith("ARCHIWUM_DZIEŃ: ")) return false; 
-                let logDate = parseLogDate(w[0]);
-                if (fD === 'LAST_3_DAYS' && logDate < cutoffDate) return false;
-                if (fD === 'CUSTOM_RANGE' && (logDate < customStart || logDate > customEnd)) return false;
-
-                let dMatch = (fD === 'ALL' || fD === 'LAST_3_DAYS' || fD === 'CUSTOM_RANGE' || w[0].startsWith(fD));
+                let logDate = parseLogDate(w[0]); let dMatch = (range && logDate >= range.start && logDate <= range.end);
                 let pMatch = (fP === 'ALL' || w[1] === fP);
-                let sMatch = false;
-                if (fS === 'ALL') sMatch = true;
-                else if (fS === 'SKILLS') sMatch = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(w[2]);
-                else sMatch = (w[2] === fS);
-                
+                let sMatch = (fS === 'ALL' || (fS === 'SKILLS' && ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(w[2])) || w[2] === fS);
                 return dMatch && pMatch && sMatch;
             });
 
+            if(filtered.length === 0) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>"; return; }
+
             let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
-            
             filtered.forEach(w => {
                 html += "<tr>";
                 let stat = w[2], isPoziom = (stat === 'Poziom'), isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
+                
                 for(let j = 0; j <= 5; j++) {
-                    let klasa = "";
-                    if (j === 5 && (isLoot || stat === 'Walki' || stat === 'Zwycięstwa' || stat === 'Porażki')) klasa = ' class="przyrost-col"';
-                    if (j === 5 && (stat === 'Stracone złoto' || stat === 'Porażki')) klasa = ' class="strata-col"';
-                    if (j === 5 && isPoziom) klasa = ' class="level-col"'; 
-                    let val = w[j];
-                    if (j === 5 && isLoot && val !== "") val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    let klasa = (j === 5 && (isLoot || stat === 'Walki' || stat === 'Zwycięstwa' || stat === 'Porażki')) ? ' class="przyrost-col"' : (j === 5 && (stat === 'Stracone złoto' || stat === 'Porażki') ? ' class="strata-col"' : (j === 5 && isPoziom ? ' class="level-col"' : ''));
+                    let val = w[j]; 
+                    
+                    if (j === 1) {
+                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
+                    } else if (j === 5 && isLoot && val !== "") {
+                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
-                let pvpResult = "", przyrostZlota = w[5] ? w[5].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
-                if (stat === 'Zrabowane złoto') pvpResult = `<span class="przyrost-col">+${przyrostZlota}</span>`;
-                else if (stat === 'Stracone złoto') pvpResult = `<span class="strata-col">-${przyrostZlota}</span>`;
-                html += `<td><strong>${pvpResult}</strong></td>`;
-
-                let sakiewkaVal = (isLoot && w[6] !== undefined) ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
-                html += `<td class="suma-col">${sakiewkaVal}</td>`;
+                let pvpResult = (stat === 'Zrabowane złoto') ? `<span class="przyrost-col">+${w[5]}</span>` : (stat === 'Stracone złoto' ? `<span class="strata-col">-${w[5]}</span>` : '0');
                 
-                let wystajaceVal = (isLoot && w[7] !== undefined) ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
-                html += `<td class="wystajace-col">${wystajaceVal}</td></tr>`;
+                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let sakiewkaHTML = sakiewkaVal ? `<span class="suma-col">${sakiewkaVal}</span>` : "";
+
+                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let wystajaceHTML = wystajaceVal ? `<span class="wystajace-col">${wystajaceVal}</span>` : "";
+
+                html += `<td><strong>${pvpResult}</strong></td><td>${sakiewkaHTML}</td><td>${wystajaceHTML}</td></tr>`;
             });
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
 
         async function loadRankingData() {
             try {
-                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime());
-                const text = await response.text();
-                const wiersze = text.trim().split('\n');
-                
-                if (wiersze.length <= 1) {
-                    document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w arkuszu Rankingu. Skrypt Google uruchomi się w nocy.</p>";
-                    return;
-                }
-
+                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu.</p>"; return; }
                 globalRankingData = [];
-                for (let i = 1; i < wiersze.length; i++) {
-                    let komorki = parseCSVLine(wiersze[i].trim());
-                    if (komorki.length >= 10) {
-                        globalRankingData.push(komorki);
-                    }
+                for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
+                calculateAndRenderRanking();
+            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
+        }
+
+        function getUniqueRankingDates() {
+            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
+        }
+
+        function populateRankingSpecificDays() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect'); const currentVal = specSelect.value; specSelect.innerHTML = "";
+            let validDays = getUniqueRankingDates().slice(1).reverse(); 
+            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
+            validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
+        }
+
+        function calculateAndRenderRanking() {
+            if (globalRankingData.length === 0) return;
+            const period = document.getElementById('rankingPeriodSelect').value; const specDay = document.getElementById('rankingSpecificDaySelect').value;
+            let uniqueDates = getUniqueRankingDates();
+            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
+            
+            let endDateStr = uniqueDates[uniqueDates.length - 1]; let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
+            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
+            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
+            else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
+            else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
+            
+            if (startDateStr === endDateStr) startDateStr = null; let isDelta = (startDateStr !== null);
+            let endRecords = globalRankingData.filter(r => r[0] === endDateStr); let startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
+            let startMap = {}; startRecords.forEach(r => { startMap[r[3]] = r; }); 
+
+            computedRankingRows = [];
+            function cleanNum(val) { if (!val || val === "?" || val === "Ukryte") return 0; return parseInt(String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '')) || 0; }
+            
+            endRecords.forEach(endRow => {
+                let rasa = endRow[2]; let nick = endRow[3]; let startRow = startMap[nick];
+                let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
+                if (startRow && isDelta) {
+                    dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0); dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]); dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]);
+                    dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]); dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]); dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]); dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]);
+                } else if (isDelta) { dPoziom = 0; dLup = 0; dWartosc = 0; dWygrane = 0; dPrzegrane = 0; dZdobyte = 0; dStracone = 0; }
+                else {
+                    dPoziom = parseInt(endRow[4]) || 0; dLup = cleanNum(endRow[5]); dWartosc = cleanNum(endRow[6]); dWygrane = cleanNum(endRow[7]); dPrzegrane = cleanNum(endRow[8]); dZdobyte = cleanNum(endRow[9]); dStracone = cleanNum(endRow[10]);
                 }
-                renderRankingTable(currentSortCol, currentSortAsc);
-            } catch (e) {
-                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania rankingu. Skrypt z Google nie pobrał jeszcze pierwszych statystyk.</p>";
-            }
+                computedRankingRows.push({ rasa, nick, poziom: dPoziom, lup: dLup, wartosc: dWartosc, wygrane: dWygrane, przegrane: dPrzegrane, zdobyte: dZdobyte, stracone: dStracone });
+            });
+            sortAndRenderRankingTable(isDelta);
         }
 
         function sortRanking(colIndex) {
-            if (currentSortCol === colIndex) {
-                currentSortAsc = !currentSortAsc;
-            } else {
-                currentSortCol = colIndex;
-                currentSortAsc = (colIndex === 0 || colIndex === 1 || colIndex === 2) ? true : false;
+            let dataKeyIndex = colIndex - 1; 
+            if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; 
+            else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; }
+            let uniqueDates = getUniqueRankingDates(); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
+            sortAndRenderRankingTable(isDelta);
+        }
+
+        function sortAndRenderRankingTable(isDelta) {
+            if (computedRankingRows.length === 0) return;
+            computedRankingRows.sort((a, b) => {
+                let valA, valB; if (currentSortCol === -1) return 0; 
+                if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; } else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; } else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
+                if (currentSortCol === 0 || currentSortCol === 1) return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); 
+                else return currentSortAsc ? valA - valB : valB - valA; 
+            });
+            let html = "<table><thead><tr>";
+            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+            headers.forEach((h, i) => { let arrow = ""; if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓"; let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            html += "</tr></thead><tbody>";
+            function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
+            computedRankingRows.forEach((row, idx) => {
+                let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
+                let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
+                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
+            });
+            html += "</tbody></table>";
+            document.getElementById('rankingTableContainer').innerHTML = html;
+        }
+
+        // ==========================================
+        //  CZYSTY TEKST KLANU JAKO DYNAMICZNY LINK
+        // ==========================================
+        function formatClanLink(nazwa, url) {
+            if (!url || url === "") return `<span class="clan-text-plain">${nazwa}</span>`;
+            return `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`;
+        }
+
+        // ==========================================
+        //  RENDEROWANIE KLANÓW I PIECZĘCI Z BAZY
+        // ==========================================
+        function renderClans() {
+            if (globalClansBaza.length === 0) {
+                document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów. Upewnij się, że opublikowałeś zakładkę Klany_Baza w formacie CSV i dodałeś link w kodzie.</p>";
+                return;
             }
 
-            globalRankingData.sort((a, b) => {
-                let valA = a[colIndex] || "";
-                let valB = b[colIndex] || "";
+            let currentClanState = {};
+            
+            globalClansBaza.forEach(w => {
+                let klan = w[0];
+                let nazwa = w[1] || klan;
+                let pieczecie = w[2] || "Brak";
+                let czlonkowie = w[3] || "-";
+                let url = w[4] || ""; // Dynamiczny URL wyciągnięty z excela
+                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie, url: url };
+            });
 
-                if (valA === "?") valA = "-1";
-                if (valB === "?") valB = "-1";
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH
+            const ALL_SEALS = [
+                { id: "Skąpstwo", img: "skapstwo.png" },
+                { id: "Zazdrość", img: "zazdrosc.png" },
+                { id: "Obżarstwo", img: "obzarstwo.png" },
+                { id: "Ociężałość", img: "ociezalosc.png" },
+                { id: "Pożądanie", img: "pozadanie.png" },
+                { id: "Gniew", img: "gniew.png" },
+                { id: "Pycha", img: "pycha.png" }
+            ];
 
-                let cleanA = valA.replace(/\./g, '').replace(/[^\d-]/g, '');
-                let cleanB = valB.replace(/\./g, '').replace(/[^\d-]/g, '');
+            let sealHolders = {};
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
 
-                let numA = parseInt(cleanA);
-                let numB = parseInt(cleanB);
+            for (let k in currentClanState) {
+                if (currentClanState[k].pieczecie !== "Brak") {
+                    let heldSeals = currentClanState[k].pieczecie.split(", ");
+                    heldSeals.forEach(s => {
+                        if (sealHolders[s]) {
+                            sealHolders[s].holder = formatClanLink(currentClanState[k].nazwa, currentClanState[k].url);
+                            sealHolders[s].klanId = k;
+                        }
+                    });
+                }
+            }
 
-                if (!isNaN(numA) && !isNaN(numB) && colIndex !== 1 && colIndex !== 2) {
-                    return currentSortAsc ? numA - numB : numB - numA;
-                } else {
-                    return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            globalClansLogi.forEach(w => {
+                if (String(w[2]) === "Pieczęcie") {
+                    let klan = w[1];
+                    let oldStr = String(w[3]);
+                    let newStr = String(w[4]);
+                    
+                    let oldArr = (oldStr === "Brak" || oldStr === "START") ? [] : oldStr.split(", ");
+                    let newArr = (newStr === "Brak" || newStr === "START") ? [] : newStr.split(", ");
+                    let gained = newArr.filter(x => !oldArr.includes(x));
+                    
+                    gained.forEach(s => {
+                        if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) {
+                            sealHolders[s].date = w[0];
+                        }
+                    });
                 }
             });
 
-            renderRankingTable(currentSortCol, currentSortAsc);
-        }
-
-        function renderRankingTable(sortCol, asc) {
-            let html = "<table><thead><tr>";
-            let headers = ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"];
-            
-            headers.forEach((h, i) => {
-                let arrow = "⇕";
-                if (sortCol === i) arrow = asc ? "↑" : "↓";
-                html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`;
+            let sealsBoardHtml = "";
+            ALL_SEALS.forEach(s => {
+                let data = sealHolders[s.id];
+                let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
+                
+                sealsBoardHtml += `<div class="seal-badge">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
+                                     <div class="seal-name">${s.id}</div>
+                                     <div class="seal-holder">${data.holder}</div>
+                                     ${dateHtml}
+                                   </div>`;
             });
-            html += "</tr></thead><tbody>";
-            
-            globalRankingData.forEach(row => {
-                html += "<tr>";
-                html += `<td class="rank-num">${row[0]}</td>`;
-                
-                let rasaClass = row[1] === "Wampir" ? "rasa-wampir" : (row[1] === "Wilkołak" ? "rasa-wilkolak" : "");
-                html += `<td class="${rasaClass}">${row[1]}</td>`;
-                
-                html += `<td><strong>${row[2]}</strong></td>`;
-                html += `<td class="level-col">${row[3]}</td>`;
-                
-                let safeVal = (v) => v === "?" ? `<span class="hidden-stat">Ukryte</span>` : v;
+            document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-                html += `<td class="suma-col">${row[4]}</td>`; 
-                html += `<td>${safeVal(row[5])}</td>`; 
-                html += `<td class="przyrost-col">${safeVal(row[6])}</td>`;
-                html += `<td class="strata-col">${safeVal(row[7])}</td>`;
-                html += `<td class="przyrost-col">${safeVal(row[8])}</td>`; 
-                html += `<td class="strata-col">${safeVal(row[9])}</td>`;
-                html += "</tr>";
+            // HISTORIA ZMIAN
+            let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
+            globalClansLogi.forEach(w => {
+                let stat = String(w[2]);
+                if (stat === "Nazwa" || stat === "Łup" || stat === "Majątek") return; 
+                if (String(w[3]) === "START") return; 
+                
+                logHtml += "<tr>";
+                let klan = w[1];
+                let oldVal = String(w[3]);
+                let newVal = String(w[4]);
+                let diffHtml = w[5];
+                
+                let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                let actualUrl = currentClanState[klan] ? currentClanState[klan].url : "";
+                let klasa = "";
+
+                if (stat === "Członkowie") {
+                    let oldMatch = oldVal.match(/(\d+)/);
+                    let newMatch = newVal.match(/(\d+)/);
+                    if (oldMatch && newMatch) {
+                        let diffNum = parseInt(newMatch[1]) - parseInt(oldMatch[1]);
+                        if (diffNum > 0) {
+                            klasa = ' class="przyrost-col"';
+                            diffHtml = "+" + diffNum + " graczy";
+                        } else if (diffNum < 0) {
+                            klasa = ' class="strata-col"';
+                            diffHtml = diffNum + " graczy";
+                        }
+                    }
+                } 
+                else if (stat === "Pieczęcie") {
+                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
+                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
+                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", "); // POPRAWKA: szukamy tego, czego już nie ma w nowej tablicy!
+                    
+                    if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
+                    else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
+                    else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
+                }
+
+                for(let j = 0; j <= 5; j++) {
+                    let val = w[j];
+                    let myKlasa = "";
+                    
+                    if (j === 1) {
+                        val = formatClanLink(actualName, actualUrl);
+                    }
+                    else if (j === 5) {
+                        val = diffHtml;
+                        myKlasa = klasa;
+                    }
+                    logHtml += `<td${myKlasa}>${val}</td>`;
+                }
+                logHtml += "</tr>";
             });
-            
-            html += "</tbody></table>";
-            document.getElementById('rankingTableContainer').innerHTML = html;
+            logHtml += "</tbody></table>";
+            document.getElementById('clansLogContainer').innerHTML = logHtml;
+
+            // AKTUALNY STAN KLANÓW WROGA
+            let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
+            for (let klan in currentClanState) {
+                let data = currentClanState[klan];
+                if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
+                    let kLink = formatClanLink(data.nazwa, data.url);
+                    let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
+                    currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
+                }
+            }
+            currentHtml += "</tbody></table>";
+            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
         }
 
         loadTableData();
