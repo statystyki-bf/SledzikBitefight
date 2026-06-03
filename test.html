@@ -365,7 +365,7 @@
                         globalClansLogi = [];
                         for (let i = 1; i < clWiersze.length; i++) {
                             let line = clWiersze[i].trim();
-                            if (!line) continue; 
+                            if (!line) continue;
                             let kom = parseCSVLine(line);
                             if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
                                 if (!CLAN_BLACKLIST.includes(kom[1])) {
@@ -805,7 +805,7 @@
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
-            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI W TWOJEJ KOLEJNOŚCI
             const ALL_SEALS = [
                 { id: "Skąpstwo", img: "skapstwo.png" },
                 { id: "Zazdrość", img: "zazdrosc.png" },
@@ -898,7 +898,8 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
+                    // POPRAWKA BŁĘDU - filtrowanie straconych pieczęci
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+${gained}</span> / <span style="color:#ff5555;">-${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
