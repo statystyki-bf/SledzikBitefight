@@ -45,15 +45,12 @@
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         
-        /* CZYSTE LINKI KLANOWE */
         a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        /* WŁASNY (NASZ) KLAN */
         .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
         
-        /* ODTWORZONE GRAFIKI PIECZĘCI */
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { 
             background: #110505; 
@@ -99,6 +96,7 @@
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
@@ -131,6 +129,7 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -158,6 +157,7 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -174,6 +174,7 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
+    <!-- ZAKŁADKA PIECZĘCI I WROGÓW -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
@@ -195,7 +196,6 @@
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         
-        // PODPIĘTE LINKI CSV KLANÓW: BAZY (Aktualny Stan) oraz LOGÓW (Historia Wrogów)
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
@@ -235,11 +235,36 @@
             "bak": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406916",
             "bot": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406867",
             "jajo.+by..": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406915",
-            "wycie": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
+            "wycie,": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
             "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917",
-           };
+            ".L.Y.C.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
+            "-BSP-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406750",
+            "RAMBO": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/391887",
+            ".B.G.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406621",
+            "TU.R": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/137337",
+            "S.RT": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/77311",
+            "NTA": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264312",
+            "vzd": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264618",
+            "LYCANS_pl": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/59295",
+            ".S.A.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/313558",
+            "OKAZ": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/375071",
+            "=LYC=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406755",
+            "A-Z": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406758",
+            "ABCD": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406757",
+            "C.W.K.S": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406552",
+            "P-O-L": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406841",
+            "W=C": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406746",
+            "=PL=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406586",
+            "RH-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406040",
+            "MCFC": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406557",
+            "Atnn": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406760",
+            "KRW": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406766",
+            "sol.,+p": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848"
+        };
 
-        const BLACKLIST = ["Kark23"]; 
+        const BLACKLIST = ["Kark23", "Darksun"]; 
+        const CLAN_BLACKLIST = ["Paruwas", "LYC"];
+
         let globalData = [];
         let globalRankingData = []; 
         let globalRutynaData = [];
@@ -341,7 +366,7 @@
                         globalRutynaData = [];
                         for (let i = 1; i < rWiersze.length; i++) {
                             let kom = parseCSVLine(rWiersze[i].trim());
-                            if (kom.length >= 3) globalRutynaData.push(kom);
+                            if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom);
                         }
                     } catch(ex) {}
                 }
@@ -354,7 +379,7 @@
                         globalClansBaza = [];
                         for (let i = 1; i < cbWiersze.length; i++) {
                             let kom = parseCSVLine(cbWiersze[i].trim());
-                            if (kom.length >= 3) globalClansBaza.push(kom);
+                            if (kom.length >= 3 && !CLAN_BLACKLIST.includes(kom[0])) globalClansBaza.push(kom);
                         }
                     } catch(ex) {}
                 }
@@ -367,7 +392,7 @@
                         globalClansLogi = [];
                         for (let i = 1; i < clWiersze.length; i++) {
                             let kom = parseCSVLine(clWiersze[i].trim());
-                            if (kom.length >= 5) globalClansLogi.push(kom);
+                            if (kom.length >= 5 && !CLAN_BLACKLIST.includes(kom[1])) globalClansLogi.push(kom);
                         }
                         globalClansLogi.reverse(); 
                     } catch(ex) {}
@@ -774,7 +799,7 @@
         }
 
         // ==========================================
-        //  FORMATOWANIE KLANÓW (Tylko nazwa jako Link)
+        //  CZYSTY TEKST KLANU JAKO LINK
         // ==========================================
         function formatClanLink(klanTag, rawName) {
             let nameStr = String(rawName || `[${klanTag}]`).replace(/^Klan\s+/i, ''); 
@@ -922,7 +947,6 @@
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
-                // Wyświetlamy tylko wrogie klany, pomijamy te gdzie nie skanujemy graczy
                 if (data.czlonkowie !== "-") {
                     let kLink = formatClanLink(klan, data.nazwa);
                     let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
