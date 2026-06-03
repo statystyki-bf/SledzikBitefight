@@ -51,7 +51,6 @@
         
         .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
         
-        /* ZAKTUALIZOWANE GRAFIKI PIECZĘCI */
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { 
             background: #110505; 
@@ -66,7 +65,7 @@
         .seal-img {
             width: 44px;
             height: 44px;
-            border: 2px ridge #808080; /* Mała srebrna rameczka w okół grafiki */
+            border: 2px ridge #808080; 
             border-radius: 2px;
             box-shadow: 0 0 6px rgba(0,0,0,1);
             margin-bottom: 8px;
@@ -231,8 +230,6 @@
         };
 
         const BLACKLIST = ["Kark23", "Darksun"]; 
-        
-        // PANCERNA CZARNA LISTA KLANÓW - ZAPOBIEGA ŁADOWANIU STAREJ HISTORII!
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
 
         let globalData = [];
@@ -368,7 +365,7 @@
                         globalClansLogi = [];
                         for (let i = 1; i < clWiersze.length; i++) {
                             let line = clWiersze[i].trim();
-                            if (!line) continue; // Wycina krzaki z ręcznego usuwania z excela!
+                            if (!line) continue; 
                             let kom = parseCSVLine(line);
                             if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
                                 if (!CLAN_BLACKLIST.includes(kom[1])) {
@@ -808,15 +805,15 @@
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
-            // GŁÓWNA STRUKTURA 7 PIECZĘCI (Z AKTUALNYMI OBRAZKAMI I W ŚCIŚLE OKREŚLONEJ KOLEJNOŚCI)
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH
             const ALL_SEALS = [
-                { id: "Skąpstwo", img: "image_864125.png" },
-                { id: "Zazdrość", img: "image_8640ed.png" },
-                { id: "Obżarstwo", img: "image_863dc4.png" },
-                { id: "Ociężałość", img: "image_863d86.png" },
-                { id: "Pożądanie", img: "image_863d08.png" },
-                { id: "Gniew", img: "image_863a3f.png" },
-                { id: "Pycha", img: "image_8639e5.png" }
+                { id: "Skąpstwo", img: "skapstwo.png" },
+                { id: "Zazdrość", img: "zazdrosc.png" },
+                { id: "Obżarstwo", img: "obzarstwo.png" },
+                { id: "Ociężałość", img: "ociezalosc.png" },
+                { id: "Pożądanie", img: "pozadanie.png" },
+                { id: "Gniew", img: "gniew.png" },
+                { id: "Pycha", img: "pycha.png" }
             ];
 
             let sealHolders = {};
@@ -930,7 +927,6 @@
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
-                // Upewniamy się, że Twoje stare klany ukryte w Excelu tu nie wyjdą:
                 if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
                     let kLink = formatClanLink(klan, data.nazwa);
                     let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
