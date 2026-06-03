@@ -45,7 +45,7 @@
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         
-        a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; position: relative; z-index: 10; pointer-events: auto; }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
@@ -72,7 +72,7 @@
         }
 
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
-        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
     </style>
@@ -204,31 +204,6 @@
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
         
-        const CLANS_LINKS = {
-            "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
-            "SA#pl32": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311819",
-            ".wh.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311772",
-            "lowe": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/286243",
-            ".ANT.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/306980",
-            "sol.,+p+v": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848",
-            "s-f.ti+b+r": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406863",
-            ".killers.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/237269",
-            "-SLOW-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/267344",
-            ".VOD": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/265373",
-            "B=A": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264234",
-            "dragons=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/307017",
-            "EL.L": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311509",
-            ".NIE.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311446",
-            "T_V": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/227719",
-            "aDV": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/45783",
-            ".se.seo+.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406870",
-            "bak": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406916",
-            "bot": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406867",
-            "jajo.+by..": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406915",
-            "wycie": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
-            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917"
-        };
-
         const BLACKLIST = ["Kark23", "Darksun"]; 
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
 
@@ -350,7 +325,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -365,7 +340,7 @@
                         globalClansLogi = [];
                         for (let i = 1; i < clWiersze.length; i++) {
                             let line = clWiersze[i].trim();
-                            if (!line) continue;
+                            if (!line) continue; 
                             let kom = parseCSVLine(line);
                             if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
                                 if (!CLAN_BLACKLIST.includes(kom[1])) {
@@ -778,12 +753,11 @@
         }
 
         // ==========================================
-        //  CZYSTY TEKST KLANU JAKO LINK
+        //  CZYSTY TEKST KLANU JAKO DYNAMICZNY LINK
         // ==========================================
-        function formatClanLink(klanTag, rawName) {
-            let nameStr = String(rawName || `[${klanTag}]`).replace(/^Klan\s+/i, ''); 
-            let finalName = `${nameStr} [${klanTag}]`;
-            return CLANS_LINKS[klanTag] ? `<a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${finalName}</a>` : `<span class="clan-text-plain">${finalName}</span>`;
+        function formatClanLink(nazwa, url) {
+            if (!url || url === "") return `<span class="clan-text-plain">${nazwa}</span>`;
+            return `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`;
         }
 
         // ==========================================
@@ -799,13 +773,14 @@
             
             globalClansBaza.forEach(w => {
                 let klan = w[0];
-                let nazwa = w[1];
-                let pieczecie = w[2];
+                let nazwa = w[1] || klan;
+                let pieczecie = w[2] || "Brak";
                 let czlonkowie = w[3] || "-";
-                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
+                let url = w[4] || ""; // Dynamiczny URL wyciągnięty z excela
+                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie, url: url };
             });
 
-            // GŁÓWNA STRUKTURA 7 PIECZĘCI W TWOJEJ KOLEJNOŚCI
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH
             const ALL_SEALS = [
                 { id: "Skąpstwo", img: "skapstwo.png" },
                 { id: "Zazdrość", img: "zazdrosc.png" },
@@ -824,7 +799,7 @@
                     let heldSeals = currentClanState[k].pieczecie.split(", ");
                     heldSeals.forEach(s => {
                         if (sealHolders[s]) {
-                            sealHolders[s].holder = formatClanLink(k, currentClanState[k].nazwa);
+                            sealHolders[s].holder = formatClanLink(currentClanState[k].nazwa, currentClanState[k].url);
                             sealHolders[s].klanId = k;
                         }
                     });
@@ -877,6 +852,7 @@
                 let diffHtml = w[5];
                 
                 let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                let actualUrl = currentClanState[klan] ? currentClanState[klan].url : "";
                 let klasa = "";
 
                 if (stat === "Członkowie") {
@@ -898,10 +874,9 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    // POPRAWKA BŁĘDU - filtrowanie straconych pieczęci
-                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", "); // POPRAWKA: szukamy tego, czego już nie ma w nowej tablicy!
                     
-                    if (gained && lost) diffHtml = `<span style="color:#55ff55;">+${gained}</span> / <span style="color:#ff5555;">-${lost}</span>`;
+                    if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
                     else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
                 }
@@ -911,7 +886,7 @@
                     let myKlasa = "";
                     
                     if (j === 1) {
-                        val = formatClanLink(klan, actualName);
+                        val = formatClanLink(actualName, actualUrl);
                     }
                     else if (j === 5) {
                         val = diffHtml;
@@ -929,7 +904,7 @@
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
                 if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
-                    let kLink = formatClanLink(klan, data.nazwa);
+                    let kLink = formatClanLink(data.nazwa, data.url);
                     let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
                     currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
                 }
