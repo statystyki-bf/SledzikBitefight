@@ -51,6 +51,7 @@
         
         .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
         
+        /* ZAKTUALIZOWANE GRAFIKI PIECZĘCI */
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { 
             background: #110505; 
@@ -61,25 +62,15 @@
             box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
             display: flex; flex-direction: column; align-items: center; 
         }
-        
-        .seal-icon-box {
-            width: 46px; height: 46px;
-            border: 2px ridge #b0b0b0; 
-            background: radial-gradient(circle, #aa0000 0%, #330000 100%); 
-            box-shadow: inset 0 0 8px #000;
-            display: flex; justify-content: center; align-items: center;
+
+        .seal-img {
+            width: 44px;
+            height: 44px;
+            border: 2px ridge #808080; /* Mała srebrna rameczka w okół grafiki */
+            border-radius: 2px;
+            box-shadow: 0 0 6px rgba(0,0,0,1);
             margin-bottom: 8px;
         }
-        
-        .seal-icon-box::before { font-size: 28px; filter: drop-shadow(0 0 3px rgba(255,255,255,0.4)); color: #ececec; }
-        
-        .ico-Pycha::before { content: "⚜️"; font-size: 32px; }
-        .ico-Pożądanie::before { content: "🔱"; font-size: 30px; }
-        .ico-Gniew::before { content: "💥"; }
-        .ico-Obżarstwo::before { content: "🍲"; }
-        .ico-Ociężałość::before { content: "🌘"; }
-        .ico-Skąpstwo::before { content: "◎"; font-weight: bold; font-size: 32px;}
-        .ico-Zazdrość::before { content: "👁️"; }
 
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -235,12 +226,14 @@
             "bak": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406916",
             "bot": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406867",
             "jajo.+by..": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406915",
-            "wycie,": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
-            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917",
-           };
+            "wycie": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
+            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917"
+        };
 
         const BLACKLIST = ["Kark23", "Darksun"]; 
-        const CLAN_BLACKLIST = ["Paruwas", "LYC"];
+        
+        // PANCERNA CZARNA LISTA KLANÓW - ZAPOBIEGA ŁADOWANIU STAREJ HISTORII!
+        const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
 
         let globalData = [];
         let globalRankingData = []; 
@@ -342,7 +335,9 @@
                         const rWiersze = rText.trim().split('\n');
                         globalRutynaData = [];
                         for (let i = 1; i < rWiersze.length; i++) {
-                            let kom = parseCSVLine(rWiersze[i].trim());
+                            let line = rWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
                             if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom);
                         }
                     } catch(ex) {}
@@ -355,8 +350,12 @@
                         const cbWiersze = cbText.trim().split('\n');
                         globalClansBaza = [];
                         for (let i = 1; i < cbWiersze.length; i++) {
-                            let kom = parseCSVLine(cbWiersze[i].trim());
-                            if (kom.length >= 3 && !CLAN_BLACKLIST.includes(kom[0])) globalClansBaza.push(kom);
+                            let line = cbWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                                globalClansBaza.push(kom);
+                            }
                         }
                     } catch(ex) {}
                 }
@@ -368,8 +367,14 @@
                         const clWiersze = clText.trim().split('\n');
                         globalClansLogi = [];
                         for (let i = 1; i < clWiersze.length; i++) {
-                            let kom = parseCSVLine(clWiersze[i].trim());
-                            if (kom.length >= 5 && !CLAN_BLACKLIST.includes(kom[1])) globalClansLogi.push(kom);
+                            let line = clWiersze[i].trim();
+                            if (!line) continue; // Wycina krzaki z ręcznego usuwania z excela!
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
+                                if (!CLAN_BLACKLIST.includes(kom[1])) {
+                                    globalClansLogi.push(kom);
+                                }
+                            }
                         }
                         globalClansLogi.reverse(); 
                     } catch(ex) {}
@@ -803,18 +808,19 @@
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI (Z AKTUALNYMI OBRAZKAMI I W ŚCIŚLE OKREŚLONEJ KOLEJNOŚCI)
             const ALL_SEALS = [
-                { id: "Pycha", badge: "ico-Pycha" },
-                { id: "Pożądanie", badge: "ico-Pożądanie" },
-                { id: "Gniew", badge: "ico-Gniew" },
-                { id: "Obżarstwo", badge: "ico-Obżarstwo" },
-                { id: "Ociężałość", badge: "ico-Ociężałość" },
-                { id: "Skąpstwo", badge: "ico-Skąpstwo" },
-                { id: "Zazdrość", badge: "ico-Zazdrość" }
+                { id: "Skąpstwo", img: "image_864125.png" },
+                { id: "Zazdrość", img: "image_8640ed.png" },
+                { id: "Obżarstwo", img: "image_863dc4.png" },
+                { id: "Ociężałość", img: "image_863d86.png" },
+                { id: "Pożądanie", img: "image_863d08.png" },
+                { id: "Gniew", img: "image_863a3f.png" },
+                { id: "Pycha", img: "image_8639e5.png" }
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', badge: s.badge, klanId: null, date: "" });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
@@ -852,7 +858,7 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
-                                     <div class="seal-icon-box ${data.badge}"></div>
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
                                      <div class="seal-name">${s.id}</div>
                                      <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
@@ -924,7 +930,8 @@
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
-                if (data.czlonkowie !== "-") {
+                // Upewniamy się, że Twoje stare klany ukryte w Excelu tu nie wyjdą:
+                if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
                     let kLink = formatClanLink(klan, data.nazwa);
                     let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
                     currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
