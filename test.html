@@ -49,8 +49,6 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
-        
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
@@ -59,81 +57,15 @@
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
         /* STYLE KALKULATORA RUIN */
-        .ruins-header-title { color: #f1fa8c; font-size: 16px; font-weight: bold; margin-bottom: 8px; text-align: left; }
-        .section-header { background: rgba(0,0,0,0.8); border-bottom: 2px solid #443; padding: 10px; margin: 20px auto; width: 95%; max-width: 1250px; display: flex; align-items: center; justify-content: space-between; }
-        .sh-left { display: flex; align-items: center; gap: 15px; flex: 1; justify-content: flex-start; }
-        .sh-center { flex: 1; text-align: center; display: flex; justify-content: center;}
-        .sh-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
-        .section-header span.title { font-weight: bold; font-size: 16px; color: #d3c6c6; display: flex; align-items: center; gap: 15px;}
-        .strength-label { color: #ffb86c; font-family: monospace; font-size: 16px; white-space: nowrap; font-weight: bold;}
-        .race-btn { padding: 4px 12px; font-size: 12px; border: 1px solid #443; background: #1a1a1a; color: #888; cursor: pointer; border-radius: 3px; font-weight: bold; transition: 0.2s; white-space: nowrap;}
-        .race-btn:hover { background: #333; color: #fff; }
-        .race-btn.active { background: #ff4d4d; color: #000; border-color: #ff4d4d; }
-        .grid-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; margin-left: auto; margin-right: auto; }
-        #enemiesGrid { max-width: 860px; } #alliesGrid { max-width: 650px; }
-        .unit-card { background: rgba(20,20,20,0.9); border: 1px solid #443; border-radius: 4px; padding: 8px; width: 145px; box-shadow: inset 0 0 15px #000; position: relative; box-sizing: border-box; transition: 0.2s border-color;}
-        .unit-card:hover { border-color: #ff4d4d; }
-        .active-card { border-color: #ff4d4d !important; box-shadow: inset 0 0 20px rgba(255, 77, 77, 0.25) !important;}
-        .card-img-container { position: relative; width: 100%; height: auto; aspect-ratio: 135/164; margin: 0 auto; border: 1px solid #333; overflow: hidden; box-sizing: border-box; }
-        .main-unit-img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-        .bonus-overlay { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 18px); background: rgba(0,0,0,0.85); color: #fff; font-size: 11px; line-height: 1.4; padding: 8px; box-sizing: border-box; opacity: 0; transition: opacity 0.2s ease-in-out; display: flex; align-items: center; justify-content: center; text-align: center; z-index: 10; pointer-events: none; }
-        .card-img-container:hover .bonus-overlay { opacity: 1; }
-        .stat-icon { width: 25px; height: 25px; object-fit: contain; }
-        .icon-overlay { position: absolute; display: flex; align-items: center; gap: 2px; background: rgba(0,0,0,0.5); padding: 1px 3px; border-radius: 2px; z-index: 5;}
-        .stat-val { color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; font-size: 13px; margin-right: 2px; }
-        .pos-tl { top: 2px; left: 2px; } .pos-tr { top: 2px; right: 2px; } .pos-bl { bottom: 20px; left: 2px; } .pos-br { bottom: 20px; right: 2px; }
-        .unit-count-input { position: absolute; bottom: 0; left: 0; width: 100%; height: 18px; background: rgba(0,0,0,0.8); color: #a6e3a1; border: none; border-top: 1px solid #443; text-align: center; font-weight: bold; font-size: 13px; outline: none; z-index: 15; box-sizing: border-box;}
-        .unit-name { font-weight: bold; font-size: 12px; margin: 8px 0 5px 0; color: #ffb86c; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .unit-name input[type="checkbox"] { cursor: pointer; width: 14px; height: 14px; accent-color: #ff4d4d; }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 2px; margin-top: 5px; }
-        .controls button { background: #2a2a2a; border: 1px solid #555; color: #fff; font-size: 11px; width: 32px; height: 24px; cursor: pointer; border-radius: 2px; font-weight: bold; }
-        .controls button:hover { background: #ff4d4d; border-color:#ff4d4d;}
-        .opt-limit { font-size: 10px; color: #888; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
-        .opt-limit input { width: 40px; background: #111; color: #ffb86c; border: 1px solid #443; text-align: center; border-radius: 2px; outline: none; font-size: 11px; height: 18px;}
-        .opt-limit input:focus { border-color: #ff4d4d; }
-        .action-panel { margin: 30px auto; width: 95%; max-width: 1250px; background: rgba(0,0,0,0.7); padding: 15px; border: 1px solid #443; box-sizing: border-box;}
-        .layer-box { margin-bottom: 20px; font-size: 16px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px;}
-        .layer-box input { width: 60px; font-size: 20px; background: #000; color: #fff; border: 1px solid #ff4d4d; text-align: center; height: 33px; box-sizing: border-box;}
-        .layer-box button { background: #2a2a2a; border: 1px solid #555; color: #fff; font-size: 14px; width: 40px; height: 33px; cursor: pointer; border-radius: 3px; font-weight: bold;}
-        .layer-box button:hover { background: #ff4d4d; border-color:#ff4d4d; color: #000;}
-        button.main-btn { padding: 10px 15px; margin: 5px; border: 1px solid #443; font-weight: bold; cursor: pointer; text-transform: uppercase; border-radius: 3px; transition: 0.2s; font-size: 12px; }
-        .btn-sim { background: #333; color: #fff; } .btn-sim:hover { background: #444; }
-        .btn-best { background: #2b4f2d; color: #fff; } .btn-best:hover { background: #38663b; }
-        .btn-safe { background: #6b3e1b; color: #fff; } .btn-safe:hover { background: #854d22; }
-        .btn-cancel { background: #7a1f1f !important; border-color: #ff4d4d !important;}
-        .log-container { height: auto; min-height: 400px; background: #050505; color: #a9b7c6; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 15px; border: 1px solid #443; outline: none; text-align: left; box-sizing: border-box; white-space: pre-wrap; line-height: 1.5; }
-        .img-log { width: 45px; height: 48px; object-fit: cover; vertical-align: middle; border-radius: 3px; border: 1px solid #443; margin: 0 4px; box-shadow: 0 0 4px #000; object-position: top;}
-        .log-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 20; }
-        .copy-btn { background: #2a2a2a; border: 1px solid #555; color: #fff; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
-        .copy-btn:hover { background: #ff4d4d; color: #000; border-color: #ff4d4d; }
-        #results-container { text-align: left; max-width: 100%; margin: 20px auto; background: rgba(0,0,0,0.9); border: 1px solid #443; display: none; padding-bottom: 10px;}
-        #results-header { padding:10px; border-bottom:1px solid #443; font-weight:bold; color:#ff4d4d; font-size:14px; text-transform: uppercase; }
-        #results-list { width: 100%; }
-        .result-item { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 13px;}
-        .result-item:hover { background: #1a1a1a; color: #ff4d4d; }
-        #async-loader { display: none; align-items: center; justify-content: center; gap: 10px; color: #ffb86c; font-weight: bold; padding: 15px; }
-        .spinner { border: 4px solid #222; border-top: 4px solid #ffb86c; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .mode-toggle { display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; font-weight: bold; font-size: 14px; margin-bottom: 15px;}
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; margin: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a2a; transition: .2s; border-radius: 22px; border: 1px solid #443; box-sizing: border-box;}
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: #888; transition: .2s; border-radius: 50%; }
-        input:checked + .slider { background-color: #331111; border-color: #ff4d4d;}
-        input:checked + .slider:before { transform: translateX(22px); background-color: #ff4d4d; }
-        .mode-lite, .mode-pro { font-size: 12px; letter-spacing: 1px; transition: 0.2s;}
-        .formation-container { display: block; width: 100%; line-height: 1.8; }
-        .formation-title { font-size: 13px; display: inline; }
-        .formation-grid { display: inline; } 
-        .formation-unit { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; white-space: nowrap; vertical-align: middle; }
-        .formation-unit .img-log { margin: 0; }
-        .comma { display: inline; margin-right: 4px; font-weight: bold; color: #888;}
-        .formation-est { color:#f1fa8c; font-weight:bold; margin-left: 10px; display: inline; white-space: nowrap; }
-        .log-stats-bar { color: #a9b7c6; font-weight: bold; margin-bottom: 15px; }
-        .stat-badge { display: inline-flex; align-items: center; background: #111; border: 1px solid #443; padding: 4px 10px; border-radius: 4px; margin-right: 5px; margin-bottom: 5px; font-size: 13px;}
-        .stat-badge i { color: #ffb86c; margin-right: 4px; }
-        .log-unit-section { margin-top: 15px; }
-        .empty-log-msg { display: flex; align-items: center; justify-content: center; min-height: 360px; color: #666; font-size: 14px; letter-spacing: 1px; text-align: center; }
+        .ruins-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .ruins-panel { background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; width: 48%; min-width: 300px; box-sizing: border-box; }
+        .unit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; border-bottom: 1px solid #381e1e; padding-bottom: 4px; }
+        .unit-row label { font-size: 13px; color: #ccc; cursor: pointer; display: flex; align-items: center; }
+        .unit-row input[type="number"] { width: 60px; background: #110505; color: #55ff55; border: 1px solid #600000; text-align: center; border-radius: 3px; font-weight: bold; padding: 3px; }
+        .unit-row input[type="number"]:focus { border-color: #ff3333; outline: none; }
+        #results-container { text-align: left; background: #110505; padding: 15px; border: 1px solid #600000; border-radius: 4px; color: #e0e0e0; font-size: 13px; line-height: 1.5; margin-top: 15px; }
+        .loader { display: none; color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 15px; }
+        .tiny-unit-img { width: 22px; height: 22px; object-fit: cover; border-radius: 3px; vertical-align: middle; margin-right: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 3px #000; }
     </style>
 </head>
 <body>
@@ -237,80 +169,67 @@
     </div>
 
     <div id="sectionRuins">
-        <h2>Optymalizator Ruin</h2>
-        <div class="layer-box">
-            <strong>LAYER:</strong> 
-            <button class="layer-mod-btn" data-amt="-10">-10</button>
-            <button class="layer-mod-btn" data-amt="-1">-1</button>
-            <input type="number" id="layerInput" value="1" min="1" max="101">
-            <button class="layer-mod-btn" data-amt="1">+1</button>
-            <button class="layer-mod-btn" data-amt="10">+10</button>
+        <h2 style="color: #ffcc00; font-size: 22px;">OPTYMALIZATOR RUIN</h2>
+        
+        <div class="filter-container" style="margin-bottom: 25px;">
+            <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Poziom Ruin:</span>
+            <input type="number" id="layerInput" value="57" min="1" max="101" style="width: 70px; font-size: 16px; font-weight: bold; text-align: center;">
+            <select id="ruinsRace" style="margin-left: 10px; font-weight: bold;">
+                <option value="werewolf" selected>Moja rasa: Wilkołak</option>
+                <option value="vampire">Moja rasa: Wampir</option>
+            </select>
         </div>
-        <div class="section-header">
-            <div class="sh-left"><span class="title">Opponent</span></div>
-            <div class="sh-center"></div>
-            <div class="sh-right">
-                <button id="btn-enemies-all" class="race-btn active btn-filter-enemies" data-side="enemies" data-pos="all">All</button>
-                <button id="btn-enemies-vanguard" class="race-btn btn-filter-enemies" data-side="enemies" data-pos="vanguard">Vanguard</button>
-                <button id="btn-enemies-rearguard" class="race-btn btn-filter-enemies" data-side="enemies" data-pos="rearguard">Rearguard</button>
+
+        <div class="ruins-grid">
+            <div class="ruins-panel">
+                <h3 style="color: #ff5555; margin-top: 0;">ARMIA WROGA</h3>
+                <div id="enemyInputs"></div>
             </div>
-        </div>
-        <div class="grid-container" id="enemiesGrid">
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Basic melee unit.</div><div class="icon-overlay pos-tr"><span class="stat-val">3</span></div><div class="icon-overlay pos-bl"><span class="stat-val">3</span></div><div class="icon-overlay pos-br"><span class="stat-val">4</span></div><input type="number" id="e1" value="0" class="unit-count-input"></div><div class="unit-name">Skeleton</div><div class="controls"><button class="unit-mod-btn" data-target="e1" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e1" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e1" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e1" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">When this unit is defeated in combat for the first time, all Zombies are revived with 1 HP each.</div><div class="icon-overlay pos-tr"><span class="stat-val">2</span></div><div class="icon-overlay pos-bl"><span class="stat-val">2</span></div><div class="icon-overlay pos-br"><span class="stat-val">7</span></div><input type="number" id="e2" value="0" class="unit-count-input"></div><div class="unit-name">Zombie</div><div class="controls"><button class="unit-mod-btn" data-target="e2" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e2" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e2" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e2" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">If this unit is still alive at the end of a turn, it boosts the damage inflicted by a random allied unit by 10% (stackable).</div><div class="icon-overlay pos-tr"><span class="stat-val">1</span></div><div class="icon-overlay pos-bl"><span class="stat-val">5</span></div><div class="icon-overlay pos-br"><span class="stat-val">1</span></div><input type="number" id="e3" value="0" class="unit-count-input"></div><div class="unit-name">Undead Cultist</div><div class="controls"><button class="unit-mod-btn" data-target="e3" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e3" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e3" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e3" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Always attacks the rearguard if possible, bypassing the vanguard. Deals 20% more damage if this unit is the first to attack this turn.</div><div class="icon-overlay pos-tr"><span class="stat-val">4</span></div><div class="icon-overlay pos-bl"><span class="stat-val">6</span></div><div class="icon-overlay pos-br"><span class="stat-val">3</span></div><input type="number" id="e4" value="0" class="unit-count-input"></div><div class="unit-name">Bonewing</div><div class="controls"><button class="unit-mod-btn" data-target="e4" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e4" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e4" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e4" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">When defeated, this unit deals 20% of its HP as damage to the attacking unit.</div><div class="icon-overlay pos-tr"><span class="stat-val">1</span></div><div class="icon-overlay pos-bl"><span class="stat-val">1</span></div><div class="icon-overlay pos-br"><span class="stat-val">10</span></div><input type="number" id="e5" value="0" class="unit-count-input"></div><div class="unit-name">Bloated Corpse</div><div class="controls"><button class="unit-mod-btn" data-target="e5" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e5" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e5" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e5" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Gains +50% attack for each time the target’s unit count is double or more compared to this unit’s count.</div><div class="icon-overlay pos-tr"><span class="stat-val">4</span></div><div class="icon-overlay pos-bl"><span class="stat-val">7</span></div><div class="icon-overlay pos-br"><span class="stat-val">2</span></div><input type="number" id="e6" value="0" class="unit-count-input"></div><div class="unit-name">Wraith</div><div class="controls"><button class="unit-mod-btn" data-target="e6" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e6" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e6" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e6" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">While this unit is alive, your rearguard deals 15% less damage.</div><div class="icon-overlay pos-tr"><span class="stat-val">4</span></div><div class="icon-overlay pos-bl"><span class="stat-val">8</span></div><div class="icon-overlay pos-br"><span class="stat-val">12</span></div><input type="number" id="e7" value="0" class="unit-count-input"></div><div class="unit-name">Revenant</div><div class="controls"><button class="unit-mod-btn" data-target="e7" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e7" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e7" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e7" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Gains a stacking 5% attack bonus for 1 turn every time this unit is attacked.</div><div class="icon-overlay pos-tr"><span class="stat-val">1</span></div><div class="icon-overlay pos-bl"><span class="stat-val">10</span></div><div class="icon-overlay pos-br"><span class="stat-val">25</span></div><input type="number" id="e8" value="0" class="unit-count-input"></div><div class="unit-name">Bone Giant</div><div class="controls"><button class="unit-mod-btn" data-target="e8" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e8" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e8" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e8" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Spawns 10 Spiderlings at the end of each turn. Each Spiderling has 1 attack, 1 HP and a speed of 6.</div><div class="icon-overlay pos-tr"><span class="stat-val">2</span></div><div class="icon-overlay pos-bl"><span class="stat-val">9</span></div><div class="icon-overlay pos-br"><span class="stat-val">18</span></div><input type="number" id="e9" value="0" class="unit-count-input"></div><div class="unit-name">Broodmother</div><div class="controls"><button class="unit-mod-btn" data-target="e9" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e9" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e9" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e9" data-amt="10">+10</button></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">When this unit destroys a unit in the vanguard, 50% of the damage inflicted is also dealt to the slowest unit in your rearguard.</div><div class="icon-overlay pos-tr"><span class="stat-val">3</span></div><div class="icon-overlay pos-bl"><span class="stat-val">40</span></div><div class="icon-overlay pos-br"><span class="stat-val">25</span></div><input type="number" id="e10" value="0" class="unit-count-input"></div><div class="unit-name">Lich</div><div class="controls"><button class="unit-mod-btn" data-target="e10" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e10" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e10" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e10" data-amt="10">+10</button></div></div>
-        </div>
-        <div class="section-header">
-            <div class="sh-left">
-                <span class="title">Your Units</span>
-                <div style="display: flex; gap: 5px;">
-                    <button id="btn-vampire" class="race-btn race-select-btn active" data-race="vampire">Vampire</button>
-                    <button id="btn-werewolf" class="race-btn race-select-btn" data-race="werewolf">Werewolf</button>
+            
+            <div class="ruins-panel">
+                <h3 style="color: #55ff55; margin-top: 0;">TWOJA ARMIA (MAX LIMITY)</h3>
+                <div id="allyInputs"></div>
+                
+                <div style="display:none;">
+                    <input type="checkbox" id="chk_a1" checked><input type="number" id="a1" value="0">
+                    <input type="checkbox" id="chk_a2" checked><input type="number" id="a2" value="0">
+                    <input type="checkbox" id="chk_a3" checked><input type="number" id="a3" value="0">
+                    <input type="checkbox" id="chk_a4" checked><input type="number" id="a4" value="0">
+                    <input type="checkbox" id="chk_a5" checked><input type="number" id="a5" value="0">
+                    <input type="checkbox" id="chk_a6" checked><input type="number" id="a6" value="0">
+                    <input type="checkbox" id="chk_a7" checked><input type="number" id="a7" value="0">
+                    <input type="checkbox" id="chk_a8" checked><input type="number" id="a8" value="0">
                 </div>
             </div>
-            <div class="sh-center"><span class="strength-label">Used Army Strength: <span id="allyStr">0</span> / <span id="maxStrAlly">20</span></span></div>
-            <div class="sh-right">
-                <button id="btn-allies-all" class="race-btn active btn-filter-allies" data-side="allies" data-pos="all">All</button>
-                <button id="btn-allies-vanguard" class="race-btn btn-filter-allies" data-side="allies" data-pos="vanguard">Vanguard</button>
-                <button id="btn-allies-rearguard" class="race-btn btn-filter-allies" data-side="allies" data-pos="rearguard">Rearguard</button>
-            </div>
         </div>
-        <div class="grid-container" id="alliesGrid">
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Causes 25% extra damage in the first round.</div><div class="icon-overlay pos-tr"><span class="stat-val">5</span></div><div class="icon-overlay pos-bl"><span class="stat-val">8</span></div><div class="icon-overlay pos-br"><span class="stat-val">2</span></div><input type="number" id="a1" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a1" class="unit-checkbox" checked> <span id="name_a1" class="dyn-name" data-tier="1">Bats</span></div><div class="controls"><button class="unit-mod-btn" data-target="a1" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a1" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a1" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a1" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a1" class="unit-max-input" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">This mob suffers 50% less damage, irrespective of enemy unit type.</div><div class="icon-overlay pos-tr"><span class="stat-val">2</span></div><div class="icon-overlay pos-bl"><span class="stat-val">3</span></div><div class="icon-overlay pos-br"><span class="stat-val">5</span></div><input type="number" id="a2" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a2" class="unit-checkbox" checked> <span id="name_a2" class="dyn-name" data-tier="2">Ghouls</span></div><div class="controls"><button class="unit-mod-btn" data-target="a2" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a2" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a2" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a2" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a2" class="unit-max-input" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">This unit deals 33% more damage to targets with a speed rating lower than 3.</div><div class="icon-overlay pos-tr"><span class="stat-val">4</span></div><div class="icon-overlay pos-bl"><span class="stat-val">6</span></div><div class="icon-overlay pos-br"><span class="stat-val">6</span></div><input type="number" id="a3" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a3" class="unit-checkbox" checked> <span id="name_a3" class="dyn-name" data-tier="3">Vampire Thralls</span></div><div class="controls"><button class="unit-mod-btn" data-target="a3" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a3" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a3" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a3" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a3" class="unit-max-input" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Always attacks the rearguard if possible, bypassing the vanguard. Reduces the attack of the first enemy group hit by 25% for 1 round.</div><div class="icon-overlay pos-tr"><span class="stat-val">4</span></div><div class="icon-overlay pos-bl"><span class="stat-val">7</span></div><div class="icon-overlay pos-br"><span class="stat-val">4</span></div><input type="number" id="a4" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a4" class="unit-checkbox" checked> <span id="name_a4" class="dyn-name" data-tier="4">Banshees</span></div><div class="controls"><button class="unit-mod-btn" data-target="a4" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a4" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a4" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a4" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a4" class="unit-max-input" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Gain +10% attack for every unit group that died this combat.</div><div class="icon-overlay pos-tr"><span class="stat-val">2</span></div><div class="icon-overlay pos-bl"><span class="stat-val">9</span></div><div class="icon-overlay pos-br"><span class="stat-val">5</span></div><input type="number" id="a5" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a5" class="unit-checkbox" checked> <span id="name_a5" class="dyn-name" data-tier="5">Necromancers</span></div><div class="controls"><button class="unit-mod-btn" data-target="a5" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a5" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a5" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a5" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a5" class="unit-max-input" value="1" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Reduces the speed rating of attacking units by 2 until the end of combat.</div><div class="icon-overlay pos-tr"><span class="stat-val">3</span></div><div class="icon-overlay pos-bl"><span class="stat-val">12</span></div><div class="icon-overlay pos-br"><span class="stat-val">12</span></div><input type="number" id="a6" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a6" class="unit-checkbox" checked> <span id="name_a6" class="dyn-name" data-tier="6">Gargoyles</span></div><div class="controls"><button class="unit-mod-btn" data-target="a6" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a6" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a6" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a6" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a6" class="unit-max-input" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Unleashes 25% of its attack as damage to all rearguard units every second round.</div><div class="icon-overlay pos-tr"><span class="stat-val">3</span></div><div class="icon-overlay pos-bl"><span class="stat-val">14</span></div><div class="icon-overlay pos-br"><span class="stat-val">8</span></div><input type="number" id="a7" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a7" class="unit-checkbox" checked> <span id="name_a7" class="dyn-name" data-tier="7">Blood Witches</span></div><div class="controls"><button class="unit-mod-btn" data-target="a7" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a7" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a7" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a7" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a7" class="unit-max-input" value="1" min="0" placeholder="∞"></div></div>
-            <div class="unit-card"><div class="card-img-container"><div class="bonus-overlay">Overkill damage dealt by this unit transfers over to the next logical target once per turn. This unit also ignores weaknesses when attacking.</div><div class="icon-overlay pos-tr"><span class="stat-val">1</span></div><div class="icon-overlay pos-bl"><span class="stat-val">30</span></div><div class="icon-overlay pos-br"><span class="stat-val">90</span></div><input type="number" id="a8" value="0" class="unit-count-input"></div><div class="unit-name"><input type="checkbox" id="chk_a8" class="unit-checkbox" checked> <span id="name_a8" class="dyn-name" data-tier="8">Rotmaws</span></div><div class="controls"><button class="unit-mod-btn" data-target="a8" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a8" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a8" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a8" data-amt="10">+10</button></div><div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a8" class="unit-max-input" min="0" placeholder="∞"></div></div>
+
+        <button id="btn-opt-best" class="action-btn" style="background: #b37700; border-color: #805500; font-size:15px; padding: 10px 20px;">
+            <span id="opt-text-best">Szukaj Najtańszej Formacji (Best)</span>
+        </button>
+        <button id="btn-opt-safe" class="action-btn" style="background: #1f7244; font-size:15px; padding: 10px 20px;">
+            <span id="opt-text-safe">Szukaj Najbezpieczniejszej (Safest)</span>
+        </button>
+        
+        <div id="async-loader" class="loader">
+            Uruchamianie Multi-Core Engine... <span id="progress-text"></span>
         </div>
-        <div class="action-panel">
-            <div class="mode-toggle">
-                <span id="labelLite" class="mode-lite">QUICK</span>
-                <label class="switch"><input type="checkbox" id="modeSwitch"><span class="slider"></span></label>
-                <span id="labelPro" class="mode-pro">DEEP</span>
-            </div>
-            <div>
-                <button id="btn-sim" class="main-btn btn-sim"><i class="fa-solid fa-play"></i> Symulacja walki</button>
-                <button id="btn-opt-best" class="main-btn btn-best"><i class="fa-solid fa-coins"></i> <span id="opt-text-best">Najtańsza (Best)</span></button>
-                <button id="btn-opt-safe" class="main-btn btn-safe"><i class="fa-solid fa-shield-halved"></i> <span id="opt-text-safe">Bezpieczna (Safe)</span></button>
-            </div>
-            <div id="results-container">
-                <div id="async-loader"><div class="spinner"></div> <span id="progress-text">Launching Multi-Core Engine...</span></div>
-                <div id="results-list"></div>
-            </div>
+        
+        <div id="results-container">
+            <div id="results-list"></div>
         </div>
-        <div class="log-wrapper" style="position: relative; width: 95%; max-width: 1250px; margin: 20px auto 40px auto; box-sizing: border-box;">
-            <div class="log-actions"><button id="btn-share-log" class="copy-btn">Share Link</button><button id="btn-copy-log" class="copy-btn">Kopiuj</button></div>
-            <div id="logOutput" class="log-container"><div class="empty-log-msg">Logi z walki będą tutaj...</div></div>
+
+        <div id="ruins-hidden-dom" style="display:none;">
+            <span id="allyStr"></span><span id="maxStrAlly"></span>
+            <div id="logOutput"></div>
+            <button id="btn-enemies-all" class="btn-filter-enemies" data-side="enemies" data-pos="all"></button>
+            <button id="btn-enemies-vanguard" class="btn-filter-enemies" data-side="enemies" data-pos="vanguard"></button>
+            <button id="btn-enemies-rearguard" class="btn-filter-enemies" data-side="enemies" data-pos="rearguard"></button>
+            <button id="btn-allies-all" class="btn-filter-allies" data-side="allies" data-pos="all"></button>
+            <button id="btn-allies-vanguard" class="btn-filter-allies" data-side="allies" data-pos="vanguard"></button>
+            <button id="btn-allies-rearguard" class="btn-filter-allies" data-side="allies" data-pos="rearguard"></button>
+            <button id="btn-share-log"></button><button id="btn-copy-log"></button><button id="btn-sim"></button>
+            <input type="checkbox" id="modeSwitch">
+            <span id="labelLite"></span><span id="labelPro"></span>
         </div>
     </div>
 
@@ -1043,12 +962,79 @@
             document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
         }
 
-        loadTableData();
-        setInterval(loadTableData, 300000);
+        // =========================================================
+        // KONTROLER INTERFEJSU KALKULATORA RUIN I GRAFIK WROGA
+        // =========================================================
+        const ENEMY_NAMES = ["Skeleton", "Zombie", "Undead Cultist", "Bonewing", "Bloated Corpse", "Wraith", "Revenant", "Bone Giant", "Broodmother", "Lich"];
+        
+        const VAMPIRE_NAMES = ["T1 (Nietoperze/Szczury)", "T2 (Ghoule/Golemy)", "T3 (Thralls)", "T4 (Banshees/Wendigos)", "T5 (Necromancers/Priests)", "T6 (Gargoyles/Chimeras)", "T7 (Blood/Moon Witches)", "T8 (Rotmaws/Hellmaws)"];
+        const VAMPIRE_IMG = ["", "", "", "", "", "", "", ""]; 
+        
+        const WEREWOLF_NAMES = ["T1 (Wilk Grozy)", "T2 (Nocny Łowca)", "T3 (Grobowy Szpon)", "T4 (Pustoszyciel)", "T5 (Wilczy Szaman)", "T6 (Widmowa Groza)", "T7 (Wyrocznia Krwawego Księżyca)", "T8 (Czeluść Piekielna)"];
+        const WEREWOLF_IMG = ["Wilk Grozy.jpg", "Nocny Łowca.jpg", "Grobowy Szpon.jpg", "Pustoszyciel.jpg", "Wilczy Szaman.jpg", "Widmowa Groza.jpg", "Wyrocznia Krwawego Księżyca.jpg", "Czeluść Piekielna.jpg"];
 
-        // =========================================================
-        // NAKŁADKA STYLUJĄCA DLA ORYGINALNEGO SILNIKA BITEFIGHT
-        // =========================================================
+        function buildRuinsUI() {
+            let enemyHtml = "";
+            ENEMY_NAMES.forEach((name, i) => {
+                enemyHtml += `<div class="unit-row"><label>${name}</label><input type="number" id="enemy_${i}" value="0" min="0"></div>`;
+            });
+            document.getElementById('enemyInputs').innerHTML = enemyHtml;
+
+            let allyHtml = "";
+            for(let i=0; i<8; i++) {
+                allyHtml += `<div class="unit-row"><label id="allyLabel_${i}"></label><input type="number" id="allyMax_${i}" placeholder="∞" min="0" title="Zostaw puste dla braku limitu"></div>`;
+            }
+            document.getElementById('allyInputs').innerHTML = allyHtml;
+
+            document.getElementById('ruinsRace').addEventListener('change', updateRaceNames);
+            updateRaceNames();
+        }
+
+        function updateRaceNames() {
+            const isWerewolf = document.getElementById('ruinsRace').value === 'werewolf';
+            const namesArray = isWerewolf ? WEREWOLF_NAMES : VAMPIRE_NAMES;
+            const imgArray = isWerewolf ? WEREWOLF_IMG : VAMPIRE_IMG;
+            
+            // Sync with backend engine
+            if(isWerewolf) document.getElementById('btn-werewolf').click();
+            else document.getElementById('btn-vampire').click();
+            
+            for(let i=0; i<8; i++) {
+                let lbl = document.getElementById(`allyLabel_${i}`);
+                if(lbl) {
+                    let imgHtml = imgArray[i] ? `<img src="img/${imgArray[i]}" class="tiny-unit-img">` : '';
+                    lbl.innerHTML = `${imgHtml}${namesArray[i]}`;
+                }
+            }
+        }
+
+        // Pomost wysyłający dane do zewnętrznego pliku ruins.js
+        function syncAndRun(mode) {
+            for(let i=0; i<10; i++) {
+                let v = parseInt(document.getElementById(`enemy_${i}`).value) || 0;
+                let target = document.getElementById(`e${i+1}`);
+                if(target) target.value = v;
+            }
+            for(let i=0; i<8; i++) {
+                let v = document.getElementById(`allyMax_${i}`).value;
+                let target = document.getElementById(`max_a${i+1}`);
+                if(target) target.value = v;
+            }
+            
+            if (mode === 'best') document.getElementById('btn-opt-best').click();
+            else if (mode === 'safest') document.getElementById('btn-opt-safe').click();
+        }
+        
+        document.getElementById('btn-opt-best').addEventListener('click', function(e) {
+            if(!e.isTrusted) return; 
+            syncAndRun('best');
+        });
+        
+        document.getElementById('btn-opt-safe').addEventListener('click', function(e) {
+            if(!e.isTrusted) return; 
+            syncAndRun('safest');
+        });
+
         const observer = new MutationObserver(() => {
             const resultsBox = document.getElementById('results-container');
             if (resultsBox && resultsBox.style.display !== 'block' && document.getElementById('results-list').innerHTML.includes('BEST')) {
@@ -1076,6 +1062,10 @@
             });
         });
         loaderObserver.observe(document.getElementById('async-loader'), { attributes: true, attributeFilter: ['style'] });
+
+        buildRuinsUI();
+        loadTableData();
+        setInterval(loadTableData, 300000);
     </script>
     <script src="ruins.js"></script>
 </body>
