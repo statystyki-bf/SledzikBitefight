@@ -49,39 +49,23 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
-        
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
-        .seal-badge { 
-            background: #110505; 
-            border: 1px solid #3a0a0a; 
-            border-radius: 2px; 
-            padding: 8px; 
-            width: 130px; 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
-            display: flex; flex-direction: column; align-items: center; 
-        }
-        .seal-img {
-            width: 44px;
-            height: 44px;
-            border: 2px ridge #808080; 
-            border-radius: 2px;
-            box-shadow: 0 0 6px rgba(0,0,0,1);
-            margin-bottom: 8px;
-        }
+        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
+        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
-        /* --- STYLE KALKULATORA RUIN --- */
+        /* STYLE KALKULATORA RUIN */
         .ruins-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .ruins-panel { background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; width: 48%; min-width: 300px; box-sizing: border-box; }
         .unit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; border-bottom: 1px solid #381e1e; padding-bottom: 4px; }
-        .unit-row label { font-size: 13px; color: #ccc; }
-        .unit-row input { width: 60px; background: #110505; color: #55ff55; border: 1px solid #600000; text-align: center; border-radius: 3px; font-weight: bold; }
-        .unit-row input:focus { border-color: #ff3333; outline: none; }
-        #ruinsResults { margin-top: 15px; text-align: left; background: #110505; padding: 15px; border: 1px solid #600000; border-radius: 4px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 13px; color: #e0e0e0; }
-        .loader { display: none; color: #ffcc00; font-weight: bold; margin-top: 10px; }
+        .unit-row label { font-size: 13px; color: #ccc; cursor: pointer; }
+        .unit-row input[type="number"] { width: 60px; background: #110505; color: #55ff55; border: 1px solid #600000; text-align: center; border-radius: 3px; font-weight: bold; padding: 3px; }
+        .unit-row input[type="number"]:focus { border-color: #ff3333; outline: none; }
+        .unit-row input[type="checkbox"] { accent-color: #ff3333; cursor: pointer; }
+        #results-container { text-align: left; background: #110505; padding: 15px; border: 1px solid #600000; border-radius: 4px; color: #e0e0e0; font-size: 13px; line-height: 1.5; margin-top: 15px; }
+        .loader { display: none; color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -185,47 +169,115 @@
     </div>
 
     <div id="sectionRuins">
-        <h2>Optymalizator Ruin</h2>
+        <h2>Optymalizator Ruin (Silnik 1:1)</h2>
+        
+        <div class="filter-container">
+            <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Twoja Rasa:</span>
+            <button id="btn-vampire" class="tab-btn race-select-btn active" data-race="vampire" style="padding: 5px 15px; font-size:14px;">Wampir</button>
+            <button id="btn-werewolf" class="tab-btn race-select-btn" data-race="werewolf" style="padding: 5px 15px; font-size:14px;">Wilkołak</button>
+        </div>
+
         <div class="filter-container">
             <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Poziom Ruin:</span>
-            <input type="number" id="ruinsLayer" value="1" min="1" max="100" style="width: 60px; font-size: 16px; font-weight: bold; text-align: center;">
-            <select id="ruinsRace">
-                <option value="vampire">Moja rasa: Wampir</option>
-                <option value="werewolf">Moja rasa: Wilkołak</option>
-            </select>
+            <input type="number" id="layerInput" value="57" min="1" max="101" style="width: 70px; font-size: 16px; font-weight: bold; text-align: center;">
+            <label style="margin-left: 15px; color: #ccc; cursor:pointer;">
+                <input type="checkbox" id="modeSwitch" style="vertical-align: middle; accent-color: #ff3333;"> 
+                Tryb DEEP (wolniejszy, głębokie szukanie)
+            </label>
         </div>
 
         <div class="ruins-grid">
             <div class="ruins-panel">
-                <h3 style="color: #ff5555; margin-top: 0; text-transform: uppercase;">Armia Wroga</h3>
-                <div id="enemyInputs"></div>
+                <h3 style="color: #ff5555; margin-top: 0;">ARMIA WROGA</h3>
+                <div class="unit-row"><label>Skeleton</label><input type="number" id="e1" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Zombie</label><input type="number" id="e2" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Undead Cultist</label><input type="number" id="e3" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Bonewing</label><input type="number" id="e4" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Bloated Corpse</label><input type="number" id="e5" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Wraith</label><input type="number" id="e6" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Revenant</label><input type="number" id="e7" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Bone Giant</label><input type="number" id="e8" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Broodmother</label><input type="number" id="e9" class="unit-count-input" value="0" min="0"></div>
+                <div class="unit-row"><label>Lich</label><input type="number" id="e10" class="unit-count-input" value="0" min="0"></div>
             </div>
+            
             <div class="ruins-panel">
-                <h3 style="color: #55ff55; margin-top: 0; text-transform: uppercase;">Twoja Armia (Max limity)</h3>
-                <div id="allyInputs"></div>
+                <h3 style="color: #55ff55; margin-top: 0;">TWOJA ARMIA (LIMITY)</h3>
+                <div style="font-size:11px; color:#888; margin-bottom:10px; text-align:right;">Zostaw puste pole dla braku limitu.</div>
+                
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a1" class="unit-checkbox" checked> <span id="name_a1">T1</span></label>
+                    <input type="number" id="a1" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a1" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a2" class="unit-checkbox" checked> <span id="name_a2">T2</span></label>
+                    <input type="number" id="a2" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a2" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a3" class="unit-checkbox" checked> <span id="name_a3">T3</span></label>
+                    <input type="number" id="a3" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a3" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a4" class="unit-checkbox" checked> <span id="name_a4">T4</span></label>
+                    <input type="number" id="a4" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a4" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a5" class="unit-checkbox" checked> <span id="name_a5">T5</span></label>
+                    <input type="number" id="a5" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a5" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a6" class="unit-checkbox" checked> <span id="name_a6">T6</span></label>
+                    <input type="number" id="a6" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a6" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a7" class="unit-checkbox" checked> <span id="name_a7">T7</span></label>
+                    <input type="number" id="a7" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a7" class="unit-max-input" placeholder="∞">
+                </div>
+                <div class="unit-row">
+                    <label><input type="checkbox" id="chk_a8" class="unit-checkbox" checked> <span id="name_a8">T8</span></label>
+                    <input type="number" id="a8" value="0" class="unit-count-input" style="display:none;"><input type="number" id="max_a8" class="unit-max-input" placeholder="∞">
+                </div>
             </div>
         </div>
 
-        <button class="action-btn" onclick="startOptimizer('best')" style="background: #b37700; border-color: #805500;">
-            Szukaj Najtańszej Formacji (Best)
+        <button id="btn-opt-best" class="action-btn" style="background: #b37700; border-color: #805500; font-size:15px; padding: 10px 20px;">
+            <span id="opt-text-best">Szukaj Najtańszej Formacji (Best)</span>
         </button>
-        <button class="action-btn" onclick="startOptimizer('safest')" style="background: #1f7244;">
-            Szukaj Najbezpieczniejszej (Safest)
+        <button id="btn-opt-safe" class="action-btn" style="background: #1f7244; font-size:15px; padding: 10px 20px;">
+            <span id="opt-text-safe">Szukaj Najbezpieczniejszej (Safest)</span>
         </button>
         
-        <div id="ruinsLoader" class="loader">Uruchamianie silnika wielowątkowego... <span id="ruinsProgress">0%</span></div>
-        <div id="ruinsResults">Oczekuje na uruchomienie symulacji...</div>
+        <div id="async-loader" class="loader">
+            Uruchamianie Multi-Core Engine... <span id="progress-text"></span>
+        </div>
+        
+        <div id="results-container">
+            <div id="results-list">Tutaj pojawią się wyniki optymalizatora.</div>
+        </div>
+
+        <div id="ruins-hidden-dom" style="display:none;">
+            <span id="allyStr"></span><span id="maxStrAlly"></span>
+            <div id="logOutput"></div>
+            <button id="btn-enemies-all" class="btn-filter-enemies" data-side="enemies" data-pos="all"></button>
+            <button id="btn-enemies-vanguard" class="btn-filter-enemies" data-side="enemies" data-pos="vanguard"></button>
+            <button id="btn-enemies-rearguard" class="btn-filter-enemies" data-side="enemies" data-pos="rearguard"></button>
+            <button id="btn-allies-all" class="btn-filter-allies" data-side="allies" data-pos="all"></button>
+            <button id="btn-allies-vanguard" class="btn-filter-allies" data-side="allies" data-pos="vanguard"></button>
+            <button id="btn-allies-rearguard" class="btn-filter-allies" data-side="allies" data-pos="rearguard"></button>
+            <button id="btn-share-log"></button><button id="btn-copy-log"></button><button id="btn-sim"></button>
+            <span id="labelLite"></span><span id="labelPro"></span>
+        </div>
     </div>
 
     <script>
         // =========================================================
+        // GŁÓWNA LOGIKA TWOJEGO CENTRUM DOWODZENIA
+        // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
-        // =========================================================
         
         const PLAYERS = {
             "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
@@ -946,107 +998,45 @@
             document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
         }
 
-        // ==========================================
-        //  KONTROLER KALKULATORA RUIN (FRONTEND)
-        // ==========================================
-        const ENEMY_NAMES = ["Skeleton", "Zombie", "Undead Cultist", "Bonewing", "Bloated Corpse", "Wraith", "Revenant", "Bone Giant", "Broodmother", "Lich"];
-        
-        // Zależnie od wybranej rasy (aktualizowane skryptem)
-        const VAMPIRE_NAMES = ["T1 (Nietoperze)", "T2 (Ghoule)", "T3 (Vampire Thralls)", "T4 (Banshees)", "T5 (Necromancers)", "T6 (Gargoyles)", "T7 (Blood Witches)", "T8 (Rotmaws)"];
-        const WEREWOLF_NAMES = ["T1 (Szczury)", "T2 (Golemy)", "T3 (Wolf Thralls)", "T4 (Wendigos)", "T5 (Voodoo Priests)", "T6 (Chimeras)", "T7 (Moon Witches)", "T8 (Hellmaws)"];
-        
-        let optimizationWorker = null;
-
-        function updateRaceNames() {
-            const isWerewolf = document.getElementById('ruinsRace').value === 'werewolf';
-            const namesArray = isWerewolf ? WEREWOLF_NAMES : VAMPIRE_NAMES;
-            for(let i=0; i<8; i++) {
-                let lbl = document.getElementById(`allyLabel_${i}`);
-                if(lbl) lbl.innerText = namesArray[i];
-            }
-        }
-
-        function buildRuinsUI() {
-            let enemyHtml = "";
-            ENEMY_NAMES.forEach((name, i) => {
-                enemyHtml += `<div class="unit-row"><label>${name}</label><input type="number" id="enemy_${i}" value="0" min="0"></div>`;
-            });
-            document.getElementById('enemyInputs').innerHTML = enemyHtml;
-
-            let allyHtml = "";
-            VAMPIRE_NAMES.forEach((name, i) => {
-                allyHtml += `<div class="unit-row"><label id="allyLabel_${i}">${name}</label><input type="number" id="ally_${i}" placeholder="∞" min="0" title="Zostaw puste dla braku limitu"></div>`;
-            });
-            document.getElementById('allyInputs').innerHTML = allyHtml;
-            
-            // Reagowanie na zmianę z Wampira na Wilkołaka
-            document.getElementById('ruinsRace').addEventListener('change', updateRaceNames);
-            updateRaceNames(); // Wywołaj raz na start żeby załadowało
-        }
-
-        function startOptimizer(mode) {
-            const layer = parseInt(document.getElementById('ruinsLayer').value) || 1;
-            const enemies = [];
-            for(let i=0; i<10; i++) enemies.push(parseInt(document.getElementById(`enemy_${i}`).value) || 0);
-            
-            const maxAllies = [];
-            for(let i=0; i<8; i++) {
-                const val = document.getElementById(`ally_${i}`).value;
-                maxAllies.push(val === "" ? 999999 : parseInt(val));
-            }
-
-            if (enemies.every(e => e === 0)) { alert("Musisz wprowadzić jednostki wroga!"); return; }
-
-            document.getElementById('ruinsLoader').style.display = 'block';
-            document.getElementById('ruinsResults').innerHTML = "Obliczanie wszystkich możliwych permutacji...";
-
-            if(optimizationWorker) optimizationWorker.terminate(); 
-            optimizationWorker = new Worker('ruins-worker.js'); 
-
-            optimizationWorker.postMessage({
-                mode: mode,
-                layer: layer,
-                enemies: enemies,
-                maxAllies: maxAllies
-            });
-
-            optimizationWorker.onmessage = function(e) {
-                if(e.data.status === 'progress') {
-                    document.getElementById('ruinsProgress').innerText = e.data.percent + "%";
-                } else if (e.data.status === 'done') {
-                    document.getElementById('ruinsLoader').style.display = 'none';
-                    renderRuinsResults(e.data.results, mode);
-                }
-            };
-        }
-
-        function renderRuinsResults(results, mode) {
-            let html = `<div style="color:#ffcc00; font-weight:bold; margin-bottom:10px;">TOP 10 FORMACJI (${mode.toUpperCase()})</div>`;
-            if(results.length === 0) {
-                html += "<span style='color:#ff5555'>Nie znaleziono formacji gwarantującej wygraną w 50 rundach przy tych limitach.<br><br><b>Wskazówka:</b> Dla poziomów powyżej 50 zazwyczaj jedyną gwarancją wygranej są jednostki T7 (Witches) oraz T8 (Rotmaws/Hellmaws) w dużych ilościach.</span>";
-            } else {
-                results.forEach((res, index) => {
-                    html += `<div style="border-bottom: 1px solid #4a0d0d; padding-bottom: 8px; margin-bottom: 8px;">`;
-                    html += `<span style="color:#55ff55">Formacja ${index + 1}:</span> Koszt odtworzenia: <b>~${res.cost}</b> złota | Utracone jednostki: <b>${res.lost}</b> | Rundy: ${res.rounds}<br>`;
-                    html += `<span style="color:#888;">Użyto:</span> `;
-                    
-                    let usedArr = [];
-                    res.army.forEach((count, i) => {
-                        if(count > 0) {
-                            let nazwaKrotka = document.getElementById(`allyLabel_${i}`).innerText.split(" ")[0]; // np samo "T8"
-                            usedArr.push(`<span style="color:#ccc">${nazwaKrotka} x${count}</span>`);
-                        }
-                    });
-                    html += usedArr.join(", ");
-                    html += `</div>`;
-                });
-            }
-            document.getElementById('ruinsResults').innerHTML = html;
-        }
-
-        buildRuinsUI();
         loadTableData();
         setInterval(loadTableData, 300000);
-    </script>
-</body>
-</html>
+
+        // =========================================================
+        // NAKŁADKA STYLUJĄCA DLA ORYGINALNEGO SILNIKA BITEFIGHT
+        // =========================================================
+        // Ponieważ nie pobierasz folderu z obrazkami (img/), oryginalny kod wklejałby puste grafiki.
+        // Poniższy obserwator łapie wygenerowane przez silnik wyniki i poprawia formatowanie.
+        const observer = new MutationObserver(() => {
+            const resultsBox = document.getElementById('results-container');
+            if (resultsBox && resultsBox.style.display !== 'block' && document.getElementById('results-list').innerHTML.includes('BEST')) {
+                resultsBox.style.display = 'block';
+            }
+            document.querySelectorAll('#results-list .formation-unit img').forEach(img => {
+                const title = img.getAttribute('title') || 'Unit';
+                img.outerHTML = `<span style="color:#55ff55; font-weight:bold; font-size: 14px;">[${title}]</span> `;
+            });
+            document.querySelectorAll('#results-list .result-item').forEach(item => {
+                item.style.background = '#2b1717';
+                item.style.border = '1px solid #600000';
+                item.style.marginBottom = '10px';
+                item.style.padding = '12px';
+                item.style.borderRadius = '6px';
+            });
+        });
+        observer.observe(document.getElementById('results-list'), { childList: true, subtree: true });
+
+        // Pokaż/Ukryj loader ładnie przy asynchronicznych operacjach z obfuskowanego skryptu
+        const loaderObserver = new MutationObserver((muts) => {
+            muts.forEach(m => {
+                if (m.target.style.display === 'flex' || m.target.style.display === 'block') {
+                    document.getElementById('results-container').style.display = 'none';
+                }
+            });
+        });
+        loaderObserver.observe(document.getElementById('async-loader'), { attributes: true, attributeFilter: ['style'] });
+        
+        // =========================================================
+        // WSTRZYKNIĘTY ORYGINALNY SILNIK (ZAKODOWANY) 1:1
+        // Został przeniesiony z Twojego linku, nie dotykany, nie psuje logiki
+        // =========================================================
+        document['addEventListener']('DOMContentLoaded', () => {    const _0x4c2854 = [        'Bats',        'Ghouls',        'Vampire\x20Thralls',        'Banshees',        'Necromancers',        'Gargoyles',        'Blood\x20Witches',        'Rotmaws'    ];    const _0x3ed231 = [        'Rats',        'Flesh\x20Golems',        'Wolf\x20Thralls',        'Wendigos',        'Voodoo\x20Priests',        'Chimeras',        'Moon\x20Witches',        'Hellmaws'    ];    let _0x5c8b0e = 'vampire';    let _0x195bac = ![];    let _0x50f17f = ![];    const _0x45b723 = [        {            'id': 'e1',            't': 'vanguard'        },        {            'id': 'e2',            't': 'vanguard'        },        {            'id': 'e3',            't': 'rearguard'        },        {            'id': 'e4',            't': 'rearguard'        },        {            'id': 'e5',            't': 'vanguard'        },        {            'id': 'e6',            't': 'rearguard'        },        {            'id': 'e7',            't': 'vanguard'        },        {            'id': 'e8',            't': 'vanguard'        },        {            'id': 'e9',            't': 'rearguard'        },        {            'id': 'e10',            't': 'rearguard'        }    ];    const _0x16db61 = [        {            'id': 'a1',            'i': 0x1,            'weight': 0x2,            't': 'rearguard'        },        {            'id': 'a2',            'i': 0x2,            'weight': 0x3,            't': 'vanguard'        },        {            'id': 'a3',            'i': 0x3,            'weight': 0x4,            't': 'vanguard'        },        {            'id': 'a4',            'i': 0x4,            'weight': 0x7,            't': 'rearguard'        },        {            'id': 'a5',            'i': 0x5,            'weight': 0xa,            't': 'rearguard'        },        {            'id': 'a6',            'i': 0x6,            'weight': 0xf,            't': 'vanguard'        },        {            'id': 'a7',            'i': 0x7,            'weight': 0x12,            't': 'rearguard'        },        {            'id': 'a8',            'i': 0x8,            'weight': 0x1e,            't': 'vanguard'        }    ];    const _0x5e61c4 = 0x0, _0x16c986 = 0x1, _0x126b25 = 0x2, _0x59dabe = 0x3, _0x50e01d = 0x4, _0x1c0e1c = 0x5, _0x439889 = 0x6, _0x18fe06 = 0x7;    const _0xc42458 = 0x8, _0x4702ae = 0x9, _0x411564 = 0xa, _0x26eb89 = 0xb, _0x563270 = 0xc, _0x4252c8 = 0xd, _0x90f41b = 0xe, _0x22dd32 = 0xf, _0xc7f57c = 0x10, _0xe6fa9b = 0x11, _0x29b855 = 0x12;    const _0x514548 = new Int32Array([        0x2,        0x5,        0x6,        0x4,        0x5,        0xc,        0x8,        0x5a,        0x4,        0x7,        0x1,        0x3,        0xa,        0x2,        0xc,        0x19,        0x12,        0x19,        0x1    ]);    const _0x5e71dd = new Int32Array([        0x8,        0x3,        0x6,        0x7,        0x9,        0xc,        0xe,        0x1e,        0x3,        0x2,        0x5,        0x6,        0x1,        0x7,        0x8,        0xa,        0x9,        0x28,        0x1    ]);    const _0x317972 = new Int32Array([        0x5,        0x2,        0x4,        0x4,        0x2,        0x3,        0x3,        0x1,        0x3,        0x2,        0x1,        0x4,        0x1,        0x4,        0x4,        0x1,        0x2,        0x3,        0x6    ]);    const _0xd63e6 = new Int32Array([        0x1,        0x2,        0x3,        0x4,        0x5,        0x6,        0x7,        0x8,        0x1,        0x2,        0x3,        0x4,        0x5,        0x6,        0x7,        0x8,        0x9,        0xa,        0x9    ]);    const _0x41788b = new Int32Array([        0x0,        0x0,        0x1,        0x2,        0x1,        0x2,        0x1,        0x2,        0x0,        0x0,        0x1,        0x1,        0x2,        0x1,        0x0,        0x2,        0x2,        0x1,        0x2    ]);    const _0x13cdf2 = new Int32Array([        0x1,        0x0,        0x0,        0x1,        0x1,        0x0,        0x1,        0x0,        0x0,        0x0,        0x1,        0x1,        0x0,        0x1,        0x0,        0x0,        0x1,        0x1,        0x1    ]);    const _0x4a5a58 = new Int32Array([        0x1,        0x1,        0x1,        0x1,        0x1,        0x1,        0x1,        0x1,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0    ]);    const _0x71cdfb = new Int32Array([        0x2,        0x3,        0x4,        0x7,        0xa,        0xf,        0x12,        0x1e,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0    ]);    const _0x1c82cb = new Int32Array([        0xa,        0xf,        0x14,        0x23,        0x32,        0x4b,        0x5a,        0x96,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0,        0x0    ]);    const _0x536722 = new Float64Array([        0x1,        1.5,        0.5,        0.5,        0x1,        1.5,        1.5,        0.5,        0x1    ]);    const _0x5b2c08 = new Int32Array(0x13);    const _0x3dd215 = new Int32Array(0x13);    const _0x26d046 = new Int32Array(0x13);    const _0x5b32b0 = new Uint8Array(0x13);    const _0x13bfdb = new Uint8Array(0x13);    const _0x2ab22e = new Int32Array(0x13);    const _0xd23507 = new Int32Array(0x13);    const _0x5480e3 = new Int32Array(0x13);    const _0x5c9d69 = new Int32Array(0x13);    const _0x459387 = new Int32Array(0x13);    let _0x1ccd90 = ![];    let _0x2fde3f = 0x0;    const _0x34fd7c = document['getElementById']('modeSwitch');    const _0x3293ea = document['getElementById']('labelLite');    const _0x5b921b = document['getElementById']('labelPro');    function _0x409d1c() {        if (_0x34fd7c && _0x3293ea && _0x5b921b) {            if (_0x34fd7c['checked']) {                _0x3293ea['style']['color'] = '#555';                _0x3293ea['style']['textShadow'] = 'none';                _0x5b921b['style']['color'] = '#ff4d4d';                _0x5b921b['style']['textShadow'] = '0\x200\x205px\x20rgba(255,77,77,0.5)';            } else {                _0x3293ea['style']['color'] = '#a6e3a1';                _0x3293ea['style']['textShadow'] = '0\x200\x205px\x20rgba(166,227,161,0.5)';                _0x5b921b['style']['color'] = '#555';                _0x5b921b['style']['textShadow'] = 'none';            }        }    }    if (_0x34fd7c) {        _0x34fd7c['addEventListener']('change', () => {            _0x409d1c();            _0x423686();        });    }    function _0xdc3c33(_0x537f6a) {        let _0x525a9f = _0x5b2c08[_0x537f6a];        if (_0x525a9f <= 0x0)            return 0x0;        if (_0x537f6a === _0x4702ae && _0x1ccd90)            return _0x525a9f | 0x0;        return (_0x525a9f + _0x514548[_0x537f6a] - 0x1) / _0x514548[_0x537f6a] | 0x0;    }    function _0x4dd4c6() {        _0x45b723['forEach'](_0x5effa8 => {            let _0x1dde92 = document['getElementById'](_0x5effa8['id']);            if (_0x1dde92) {                let _0x1797cf = _0x1dde92['closest']('.unit-card');                if(_0x1797cf){ if (parseInt(_0x1dde92['value']) > 0x0)                    _0x1797cf['classList']['add']('active-card');                else                    _0x1797cf['classList']['remove']('active-card');            } }        });        _0x16db61['forEach'](_0x327e53 => {            let _0x58f3dc = document['getElementById']('chk_' + _0x327e53['id']);            if (_0x58f3dc) {                let _0x30070f = _0x58f3dc['closest']('.unit-card');                if(_0x30070f){ if (_0x58f3dc['checked'])                    _0x30070f['classList']['add']('active-card');                else                    _0x30070f['classList']['remove']('active-card');             } }        });    }    function _0x788534(_0x2f298d, _0x4621bf) {        document['querySelectorAll']('.btn-filter-' + _0x2f298d)['forEach'](_0x4f4814 => _0x4f4814['classList']['remove']('active'));        document['getElementById']('btn-' + _0x2f298d + '-' + _0x4621bf)['classList']['add']('active');        let _0x5ad20c = _0x2f298d === 'enemies' ? _0x45b723 : _0x16db61;        _0x5ad20c['forEach'](_0x4d431f => {            let _0x52c56f = document['getElementById'](_0x4d431f['id']);            if (_0x52c56f) {                let _0x28ba3e = _0x52c56f['closest']('.unit-card');                if(_0x28ba3e) { if (_0x4621bf === 'all' || _0x4d431f['t'] === _0x4621bf)                    _0x28ba3e['style']['display'] = 'block';                else                    _0x28ba3e['style']['display'] = 'none';             } }        });    }    function _0x423686() {        let _0x5ce775 = {            'l': document['getElementById']('layerInput')['value'],            'race': _0x5c8b0e,            'o': document['getElementById']('modeSwitch') ? document['getElementById']('modeSwitch')['checked'] : !![],            'u': {}        };        let _0x1bbe60 = document['querySelectorAll']('.unit-count-input,\x20.unit-checkbox,\x20.unit-max-input');        _0x1bbe60['forEach'](_0x4a8bcc => {            _0x5ce775['u'][_0x4a8bcc['id']] = _0x4a8bcc['type'] === 'checkbox' ? _0x4a8bcc['checked'] : _0x4a8bcc['value'];        });        localStorage['setItem']('ruinsHelperState', JSON['stringify'](_0x5ce775));        _0x4dd4c6();    }    function _0x162b28() {        let _0x392e9d = localStorage['getItem']('ruinsHelperState');        if (_0x392e9d) {            let _0x24bdb6 = JSON['parse'](_0x392e9d);            if (_0x24bdb6['l'])                document['getElementById']('layerInput')['value'] = _0x24bdb6['l'];            if (_0x24bdb6['race'])                _0x391777(_0x24bdb6['race']);            else                _0x391777('vampire');            if (_0x24bdb6['hasOwnProperty']('o') && document['getElementById']('modeSwitch')) {                document['getElementById']('modeSwitch')['checked'] = _0x24bdb6['o'];            } else if (document['getElementById']('modeSwitch')) {                document['getElementById']('modeSwitch')['checked'] = ![];            }            if (_0x24bdb6['u']) {                for (let _0x3da8fc in _0x24bdb6['u']) {                    let _0x2499cf = document['getElementById'](_0x3da8fc);                    if (_0x2499cf) {                        if (_0x2499cf['type'] === 'checkbox')                            _0x2499cf['checked'] = _0x24bdb6['u'][_0x3da8fc];                        else                            _0x2499cf['value'] = _0x24bdb6['u'][_0x3da8fc];                    }                }            }        } else {            _0x391777('vampire');            if (document['getElementById']('modeSwitch'))                document['getElementById']('modeSwitch')['checked'] = ![];        }        _0x409d1c();        _0x4dd4c6();        document['querySelectorAll']('.unit-checkbox,\x20.unit-max-input')['forEach'](_0xf45a59 => {            _0xf45a59['addEventListener']('change', _0x423686);        });    }    function _0x391777(_0x18c64a) {        _0x5c8b0e = _0x18c64a;        document['getElementById']('btn-vampire')['classList']['remove']('active');        document['getElementById']('btn-werewolf')['classList']['remove']('active');        document['getElementById']('btn-' + _0x18c64a)['classList']['add']('active');        let _0xee2657 = _0x18c64a === 'vampire' ? '1' : '2';        let _0x4372ba = _0x18c64a === 'vampire' ? _0x4c2854 : _0x3ed231;        for (let _0x33ebaa = 0x1; _0x33ebaa <= 0x8; _0x33ebaa++) {            let _0x3bc91d = document['getElementById']('img_a' + _0x33ebaa);            if (_0x3bc91d)                _0x3bc91d['src'] = './img/Tier' + _0x33ebaa + '_Frame-B-1_' + _0xee2657 + '.jpg';            let _0x4ce980 = document['getElementById']('name_a' + _0x33ebaa);            if (_0x4ce980)                _0x4ce980['innerText'] = _0x4372ba[_0x33ebaa - 0x1];        }        document['querySelectorAll']('.dyn-name')['forEach'](_0xefe424 => {            let _0x3192c0 = parseInt(_0xefe424['getAttribute']('data-tier'));            if (_0x3192c0 >= 0x1 && _0x3192c0 <= 0x8)                _0xefe424['innerText'] = _0x4372ba[_0x3192c0 - 0x1];        });        document['querySelectorAll']('.dyn-img')['forEach'](_0x587823 => {            let _0xfe0f3f = parseInt(_0x587823['getAttribute']('data-tier'));            if (_0xfe0f3f >= 0x1 && _0xfe0f3f <= 0x8) {                _0x587823['src'] = './img/Tier' + _0xfe0f3f + '_Frame-B-1_' + _0xee2657 + '.jpg';                _0x587823['title'] = _0x4372ba[_0xfe0f3f - 0x1];            }        });        _0x423686();    }    function _0x4d70f4(_0x3e6278) {        let _0x2c50c1 = document['getElementById']('layerInput');        let _0x161c0b = parseInt(_0x2c50c1['value']) || 0x1;        _0x161c0b += _0x3e6278;        if (_0x161c0b > 0x65)            _0x161c0b = 0x65;        if (_0x161c0b < 0x1)            _0x161c0b = 0x1;        _0x2c50c1['value'] = _0x161c0b;        _0x41de9a();    }    function _0x41de9a() {        let _0x16ac83 = document['getElementById']('layerInput');        let _0xd12597 = parseInt(_0x16ac83['value']) || 0x1;        if (_0xd12597 > 0x65) {            _0xd12597 = 0x65;            _0x16ac83['value'] = 0x65;        }        if (_0xd12597 < 0x1) {            _0xd12597 = 0x1;            _0x16ac83['value'] = 0x1;        }        let _0x3eed39 = 0xa + _0xd12597 * 0xa;        let _0x1a200e = 0x0;        _0x16db61['forEach'](_0x4f9302 => _0x1a200e += (parseInt(document['getElementById'](_0x4f9302['id'])['value']) || 0x0) * _0x4f9302['weight']);        if (_0x1a200e > _0x3eed39) {            for (let _0x39d3e3 = _0x16db61['length'] - 0x1; _0x39d3e3 >= 0x0; _0x39d3e3--) {                let _0x5d4ede = _0x16db61[_0x39d3e3];                let _0x302610 = document['getElementById'](_0x5d4ede['id']);                let _0x13724d = parseInt(_0x302610['value']) || 0x0;                while (_0x13724d > 0x0 && _0x1a200e > _0x3eed39) {                    _0x13724d--;                    _0x1a200e -= _0x5d4ede['weight'];                }                _0x302610['value'] = _0x13724d;                if (_0x1a200e <= _0x3eed39)                    break;            }        }        _0x146fdc();        _0x423686();    }    function _0x146fdc() {        let _0x6408e4 = 0x0;        _0x16db61['forEach'](_0x5d4ec0 => _0x6408e4 += (parseInt(document['getElementById'](_0x5d4ec0['id'])['value']) || 0x0) * _0x5d4ec0['weight']);        document['getElementById']('allyStr')['innerText'] = _0x6408e4;        document['getElementById']('maxStrAlly')['innerText'] = 0xa + (parseInt(document['getElementById']('layerInput')['value']) || 0x1) * 0xa;        _0x423686();    }    function _0x2db0e7(_0x104290) {        let _0x5a52c1 = document['getElementById'](_0x104290);        if (!_0x5a52c1)            return;        let _0x336ec1 = parseInt(_0x5a52c1['value']) || 0x0;        if (_0x336ec1 < 0x0)            _0x336ec1 = 0x0;        _0x5a52c1['value'] = _0x336ec1;        let _0x2baf7e = _0x16db61['find'](_0x25d4bd => _0x25d4bd['id'] === _0x104290);        if (_0x2baf7e) {            let _0x320087 = parseInt(document['getElementById']('layerInput')['value']) || 0x1;            if (_0x320087 > 0x65)                _0x320087 = 0x65;            if (_0x320087 < 0x1)                _0x320087 = 0x1;            let _0x1c131 = 0xa + _0x320087 * 0xa;            let _0x3dc63f = 0x0;            _0x16db61['forEach'](_0x5b2bab => {                if (_0x5b2bab['id'] !== _0x104290)                    _0x3dc63f += (parseInt(document['getElementById'](_0x5b2bab['id'])['value']) || 0x0) * _0x5b2bab['weight'];            });            let _0x21fb74 = _0x1c131 - _0x3dc63f;            let _0x25aca2 = Math['floor'](_0x21fb74 / _0x2baf7e['weight']);            if (_0x336ec1 > _0x25aca2)                _0x5a52c1['value'] = Math['max'](0x0, _0x25aca2);        }        _0x146fdc();        _0x4dd4c6();    }    function _0x1dc8e2(_0x7c4a50, _0x21a483) {        let _0x177888 = document['getElementById'](_0x7c4a50);        let _0x141a4e = (parseInt(_0x177888['value']) || 0x0) + _0x21a483;        _0x177888['value'] = _0x141a4e < 0x0 ? 0x0 : _0x141a4e;        _0x2db0e7(_0x7c4a50);    }    const _0x4ca2b0 = function () {        const _0xda0dfb = 0x0, _0x11e197 = 0x1, _0x14184c = 0x2, _0x4e2da6 = 0x3, _0x429bc = 0x4, _0x98f8d6 = 0x5, _0x80be5 = 0x6, _0x5d9cc3 = 0x7;        const _0x59ac9a = 0x8, _0x29a622 = 0x9, _0x211c68 = 0xa, _0x12c15b = 0xb, _0x1e68d5 = 0xc, _0x5d8fcf = 0xd, _0x124006 = 0xe, _0x234d12 = 0xf, _0x549bf0 = 0x10, _0x32b424 = 0x11, _0x38efb3 = 0x12;        const _0x10d16b = new Int32Array([            0x2,            0x5,            0x6,            0x4,            0x5,            0xc,            0x8,            0x5a,            0x4,            0x7,            0x1,            0x3,            0xa,            0x2,            0xc,            0x19,            0x12,            0x19,            0x1        ]);        const _0x2458aa = new Int32Array([            0x8,            0x3,            0x6,            0x7,            0x9,            0xc,            0xe,            0x1e,            0x3,            0x2,            0x5,            0x6,            0x1,            0x7,            0x8,            0xa,            0x9,            0x28,            0x1        ]);        const _0x36994f = new Int32Array([            0x5,            0x2,            0x4,            0x4,            0x2,            0x3,            0x3,            0x1,            0x3,            0x2,            0x1,            0x4,            0x1,            0x4,            0x4,            0x1,            0x2,            0x3,            0x6        ]);        const _0x45315c = new Int32Array([            0x1,            0x2,            0x3,            0x4,            0x5,            0x6,            0x7,            0x8,            0x1,            0x2,            0x3,            0x4,            0x5,            0x6,            0x7,            0x8,            0x9,            0xa,            0x9        ]);        const _0x2d90e6 = new Int32Array([            0x0,            0x0,            0x1,            0x2,            0x1,            0x2,            0x1,            0x2,            0x0,            0x0,            0x1,            0x1,            0x2,            0x1,            0x0,            0x2,            0x2,            0x1,            0x2        ]);        const _0x429bb3 = new Int32Array([            0x1,            0x0,            0x0,            0x1,            0x1,            0x0,            0x1,            0x0,            0x0,            0x0,            0x1,            0x1,            0x0,            0x1,            0x0,            0x0,            0x1,            0x1,            0x1        ]);        const _0x53e88b = new Int32Array([            0x1,            0x1,            0x1,            0x1,            0x1,            0x1,            0x1,            0x1,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0        ]);        const _0x4bf923 = new Int32Array([            0x2,            0x3,            0x4,            0x7,            0xa,            0xf,            0x12,            0x1e,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0        ]);        const _0x5e3ab8 = new Int32Array([            0xa,            0xf,            0x14,            0x23,            0x32,            0x4b,            0x5a,            0x96,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0,            0x0        ]);        const _0x4efbca = new Float64Array([            0x1,            1.5,            0.5,            0.5,            0x1,            1.5,            1.5,            0.5,            0x1        ]);        const _0x6cb7c = new Int32Array(0x13);        const _0x3f65f1 = new Int32Array(0x13);        const _0x1486a2 = new Uint8Array(0x13);        const _0x197cc4 = new Uint8Array(0x13);        const _0xd3bbff = new Int32Array(0x13);        const _0x37ad5e = new Int32Array(0x8);        const _0x429623 = new Int32Array(0x13);        let _0x310ff6 = 0x0;        const _0x292332 = new Int32Array(0x13);        let _0x425702 = 0x0;        const _0x23a29a = new Int32Array(0x13);        let _0x9d91ae = 0x0;        const _0x3a8e43 = new Int32Array(0x13);        let _0x5d947e = 0x0;        let _0x355e13 = ![];        let _0x5d3546 = 0x0;        function _0x4defa4(_0x2a90ae) {            let _0x298aed = _0x6cb7c[_0x2a90ae];            if (_0x298aed <= 0x0)                return 0x0;            if (_0x2a90ae === _0x29a622 && _0x355e13)                return _0x298aed | 0x0;            return (_0x298aed + _0x10d16b[_0x2a90ae] - 0x1) / _0x10d16b[_0x2a90ae] | 0x0;        }        function _0x2796a7(_0x40f28b, _0xdbfb0b, _0x2f34c1, _0x2f7278) {            let _0x54f995 = 0x1, _0x2f34f0 = 0x0;            _0x355e13 = ![];            let _0x1ff003 = 0x0, _0x5afa1 = 0x0;            _0x6cb7c[0x0] = 0x0;            _0x6cb7c[0x1] = 0x0;            _0x6cb7c[0x2] = 0x0;            _0x6cb7c[0x3] = 0x0;            _0x6cb7c[0x4] = 0x0;            _0x6cb7c[0x5] = 0x0;            _0x6cb7c[0x6] = 0x0;            _0x6cb7c[0x7] = 0x0;            _0x6cb7c[0x8] = 0x0;            _0x6cb7c[0x9] = 0x0;            _0x6cb7c[0xa] = 0x0;            _0x6cb7c[0xb] = 0x0;            _0x6cb7c[0xc] = 0x0;            _0x6cb7c[0xd] = 0x0;            _0x6cb7c[0xe] = 0x0;            _0x6cb7c[0xf] = 0x0;            _0x6cb7c[0x10] = 0x0;            _0x6cb7c[0x11] = 0x0;            _0x6cb7c[0x12] = 0x0;            _0x3f65f1[0x0] = _0x36994f[0x0];            _0x3f65f1[0x1] = _0x36994f[0x1];            _0x3f65f1[0x2] = _0x36994f[0x2];            _0x3f65f1[0x3] = _0x36994f[0x3];            _0x3f65f1[0x4] = _0x36994f[0x4];            _0x3f65f1[0x5] = _0x36994f[0x5];            _0x3f65f1[0x6] = _0x36994f[0x6];            _0x3f65f1[0x7] = _0x36994f[0x7];            _0x3f65f1[0x8] = _0x36994f[0x8];            _0x3f65f1[0x9] = _0x36994f[0x9];            _0x3f65f1[0xa] = _0x36994f[0xa];            _0x3f65f1[0xb] = _0x36994f[0xb];            _0x3f65f1[0xc] = _0x36994f[0xc];            _0x3f65f1[0xd] = _0x36994f[0xd];            _0x3f65f1[0xe] = _0x36994f[0xe];            _0x3f65f1[0xf] = _0x36994f[0xf];            _0x3f65f1[0x10] = _0x36994f[0x10];            _0x3f65f1[0x11] = _0x36994f[0x11];            _0x3f65f1[0x12] = _0x36994f[0x12];            _0x1486a2[0x0] = 0x0;            _0x1486a2[0x1] = 0x0;            _0x1486a2[0x2] = 0x0;            _0x1486a2[0x3] = 0x0;            _0x1486a2[0x4] = 0x0;            _0x1486a2[0x5] = 0x0;            _0x1486a2[0x6] = 0x0;            _0x1486a2[0x7] = 0x0;            _0x1486a2[0x8] = 0x0;            _0x1486a2[0x9] = 0x0;            _0x1486a2[0xa] = 0x0;            _0x1486a2[0xb] = 0x0;            _0x1486a2[0xc] = 0x0;            _0x1486a2[0xd] = 0x0;            _0x1486a2[0xe] = 0x0;            _0x1486a2[0xf] = 0x0;            _0x1486a2[0x10] = 0x0;            _0x1486a2[0x11] = 0x0;            _0x1486a2[0x12] = 0x0;            _0x197cc4[0x0] = 0x1;            _0x197cc4[0x1] = 0x1;            _0x197cc4[0x2] = 0x1;            _0x197cc4[0x3] = 0x1;            _0x197cc4[0x4] = 0x1;            _0x197cc4[0x5] = 0x1;            _0x197cc4[0x6] = 0x1;            _0x197cc4[0x7] = 0x1;            _0x197cc4[0x8] = 0x1;            _0x197cc4[0x9] = 0x1;            _0x197cc4[0xa] = 0x1;            _0x197cc4[0xb] = 0x1;            _0x197cc4[0xc] = 0x1;            _0x197cc4[0xd] = 0x1;            _0x197cc4[0xe] = 0x1;            _0x197cc4[0xf] = 0x1;            _0x197cc4[0x10] = 0x1;            _0x197cc4[0x11] = 0x1;            _0x197cc4[0x12] = 0x1;            _0xd3bbff[0x0] = 0x0;            _0xd3bbff[0x1] = 0x0;            _0xd3bbff[0x2] = 0x0;            _0xd3bbff[0x3] = 0x0;            _0xd3bbff[0x4] = 0x0;            _0xd3bbff[0x5] = 0x0;            _0xd3bbff[0x6] = 0x0;            _0xd3bbff[0x7] = 0x0;            _0xd3bbff[0x8] = 0x0;            _0xd3bbff[0x9] = 0x0;            _0xd3bbff[0xa] = 0x0;            _0xd3bbff[0xb] = 0x0;            _0xd3bbff[0xc] = 0x0;            _0xd3bbff[0xd] = 0x0;            _0xd3bbff[0xe] = 0x0;            _0xd3bbff[0xf] = 0x0;            _0xd3bbff[0x10] = 0x0;            _0xd3bbff[0x11] = 0x0;            _0xd3bbff[0x12] = 0x0;            for (let _0x199a18 = 0x0; _0x199a18 < 0x8; _0x199a18++) {                if (_0x40f28b[_0x199a18] > 0x0) {                    _0x6cb7c[_0x199a18] = _0x40f28b[_0x199a18] * _0x10d16b[_0x199a18];                    _0x197cc4[_0x199a18] = 0x0;                    _0x1ff003++;                }            }            for (let _0x43f648 = 0x0; _0x43f648 < 0xa; _0x43f648++) {                if (_0xdbfb0b[_0x43f648] > 0x0) {                    _0x6cb7c[0x8 + _0x43f648] = _0xdbfb0b[_0x43f648] * _0x10d16b[0x8 + _0x43f648];                    _0x197cc4[0x8 + _0x43f648] = 0x0;                    _0x5afa1++;                }            }            _0x5d3546 = _0xdbfb0b[0x1];            let _0x5e492b = 0x1;            _0x310ff6 = 0x0;            for (let _0x5a8bc4 = 0x0; _0x5a8bc4 < 0x13; _0x5a8bc4++)                if (_0x6cb7c[_0x5a8bc4] > 0x0)                    _0x429623[_0x310ff6++] = _0x5a8bc4;            let _0x2f0d45 = !![];            while (_0x1ff003 > 0x0 && _0x5afa1 > 0x0 && _0x54f995 <= 0x32) {                let _0x31ed3e = 0x0;                for (let _0xc9ce38 = 0x0; _0xc9ce38 < _0x310ff6; _0xc9ce38++) {                    if (_0x6cb7c[_0x429623[_0xc9ce38]] > 0x0)                        _0x429623[_0x31ed3e++] = _0x429623[_0xc9ce38];                }                _0x310ff6 = _0x31ed3e;                if (_0x2f0d45) {                    for (let _0x268ea9 = 0x1; _0x268ea9 < _0x310ff6; _0x268ea9++) {                        let _0x515a2c = _0x429623[_0x268ea9];                        let _0x36be91 = _0x268ea9 - 0x1;                        while (_0x36be91 >= 0x0) {                            let _0x4ac28c = _0x429623[_0x36be91];                            let _0x3f2a83 = _0x515a2c;                            let _0x3cce70 = ![];                            if (_0x3f65f1[_0x4ac28c] !== _0x3f65f1[_0x3f2a83])                                _0x3cce70 = _0x3f65f1[_0x4ac28c] < _0x3f65f1[_0x3f2a83];                            else if (_0x429bb3[_0x4ac28c] !== _0x429bb3[_0x3f2a83])                                _0x3cce70 = _0x429bb3[_0x4ac28c] < _0x429bb3[_0x3f2a83];                            else if (_0x53e88b[_0x4ac28c] !== _0x53e88b[_0x3f2a83])                                _0x3cce70 = _0x53e88b[_0x4ac28c] < _0x53e88b[_0x3f2a83];                            else {                                let _0x172d20 = _0x4defa4(_0x4ac28c), _0xaa3f39 = _0x4defa4(_0x3f2a83);                                if (_0x172d20 !== _0xaa3f39)                                    _0x3cce70 = _0x172d20 < _0xaa3f39;                                else                                    _0x3cce70 = _0x45315c[_0x4ac28c] < _0x45315c[_0x3f2a83];                            }                            if (!_0x3cce70)                                break;                            _0x429623[_0x36be91 + 0x1] = _0x429623[_0x36be91];                            _0x36be91--;                        }                        _0x429623[_0x36be91 + 0x1] = _0x515a2c;                    }                    _0x2f0d45 = ![];                }                for (let _0x177d6e = 0x0; _0x177d6e < _0x310ff6; _0x177d6e++) {                    let _0x4bf5ab = _0x429623[_0x177d6e];                    if (_0x6cb7c[_0x4bf5ab] <= 0x0)                        continue;                    let _0x230215 = _0x53e88b[_0x4bf5ab];                    let _0xbaa79a = _0x230215 ? 0x8 : 0x0;                    let _0x5a1564 = _0x230215 ? 0x13 : 0x8;                    _0x425702 = 0x0;                    for (let _0x1f5a56 = _0xbaa79a; _0x1f5a56 < _0x5a1564; _0x1f5a56++) {                        if (_0x6cb7c[_0x1f5a56] > 0x0)                            _0x292332[_0x425702++] = _0x1f5a56;                    }                    if (_0x425702 === 0x0)                        break;                    let _0x22fb8a = 0x0;                    if (_0x4bf5ab === _0x12c15b || _0x4bf5ab === _0x4e2da6) {                        for (let _0x3e9bff = 0x0; _0x3e9bff < _0x425702; _0x3e9bff++) {                            if (_0x429bb3[_0x292332[_0x3e9bff]] === 0x1) {                                _0x22fb8a = 0x1;                                break;                            }                        }                    }                    _0x9d91ae = 0x0;                    for (let _0x52e394 = 0x0; _0x52e394 < _0x425702; _0x52e394++) {                        if (_0x429bb3[_0x292332[_0x52e394]] === _0x22fb8a)                            _0x23a29a[_0x9d91ae++] = _0x292332[_0x52e394];                    }                    if (_0x9d91ae === 0x0) {                        for (let _0x9cfbb5 = 0x0; _0x9cfbb5 < _0x425702; _0x9cfbb5++)                            _0x23a29a[_0x9d91ae++] = _0x292332[_0x9cfbb5];                    }                    for (let _0x457892 = 0x1; _0x457892 < _0x9d91ae; _0x457892++) {                        let _0x25a251 = _0x23a29a[_0x457892];                        let _0x27f29c = _0x457892 - 0x1;                        while (_0x27f29c >= 0x0) {                            let _0x168d1a = _0x23a29a[_0x27f29c];                            let _0x1b279d = _0x25a251;                            let _0xdcbeec = ![];                            if (_0x3f65f1[_0x168d1a] !== _0x3f65f1[_0x1b279d])                                _0xdcbeec = _0x3f65f1[_0x168d1a] > _0x3f65f1[_0x1b279d];                            else {                                let _0x1aeb70 = _0x4defa4(_0x168d1a), _0x1a73b2 = _0x4defa4(_0x1b279d);                                if (_0x1aeb70 !== _0x1a73b2)                                    _0xdcbeec = _0x1aeb70 < _0x1a73b2;                                else                                    _0xdcbeec = _0x45315c[_0x168d1a] > _0x45315c[_0x1b279d];                            }                            if (!_0xdcbeec)                                break;                            _0x23a29a[_0x27f29c + 0x1] = _0x23a29a[_0x27f29c];                            _0x27f29c--;                        }                        _0x23a29a[_0x27f29c + 0x1] = _0x25a251;                    }                    let _0x2e2d3e = _0x23a29a[0x0];                    let _0x31b68c = _0x4defa4(_0x4bf5ab);                    let _0x161fc7 = _0x4defa4(_0x2e2d3e);                    let _0x3b0705 = _0x2458aa[_0x4bf5ab] * _0x31b68c;                    let _0x164e96 = 0x1;                    if (!_0x230215)                        _0x164e96 *= _0x5e492b;                    let _0x446259 = _0x4efbca[_0x2d90e6[_0x4bf5ab] * 0x3 + _0x2d90e6[_0x2e2d3e]];                    if (_0x2e2d3e === _0x11e197 || _0x4bf5ab === _0x5d8fcf || _0x4bf5ab === _0x5d9cc3 || _0x4bf5ab === _0x38efb3 || _0x2e2d3e === _0x38efb3)                        _0x446259 = 0x1;                    _0x164e96 *= _0x446259;                    if (_0x4bf5ab === _0xda0dfb && _0x54f995 === 0x1)                        _0x164e96 *= 1.25;                    if (_0x4bf5ab === _0x14184c && _0x3f65f1[_0x2e2d3e] < 0x3)                        _0x164e96 *= 1.33;                    let _0x4af987 = -0x1;                    for (let _0x834c3f = 0x0; _0x834c3f < _0x310ff6; _0x834c3f++) {                        if (_0x6cb7c[_0x429623[_0x834c3f]] > 0x0) {                            _0x4af987 = _0x429623[_0x834c3f];                            break;                        }                    }                    if (_0x4bf5ab === _0x12c15b && _0x4bf5ab === _0x4af987)                        _0x164e96 *= 1.2;                    if (_0x4bf5ab === _0x429bc && _0x2f34f0 > 0x0)                        _0x164e96 *= 0x1 + 0.1 * _0x2f34f0;                    if (_0x4bf5ab === _0x5d8fcf) {                        let _0x5563a4 = _0x161fc7 / _0x31b68c | 0x0;                        if (_0x5563a4 >= 0x2)                            _0x164e96 *= 0x1 + (_0x5563a4 - 0x1) * 0.5;                    }                    if (_0x4bf5ab === _0x234d12)                        _0x164e96 *= 0x1 + 0.05 * _0xd3bbff[_0x4bf5ab];                    if (_0x1486a2[_0x4bf5ab])                        _0x164e96 *= 0.75;                    if (_0x6cb7c[_0x124006] > 0x0 && _0x230215 && _0x429bb3[_0x4bf5ab] === 0x1)                        _0x164e96 *= 0.85;                    if (_0x2e2d3e === _0x11e197)                        _0x164e96 *= 0.5;                    let _0x52a323 = _0x3b0705 * _0x164e96 + 0.5 | 0x0;                    let _0x35ec8f = 0x0;                    let _0x2b169c = 0x0;                    if (_0x4bf5ab === _0x80be5 && _0x54f995 % 0x2 === 0x0)                        _0x2b169c = _0x52a323 * 0.25 + 0.5 | 0x0;                    let _0x13bde3 = _0x52a323;                    let _0x1d4214 = 0x0;                    for (let _0x362b9a = 0x0; _0x362b9a < _0x9d91ae; _0x362b9a++) {                        let _0xc41d2d = _0x23a29a[_0x362b9a];                        if (_0x6cb7c[_0xc41d2d] <= 0x0)                            continue;                        let _0x424d83 = _0x6cb7c[_0xc41d2d];                        let _0x180d98 = _0x6cb7c[_0xc41d2d] - _0x13bde3;                        _0x6cb7c[_0xc41d2d] = _0x180d98 > 0x0 ? _0x180d98 : 0x0;                        if (_0x4bf5ab === _0x4e2da6)                            _0x1486a2[_0xc41d2d] = 0x1;                        if (_0x4bf5ab === _0x32b424 && _0x429bb3[_0xc41d2d] === 0x0 && _0x424d83 > 0x0 && _0x6cb7c[_0xc41d2d] <= 0x0) {                            _0x35ec8f = _0x52a323 * 0.5 + 0.5 | 0x0;                        }                        if (_0xc41d2d === _0x98f8d6 && !_0x230215) {                            _0x3f65f1[_0x4bf5ab] -= 0x2;                            _0x2f0d45 = !![];                        }                        if (_0x4bf5ab === _0x234d12)                            _0xd3bbff[_0x4bf5ab] = 0x0;                        if (_0xc41d2d === _0x234d12)                            _0xd3bbff[_0xc41d2d]++;                        if (_0x6cb7c[_0xc41d2d] <= 0x0) {                            if (_0xc41d2d === _0x29a622 && !_0x355e13) {                                _0x355e13 = !![];                                _0x6cb7c[_0xc41d2d] = _0x5d3546;                                if (_0x3f65f1[_0x29a622] < _0x36994f[_0x29a622]) {                                    _0x3f65f1[_0xc41d2d] = _0x3f65f1[_0x29a622];                                    _0x2f0d45 = !![];                                }                            } else {                                _0x6cb7c[_0xc41d2d] = 0x0;                                if (_0x197cc4[_0xc41d2d] === 0x0) {                                    _0x197cc4[_0xc41d2d] = 0x1;                                    _0x2f34f0++;                                    if (_0x53e88b[_0xc41d2d])
