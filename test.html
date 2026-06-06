@@ -198,10 +198,12 @@
         <div class="ruins-grid">
             <div class="ruins-panel">
                 <h3 style="color: #ff5555; margin-top: 0; text-transform: uppercase;">Armia Wroga</h3>
-                <div id="enemyInputs"></div> </div>
+                <div id="enemyInputs"></div>
+            </div>
             <div class="ruins-panel">
                 <h3 style="color: #55ff55; margin-top: 0; text-transform: uppercase;">Twoja Armia (Max limity)</h3>
-                <div id="allyInputs"></div> </div>
+                <div id="allyInputs"></div>
+            </div>
         </div>
 
         <button class="action-btn" onclick="startOptimizer('best')" style="background: #b37700; border-color: #805500;">
@@ -948,8 +950,21 @@
         //  KONTROLER KALKULATORA RUIN (FRONTEND)
         // ==========================================
         const ENEMY_NAMES = ["Skeleton", "Zombie", "Undead Cultist", "Bonewing", "Bloated Corpse", "Wraith", "Revenant", "Bone Giant", "Broodmother", "Lich"];
-        const ALLY_NAMES = ["T1 (Nietoperze/Szczury)", "T2 (Ghoule/Golemy)", "T3 (Thralls)", "T4 (Banshees/Wendigos)", "T5 (Necromancers/Priests)", "T6 (Gargoyles/Chimeras)", "T7 (Blood/Moon Witches)", "T8 (Rotmaws/Hellmaws)"];
+        
+        // Zależnie od wybranej rasy (aktualizowane skryptem)
+        const VAMPIRE_NAMES = ["T1 (Nietoperze)", "T2 (Ghoule)", "T3 (Vampire Thralls)", "T4 (Banshees)", "T5 (Necromancers)", "T6 (Gargoyles)", "T7 (Blood Witches)", "T8 (Rotmaws)"];
+        const WEREWOLF_NAMES = ["T1 (Szczury)", "T2 (Golemy)", "T3 (Wolf Thralls)", "T4 (Wendigos)", "T5 (Voodoo Priests)", "T6 (Chimeras)", "T7 (Moon Witches)", "T8 (Hellmaws)"];
+        
         let optimizationWorker = null;
+
+        function updateRaceNames() {
+            const isWerewolf = document.getElementById('ruinsRace').value === 'werewolf';
+            const namesArray = isWerewolf ? WEREWOLF_NAMES : VAMPIRE_NAMES;
+            for(let i=0; i<8; i++) {
+                let lbl = document.getElementById(`allyLabel_${i}`);
+                if(lbl) lbl.innerText = namesArray[i];
+            }
+        }
 
         function buildRuinsUI() {
             let enemyHtml = "";
@@ -959,10 +974,14 @@
             document.getElementById('enemyInputs').innerHTML = enemyHtml;
 
             let allyHtml = "";
-            ALLY_NAMES.forEach((name, i) => {
-                allyHtml += `<div class="unit-row"><label>${name}</label><input type="number" id="ally_${i}" placeholder="∞" min="0" title="Zostaw puste dla braku limitu"></div>`;
+            VAMPIRE_NAMES.forEach((name, i) => {
+                allyHtml += `<div class="unit-row"><label id="allyLabel_${i}">${name}</label><input type="number" id="ally_${i}" placeholder="∞" min="0" title="Zostaw puste dla braku limitu"></div>`;
             });
             document.getElementById('allyInputs').innerHTML = allyHtml;
+            
+            // Reagowanie na zmianę z Wampira na Wilkołaka
+            document.getElementById('ruinsRace').addEventListener('change', updateRaceNames);
+            updateRaceNames(); // Wywołaj raz na start żeby załadowało
         }
 
         function startOptimizer(mode) {
@@ -1004,7 +1023,7 @@
         function renderRuinsResults(results, mode) {
             let html = `<div style="color:#ffcc00; font-weight:bold; margin-bottom:10px;">TOP 10 FORMACJI (${mode.toUpperCase()})</div>`;
             if(results.length === 0) {
-                html += "<span style='color:#ff5555'>Nie znaleziono formacji gwarantującej wygraną w 50 rundach przy tych limitach.</span>";
+                html += "<span style='color:#ff5555'>Nie znaleziono formacji gwarantującej wygraną w 50 rundach przy tych limitach.<br><br><b>Wskazówka:</b> Dla poziomów powyżej 50 zazwyczaj jedyną gwarancją wygranej są jednostki T7 (Witches) oraz T8 (Rotmaws/Hellmaws) w dużych ilościach.</span>";
             } else {
                 results.forEach((res, index) => {
                     html += `<div style="border-bottom: 1px solid #4a0d0d; padding-bottom: 8px; margin-bottom: 8px;">`;
@@ -1013,7 +1032,10 @@
                     
                     let usedArr = [];
                     res.army.forEach((count, i) => {
-                        if(count > 0) usedArr.push(`<span style="color:#ccc">T${i+1} x${count}</span>`);
+                        if(count > 0) {
+                            let nazwaKrotka = document.getElementById(`allyLabel_${i}`).innerText.split(" ")[0]; // np samo "T8"
+                            usedArr.push(`<span style="color:#ccc">${nazwaKrotka} x${count}</span>`);
+                        }
                     });
                     html += usedArr.join(", ");
                     html += `</div>`;
