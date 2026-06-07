@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "172.466.264 / 172.466.515",
+        "Doswiadczenie": "172.572.620 / 172.584.000",
         "Sila": "3943",
         "Obrona": "3657",
         "Zwinnosc": "3481",
         "Wytrzymalosc": "3243",
         "Charyzma": "1506",
-        "Walki": "95.646",
-        "Zrabowane dobra": "265.590.877.759 krwi"
+        "Walki": "95.650",
+        "Zrabowane dobra": "265.684.406.844 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "116.663.813 / 116.697.635",
@@ -20,37 +20,37 @@
         "Zrabowane dobra": "183.677.974.731 krwi"
     },
     "lux": {
-        "Doswiadczenie": "105.022.238 / 105.024.025",
+        "Doswiadczenie": "105.023.493 / 105.024.025",
         "Sila": "2368",
         "Obrona": "2845",
         "Zwinnosc": "2106",
         "Wytrzymalosc": "2509",
         "Charyzma": "1878",
-        "Walki": "104.293",
+        "Walki": "104.294",
         "Zrabowane dobra": "172.345.167.893 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "368.799.615 / 368.863.190",
+        "Doswiadczenie": "368.926.741 / 368.949.090",
         "Sila": "4311",
         "Obrona": "3071",
         "Zwinnosc": "3891",
         "Wytrzymalosc": "3732",
         "Charyzma": "2836",
         "Walki": "115.620",
-        "Zrabowane dobra": "778.875.808.072 mięsa"
+        "Zrabowane dobra": "779.005.330.832 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "138.271.503 / 138.290.660",
+        "Doswiadczenie": "138.271.911 / 138.290.660",
         "Sila": "3000",
         "Obrona": "2982",
         "Zwinnosc": "2607",
         "Wytrzymalosc": "2397",
         "Charyzma": "1559",
-        "Walki": "49.568",
-        "Zrabowane dobra": "245.304.522.414 krwi"
+        "Walki": "49.569",
+        "Zrabowane dobra": "245.305.803.840 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "145.144.224 / 145.158.105",
+        "Doswiadczenie": "145.149.612 / 145.158.105",
         "Sila": "4790",
         "Obrona": "3285",
         "Zwinnosc": "3002",
