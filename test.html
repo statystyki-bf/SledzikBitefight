@@ -7,7 +7,8 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="ruins.js"></script> <style>
+
+    <style>
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
@@ -78,6 +79,9 @@
         
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
+
+        /* IFRAME DLA RUIN */
+        .ruins-iframe { width: 100%; min-height: 1200px; border: none; background: transparent; }
     </style>
 </head>
 <body>
@@ -170,11 +174,11 @@
         <div id="sealsBoardContainer" class="seal-board"></div>
         
         <hr class="separator">
-        <h2>Historia Przekazywania Pieczęci i Zmian u wrogów</h2>
+        <h2>Historia Przekazywania Pieczęci u wrogów</h2>
         <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
         
         <hr class="separator">
-        <h2>Odejścia i Wyrzucenia z Klanów (Krytyczne utraty pieczęci)</h2>
+        <h2>Krytyczne Zmniejszenia Stanu Osobowego (Spadki z 3 na 2 osoby)</h2>
         <div id="clansKicksContainer"><p>Trwa analizowanie rotacji graczy...</p></div>
 
         <div class="kicks-chart-container">
@@ -201,10 +205,8 @@
     </div>
 
     <div id="sectionRuin">
-        <h2>Kalkulator Ekspedycji do Ruin</h2>
-        
-        <div id="ruinsExternalContainer" style="margin: 0 auto; max-width: 1000px; text-align: left; padding: 20px; background: #231212; border: 1px solid #4a0d0d; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.8);">
-            <p style="color:#aaa; text-align: center;">Tu zostanie wczytany Twój zewnętrzny kalkulator...</p>
+        <div id="ruinsExternalContainer" style="margin: 0 auto; max-width: 1300px; text-align: left; padding: 5px; background: transparent;">
+            <iframe class="ruins-iframe" src="ruins.js"></iframe>
         </div>
     </div>
 
@@ -382,7 +384,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -822,7 +824,11 @@
                 if (currentSortCol === i - 1 && i !== 0) {
                     arrow = currentSortAsc ? " ▲" : " ▼";
                     arrowClass = "sort-arrow-active";
-                    html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    if (currentSortAsc) {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    } else {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    }
                 } else {
                     let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
                     html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
@@ -859,8 +865,7 @@
                 let nazwa = w[1];
                 let pieczecie = w[2];
                 let czlonkowie = w[3] || "-";
-                let url = w[4] || "";
-                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie, url: url };
+                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
             const ALL_SEALS = [
@@ -923,7 +928,7 @@
             // --- TABELA UTRATY PIECZĘCI ORAZ WYKRES ---
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
             let entriesFound = false;
-            let kicksPerHour = new Array(24).fill(0); // Tablica zliczająca zniszczenia w danej godzinie
+            let kicksPerHour = new Array(24).fill(0); 
 
             globalClansLogi.forEach(w => {
                 if (String(w[2]) !== "Członkowie") return;
@@ -942,7 +947,6 @@
                         let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
                         kicksHtml += `<tr><td>${w[0]}</td><td>${formatClanLink(klan, actualName)}</td><td>Spadek graczy z 3 do 2</td><td class="strata-col"><strong>Utrata pieczęci!</strong></td></tr>`;
                         
-                        // Zbieranie danych do wykresu
                         let dateStr = w[0];
                         let timePart = dateStr.split(" ")[1];
                         if (timePart) {
@@ -1028,7 +1032,7 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
