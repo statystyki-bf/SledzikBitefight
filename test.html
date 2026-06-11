@@ -12,7 +12,7 @@
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
-        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; }
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 8px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
@@ -69,6 +69,7 @@
             border-radius: 2px;
             box-shadow: 0 0 6px rgba(0,0,0,1);
             margin-bottom: 8px;
+            background-color: #220000;
         }
 
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
@@ -76,11 +77,11 @@
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
         /* STYLIZACJA STRZAŁEK SORTOWANIA */
-        .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; }
-        .sort-arrow-inactive { color: #555; font-size: 11px; }
+        .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
+        .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
         /* MODUŁ RUIN */
-        .ruin-img-container { margin: 15px auto; width: 120px; height: 120px; border: 3px ridge #b0b0b0; background: #000; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .ruin-img-container { margin: 15px auto; width: 120px; height: 120px; border: 3px ridge #b0b0b0; background: #2a0000; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: #777; font-size: 10px; }
         .ruin-img-container img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
@@ -95,7 +96,7 @@
     </div>
 
     <div id="sectionTracker" class="active">
-        <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
+        <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;">Ładowanie silnika wywiadu...</div>
         <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
         <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
 
@@ -123,7 +124,7 @@
             <select id="filterPlayer"><option value="ALL">Wszyscy gracze</option></select>
             <select id="filterStat"><option value="ALL">Wszystkie statystyki</option></select>
         </div>
-        <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
+        <div id="tableContainer"><p>Trwa łączenie z serwerami Google...</p></div>
     </div>
 
     <div id="sectionHeatmap">
@@ -206,7 +207,7 @@
         
         <div class="summary-box" style="max-width: 500px; margin: 0 auto; text-align: left; padding: 25px;">
             <div class="ruin-img-container">
-                <img id="ruinDisplayImg" src="ruina1.png" alt="Grafika Ruin">
+                <img id="ruinDisplayImg" src="ruina1.png" alt="Brak pliku ruina1.png na serwerze" onerror="this.style.display='none'; this.parentNode.innerHTML='<span style=\'color:#ff4444; font-weight:bold; padding: 10px; text-align:center;\'>Brak pliku na serwerze GitHuba</span>';">
             </div>
 
             <div style="margin-bottom: 15px;">
@@ -235,8 +236,6 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
-        // POPRAWIONE I PODPIĘTE LINKI ZGODNIE Z TWOIM ZLECENIEM
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
@@ -255,6 +254,7 @@
             "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
         };
         
+        // PRZYWRÓCONY I UZUPEŁNIONY SŁOWNIK LINKÓW KLANOWYCH (DLA KLIKANIA)
         const CLANS_LINKS = {
             "ODYNCE": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/242019",
             "SA#pl32": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/311819",
@@ -277,7 +277,33 @@
             "bot": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406867",
             "jajo.+by..": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406915",
             "wycie": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918",
-            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917"
+            "PPZL": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406917",
+            ".L.Y.C.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/378555",
+            "-BSP-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406750",
+            "RAMBO": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/391887",
+            ".B.G.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406621",
+            "TU.R": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/137337",
+            "S.RT": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/77311",
+            "NTA": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264312",
+            "vzd": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/264618",
+            "LYCANS_pl": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/59295",
+            ".S.A.": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/313558",
+            "OKAZ": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/375071",
+            "=LYC=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406755",
+            "LYC": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406650",
+            "A-Z": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406758",
+            "ABCD": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406757",
+            "C.W.K.S": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406552",
+            "P-O-L": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406841",
+            "W=C": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406746",
+            "=PL=": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406586",
+            "RH-": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406040",
+            "MCFC": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406557",
+            "Atnn": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406760",
+            "KRW": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406766",
+            "Paruwas": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406893",
+            "sol.,+p": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406848",
+            "wycie,": "https://s60-pl.bitefight.gameforge.com/clan/viewExtern/406918"
         };
 
         const BLACKLIST = ["Kark23", "Darksun"]; 
@@ -290,46 +316,59 @@
         let globalClansLogi = []; 
         
         let computedRankingRows = []; 
-        let currentSortCol = 5; // Domyślnie sortujemy po Wartości Bojowej
+        let currentSortCol = 5; 
         let currentSortAsc = false; 
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
 
         function switchTab(tabId) {
-            const tabs = ['tracker', 'heatmap', 'ranking', 'clans', 'ruin'];
-            tabs.forEach(t => {
-                const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
-                const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
-                if(btn) btn.classList.remove('active');
-                if(sec) sec.classList.remove('active');
-            });
+            try {
+                const tabs = ['tracker', 'heatmap', 'ranking', 'clans', 'ruin'];
+                tabs.forEach(t => {
+                    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
+                    const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+                    if(btn) btn.classList.remove('active');
+                    if(sec) sec.classList.remove('active');
+                });
 
-            document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
-            document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+                document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
+                document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
 
-            if (tabId === 'ranking') {
-                if (globalRankingData.length === 0) loadRankingData();
-                else calculateAndRenderRanking();
-            } else if (tabId === 'heatmap') {
-                renderChart();
-            } else if (tabId === 'clans') {
-                renderClans();
+                if (tabId === 'ranking') {
+                    if (globalRankingData.length === 0) loadRankingData();
+                    else calculateAndRenderRanking();
+                } else if (tabId === 'heatmap') {
+                    renderChart();
+                } else if (tabId === 'clans') {
+                    renderClans();
+                }
+            } catch (e) {
+                console.error("Błąd ładowania zakładki: ", e);
             }
         }
 
-        function handleFilterChange() { renderTable(); }
-        document.getElementById('filterDate').addEventListener('change', handleFilterChange);
-        document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
-        document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
-        document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
-            const specSelect = document.getElementById('rankingSpecificDaySelect');
-            if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
-            else { specSelect.style.display = 'none'; }
-            calculateAndRenderRanking();
+        // REJESTRACJA EVENTÓW Z ZABEZPIECZENIEM
+        document.addEventListener("DOMContentLoaded", function() {
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
+            if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
+            if(document.getElementById('rankingPeriodSelect')) {
+                document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+                    const specSelect = document.getElementById('rankingSpecificDaySelect');
+                    if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
+                    else { specSelect.style.display = 'none'; }
+                    calculateAndRenderRanking();
+                });
+            }
+            if(document.getElementById('rankingSpecificDaySelect')) document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
+
+            loadTableData();
+            setInterval(loadTableData, 300000);
         });
-        document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
+
+        function handleFilterChange() { renderTable(); }
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
@@ -363,8 +402,7 @@
         async function loadTableData() {
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
-                const nowInfo = new Date();
-                document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + new Date().toLocaleTimeString('pl-PL');
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 
@@ -393,7 +431,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -420,7 +458,10 @@
                     } catch(ex) {}
                 }
 
-                if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu (Arkusz Pusty).</p>"; 
+                    return; 
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -457,7 +498,12 @@
                 renderSummaryTable();
                 updateFilters(); 
                 renderTable(); 
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Główny błąd ładownia: ", e); 
+                if(document.getElementById('tableContainer')) {
+                    document.getElementById('tableContainer').innerHTML = `<p style="color:#ff5555; padding:20px;">Błąd pobierania danych. Sprawdź konsole F12.</p>`;
+                }
+            }
         }
 
         function getRangeForPeriod(period) {
@@ -477,6 +523,7 @@
         }
 
         function renderChart() {
+            if (!document.getElementById('heatmapPlayerSelect')) return;
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
@@ -517,8 +564,9 @@
             });
 
             if (routineChartInstance) routineChartInstance.destroy();
-
-            const ctx = document.getElementById('routineChart').getContext('2d');
+            const ctxElem = document.getElementById('routineChart');
+            if(!ctxElem) return;
+            const ctx = ctxElem.getContext('2d');
             routineChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -585,6 +633,7 @@
         }
 
         function renderSummaryTable() {
+            if(!document.getElementById('summaryPeriodSelect')) return;
             const period = document.getElementById('summaryPeriodSelect').value;
             const range = getRangeForPeriod(period); if (!range) return;
             let summary = {}; let absoluteLastSeen = {}; let fightTimestamps = {};
@@ -652,7 +701,7 @@
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
             let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Ostatnia Aktywność"];
-            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "▲" : "▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
@@ -673,14 +722,18 @@
             globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
             
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
 
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>
                                <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
@@ -693,6 +746,7 @@
         }
 
         function renderTable() {
+            if(!document.getElementById('filterDate')) return;
             const fD = document.getElementById('filterDate').value; const fP = document.getElementById('filterPlayer').value; const fS = document.getElementById('filterStat').value;
             let range = getRangeForPeriod(fD);
             let filtered = globalData.filter(w => {
@@ -716,7 +770,7 @@
                     if (j === 1) {
                         val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
-                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                     html += `<td${klasa}>${val}</td>`;
                 }
@@ -795,7 +849,7 @@
             if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; 
             else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; }
             let uniqueDates = getUniqueRankingDates(); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
-            calculateAndRenderRanking();
+            sortAndRenderRankingTable(isDelta);
         }
 
         // --- CALKOWICIE NAPRAWIONE W 100% NUMERYCZNE SORTOWANIE RANKINGU ---
@@ -822,9 +876,15 @@
                 if (currentSortCol === i - 1 && i !== 0) {
                     arrow = currentSortAsc ? " ▲" : " ▼";
                     arrowClass = "sort-arrow-active";
-                } 
-                let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; 
-                html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
+                    if (currentSortAsc) {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    } else {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    }
+                } else {
+                    let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
+                    html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
+                }
             });
             html += "</tr></thead><tbody>";
             
@@ -863,6 +923,7 @@
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
+            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH (ZGODNA Z KOLEJNOŚCIĄ UŻYTKOWNIKA)
             const ALL_SEALS = [
                 { id: "Skąpstwo", img: "skapstwo.png" },
                 { id: "Zazdrość", img: "zazdrosc.png" },
@@ -912,7 +973,7 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
-                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
                                      <div class="seal-name">${s.id}</div>
                                      <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
@@ -978,6 +1039,7 @@
                 else if (stat === "Pieczęcie") {
                     let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
                     let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
                     
@@ -1042,7 +1104,6 @@
             const floor = parseInt(document.getElementById('ruinFloorSelect').value) || 1;
             const resBox = document.getElementById('ruinResultBox');
             
-            // Wycena skrojona pod klasyczny przelicznik algorytmu gry
             let apCost = floor === 1 ? 1 : (floor === 2 ? 2 : (floor === 3 ? 4 : (floor === 4 ? 6 : 8)));
             let baseGold = lvl * 180 * floor;
             let monsterHealth = lvl * 450 * (floor * 1.5);
@@ -1057,8 +1118,6 @@
             `;
         }
 
-        loadTableData();
-        setInterval(loadTableData, 300000);
     </script>
 </body>
 </html>
