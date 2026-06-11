@@ -43,6 +43,7 @@
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .kicks-chart-container { width: 95%; max-width: 1000px; margin: 20px auto; height: 250px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         
         a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; position: relative; z-index: 10; pointer-events: auto; }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
@@ -176,6 +177,10 @@
         <h2>Odejścia i Wyrzucenia z Klanów (Krytyczne utraty pieczęci)</h2>
         <div id="clansKicksContainer"><p>Trwa analizowanie rotacji graczy...</p></div>
 
+        <div class="kicks-chart-container">
+            <canvas id="kicksChart"></canvas>
+        </div>
+
         <hr class="separator">
         <h2>Aktualny stan Klanów Wroga</h2>
         
@@ -199,8 +204,7 @@
         <h2>Kalkulator Ekspedycji do Ruin</h2>
         
         <div id="ruinsExternalContainer" style="margin: 0 auto; max-width: 1000px; text-align: left; padding: 20px; background: #231212; border: 1px solid #4a0d0d; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.8);">
-            
-            <p style="color:#aaa; text-align: center;">Gotowy na skrypt ruins.js. Jeśli kalkulator się nie pojawia, skopiuj jego HTML ze strony źródłowej i wklej go do kontenera #ruinsExternalContainer</p>
+            <p style="color:#aaa; text-align: center;">Tu zostanie wczytany Twój zewnętrzny kalkulator...</p>
         </div>
     </div>
 
@@ -268,6 +272,7 @@
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
+        let kicksChartInstance = null;
 
         function switchTab(tabId) {
             try {
@@ -377,7 +382,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -854,7 +859,8 @@
                 let nazwa = w[1];
                 let pieczecie = w[2];
                 let czlonkowie = w[3] || "-";
-                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
+                let url = w[4] || "";
+                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie, url: url };
             });
 
             const ALL_SEALS = [
@@ -914,9 +920,10 @@
             });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-            // --- TABELA UTRATY PIECZĘCI: TYLKO SPADEK Z RÓWNO 3 NA RÓWNO 2 ---
+            // --- TABELA UTRATY PIECZĘCI ORAZ WYKRES ---
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
             let entriesFound = false;
+            let kicksPerHour = new Array(24).fill(0); // Tablica zliczająca zniszczenia w danej godzinie
 
             globalClansLogi.forEach(w => {
                 if (String(w[2]) !== "Członkowie") return;
@@ -934,12 +941,57 @@
                         let klan = w[1];
                         let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
                         kicksHtml += `<tr><td>${w[0]}</td><td>${formatClanLink(klan, actualName)}</td><td>Spadek graczy z 3 do 2</td><td class="strata-col"><strong>Utrata pieczęci!</strong></td></tr>`;
+                        
+                        // Zbieranie danych do wykresu
+                        let dateStr = w[0];
+                        let timePart = dateStr.split(" ")[1];
+                        if (timePart) {
+                            let hour = parseInt(timePart.split(":")[0], 10);
+                            if (!isNaN(hour) && hour >= 0 && hour < 24) {
+                                kicksPerHour[hour]++;
+                            }
+                        }
                     }
                 }
             });
             kicksHtml += "</tbody></table>";
             if (!entriesFound) kicksHtml = "<p style='color:#777; padding:10px;'>Brak odnotowanych spadków klanów z 3 do 2 członków.</p>";
             document.getElementById('clansKicksContainer').innerHTML = kicksHtml;
+
+            // GENEROWANIE WYKRESU 24H DLA ZNISZCZONYCH PIECZĘCI
+            if (window.kicksChartInstance) {
+                window.kicksChartInstance.destroy();
+            }
+            const ctxKicks = document.getElementById('kicksChart');
+            if (ctxKicks) {
+                let labels = Array.from({length: 24}, (_, i) => i + ':00');
+                window.kicksChartInstance = new Chart(ctxKicks.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Zniszczone pieczęcie',
+                            data: kicksPerHour,
+                            backgroundColor: 'rgba(255, 68, 68, 0.7)',
+                            borderColor: 'rgba(255, 68, 68, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: '#333' }, ticks: { color: '#aaa' } },
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { color: '#ffcc00', precision: 0, stepSize: 1 }, 
+                                grid: { color: '#333' } 
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
 
             // HISTORIA ZMIAN (LOGI KLANOWE)
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
