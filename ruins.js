@@ -1,3 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="./img/type_occult.png">
+    
+    <title>Bitefight Ruins Strategy Helper</title>
+
+    <meta name="description" content="Bitefight Ruins advanced simulator. Optimize your army formation, minimize unit loss, and conquer higher layers instantly.">
+    <meta itemprop="name" content="Bitefight Ruins Strategy Helper">
+    <meta itemprop="description" content="Bitefight Ruins advanced simulator. Optimize your army formation, minimize unit loss, and conquer higher layers instantly.">
+    <meta itemprop="image" content="https://ruins-helper.site/img/og.jpg">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ruins-helper.site/">
+    <meta property="og:title" content="Bitefight Ruins Strategy Helper">
+    <meta property="og:description" content="Bitefight Ruins advanced simulator. Optimize your army formation, minimize unit loss, and conquer higher layers instantly.">
+    <meta property="og:image" content="https://ruins-helper.site/img/og.jpg">
+    <meta property="og:image:width" content="488">
+    <meta property="og:image:height" content="488">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitefight Ruins Strategy Helper">
+    <meta name="twitter:description" content="Bitefight Ruins advanced simulator. Optimize your army formation, minimize unit loss, and conquer higher layers instantly.">
+    <meta name="twitter:image" content="https://ruins-helper.site/img/og.jpg">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nosifer&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; background: #000 url(./img/page-bg.jpg) no-repeat 50% 0;; background-attachment: fixed; color: #b09795; padding: 20px; text-align: center; margin: 0; font-size: 12px; }
+        h1 { 
+            font-family: 'Nosifer', cursive; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 25px; 
+            font-size: 26px;
+            
+            background: linear-gradient(to bottom, #ff5555 10%, #660000 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            filter: drop-shadow(3px 3px 2px #000000) drop-shadow(0px 0px 10px rgba(255, 0, 0, 0.3));
+        }
+        
+        .log-header-title { color: #f1fa8c; font-size: 16px; font-weight: bold; margin-bottom: 8px; text-align: left; }
+        .section-header { background: rgba(0,0,0,0.8); border-bottom: 2px solid #443; padding: 10px; margin: 20px auto; width: 95%; max-width: 1250px; display: flex; align-items: center; justify-content: space-between; }
+        .sh-left { display: flex; align-items: center; gap: 15px; flex: 1; justify-content: flex-start; }
+        .sh-center { flex: 1; text-align: center; display: flex; justify-content: center;}
+        .sh-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+        
+        .section-header span.title { font-weight: bold; font-size: 16px; color: #d3c6c6; display: flex; align-items: center; gap: 15px;}
+        .strength-label { color: #ffb86c; font-family: monospace; font-size: 16px; white-space: nowrap; font-weight: bold;}
+        
+        .race-btn { padding: 4px 12px; font-size: 12px; border: 1px solid #443; background: #1a1a1a; color: #888; cursor: pointer; border-radius: 3px; font-weight: bold; transition: 0.2s; white-space: nowrap;}
+        .race-btn:hover { background: #333; color: #fff; }
+        .race-btn.active { background: #ff4d4d; color: #000; border-color: #ff4d4d; }
+
+        .grid-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; margin-left: auto; margin-right: auto; }
+        #enemiesGrid { max-width: 860px; } 
+        #alliesGrid { max-width: 650px; } 
+        
+        .unit-card { background: rgba(20,20,20,0.9); border: 1px solid #443; border-radius: 4px; padding: 8px; width: 145px; box-shadow: inset 0 0 15px #000; position: relative; box-sizing: border-box; transition: 0.2s border-color;}
+        .unit-card:hover { border-color: #ff4d4d; }
+        .active-card { border-color: #ff4d4d !important; box-shadow: inset 0 0 20px rgba(255, 77, 77, 0.25) !important;}
+
+        .card-img-container { position: relative; width: 100%; height: auto; aspect-ratio: 135/164; margin: 0 auto; border: 1px solid #333; overflow: hidden; box-sizing: border-box; }
+        .main-unit-img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+
+        .bonus-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 18px); 
+            background: rgba(0,0,0,0.85); color: #fff; font-size: 11px; line-height: 1.4;
+            padding: 8px; box-sizing: border-box; opacity: 0; transition: opacity 0.2s ease-in-out;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            z-index: 10; pointer-events: none; 
+        }
+        .card-img-container:hover .bonus-overlay { opacity: 1; }
+
+        .stat-icon { width: 25px; height: 25px; object-fit: contain; }
+        .icon-overlay { position: absolute; display: flex; align-items: center; gap: 2px; background: rgba(0,0,0,0.5); padding: 1px 3px; border-radius: 2px; z-index: 5;}
+        .stat-val { color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; font-size: 13px; margin-right: 2px; }
+
+        .pos-tl { top: 2px; left: 2px; } .pos-tr { top: 2px; right: 2px; } 
+        .pos-bl { bottom: 20px; left: 2px; } .pos-br { bottom: 20px; right: 2px; } 
+
+        .unit-count-input { 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 18px;
+            background: rgba(0,0,0,0.8); color: #a6e3a1; border: none; border-top: 1px solid #443;
+            text-align: center; font-weight: bold; font-size: 13px; outline: none; z-index: 15; box-sizing: border-box;
+        }
+
+        .unit-name { font-weight: bold; font-size: 12px; margin: 8px 0 5px 0; color: #ffb86c; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .unit-name input[type="checkbox"] { cursor: pointer; width: 14px; height: 14px; accent-color: #ff4d4d; }
+
+        .controls { display: flex; justify-content: center; align-items: center; gap: 2px; margin-top: 5px; }
+        .controls button { background: #2a2a2a; border: 1px solid #555; color: #fff; font-size: 11px; width: 32px; height: 24px; cursor: pointer; border-radius: 2px; font-weight: bold; }
+        .controls button:hover { background: #ff4d4d; border-color:#ff4d4d;}
+
+        .opt-limit { font-size: 10px; color: #888; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .opt-limit input { width: 40px; background: #111; color: #ffb86c; border: 1px solid #443; text-align: center; border-radius: 2px; outline: none; font-size: 11px; height: 18px;}
+        .opt-limit input:focus { border-color: #ff4d4d; }
+
+        .action-panel { margin: 30px auto; width: 95%; max-width: 1250px; background: rgba(0,0,0,0.7); padding: 15px; border: 1px solid #443; box-sizing: border-box;}
+        .layer-box { margin-bottom: 20px; font-size: 16px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .layer-box input { width: 60px; font-size: 20px; background: #000; color: #fff; border: 1px solid #ff4d4d; text-align: center; height: 33px; box-sizing: border-box;}
+        .layer-box button { background: #2a2a2a; border: 1px solid #555; color: #fff; font-size: 14px; width: 40px; height: 33px; cursor: pointer; border-radius: 3px; font-weight: bold;}
+        .layer-box button:hover { background: #ff4d4d; border-color:#ff4d4d; color: #000;}
+        
+        button.main-btn { padding: 10px 15px; margin: 5px; border: 1px solid #443; font-weight: bold; cursor: pointer; text-transform: uppercase; border-radius: 3px; transition: 0.2s; font-size: 12px; }
+        .btn-sim { background: #333; color: #fff; } .btn-sim:hover { background: #444; }
+        .btn-best { background: #2b4f2d; color: #fff; } .btn-best:hover { background: #38663b; }
+        .btn-safe { background: #6b3e1b; color: #fff; } .btn-safe:hover { background: #854d22; }
+        .btn-cancel { background: #7a1f1f !important; border-color: #ff4d4d !important;}
+        
+        .log-container { 
+            height: auto; min-height: 400px; background: #050505; color: #a9b7c6; 
+            font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 15px; 
+            border: 1px solid #443; outline: none; 
+            text-align: left; box-sizing: border-box; white-space: pre-wrap; line-height: 1.5; 
+        }
+        .img-log { width: 45px; height: 48px; object-fit: cover; vertical-align: middle; border-radius: 3px; border: 1px solid #443; margin: 0 4px; box-shadow: 0 0 4px #000; object-position: top;}
+        
+       .log-actions {
+            position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 20;
+        }
+        .copy-btn {
+            background: #2a2a2a; border: 1px solid #555; color: #fff; padding: 6px 12px; 
+            border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;
+        }
+        .copy-btn:hover { background: #ff4d4d; color: #000; border-color: #ff4d4d; }
+
+        #results-container { text-align: left; max-width: 100%; margin: 20px auto; background: rgba(0,0,0,0.9); border: 1px solid #443; display: none; padding-bottom: 10px;}
+        #results-header { padding:10px; border-bottom:1px solid #443; font-weight:bold; color:#ff4d4d; font-size:14px; text-transform: uppercase; }
+        #results-list { width: 100%; }
+        .result-item { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 13px;}
+        .result-item:hover { background: #1a1a1a; color: #ff4d4d; }
+        
+        #async-loader { display: none; align-items: center; justify-content: center; gap: 10px; color: #ffb86c; font-weight: bold; padding: 15px; }
+        .spinner { border: 4px solid #222; border-top: 4px solid #ffb86c; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .mode-toggle { display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; font-weight: bold; font-size: 14px; margin-bottom: 15px;}
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; margin: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a2a; transition: .2s; border-radius: 22px; border: 1px solid #443; box-sizing: border-box;}
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: #888; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: #331111; border-color: #ff4d4d;}
+        input:checked + .slider:before { transform: translateX(22px); background-color: #ff4d4d; }
+        .mode-lite, .mode-pro { font-size: 12px; letter-spacing: 1px; transition: 0.2s;}
+
+        .formation-container { display: block; width: 100%; line-height: 1.8; }
+        .formation-title { font-size: 13px; display: inline; }
+        .formation-grid { display: inline; } 
+        .formation-unit { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; white-space: nowrap; vertical-align: middle; }
+        .formation-unit .img-log { margin: 0; }
+        .comma { display: inline; margin-right: 4px; font-weight: bold; color: #888;}
+        .formation-est { color:#f1fa8c; font-weight:bold; margin-left: 10px; display: inline; white-space: nowrap; }
+
+        .log-stats-bar { color: #a9b7c6; font-weight: bold; margin-bottom: 15px; }
+        .stat-badge { display: inline-flex; align-items: center; background: #111; border: 1px solid #443; padding: 4px 10px; border-radius: 4px; margin-right: 5px; margin-bottom: 5px; font-size: 13px;}        .stat-badge i { color: #ffb86c; margin-right: 4px; }
+        .log-unit-section { margin-top: 15px; }
+        .log-unit-section:first-of-type { margin-top: 0; }
+
+        .empty-log-msg { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 360px; /* Ocupă înălțimea minimă a ecranului negru */
+            color: #666; /* Un gri mai șters, ca un placeholder (text ajutător) */
+            font-size: 14px; 
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 2px; }
+            h1 { font-size: 20px; margin-top: 24px; }
+            .grid-container { gap: 10px; width: 100%; padding: 0 5px; box-sizing: border-box; }
+            .unit-card { width: calc(50% - 5px); padding: 5px; box-sizing: border-box; }
+            .bonus-overlay { font-size: 10px; padding: 4px; }
+            .layer-box input { width: 70px; font-size: 20px; }
+            .layer-box button { font-size: 16px; width: 45px; height: 35px; }
+            
+            .section-header { flex-direction: column; gap: 8px; text-align: center;}
+            .sh-center:empty { display: none; }
+            .sh-left, .sh-center, .sh-right { width: 100%; justify-content: center !important; flex-wrap: wrap;}
+            .controls button { width: 35px; height: 30px; font-size: 13px; }
+            button.main-btn { width: 100%; padding: 15px; font-size: 14px; margin: 5px 0;}
+
+            .log-wrapper, #results-container { 
+                width: 100%; max-width: 100%; box-sizing: border-box; 
+                margin-left: 0; margin-right: 0; border-radius: 0;
+            }
+
+            .log-container { font-size: 11px; padding: 10px; border-radius: 0;}
+            
+            .comma { display: none !important; }
+            
+            .formation-container { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; text-align: left; line-height: normal; }
+            .formation-title { display: block; margin-bottom: 5px; font-size: 14px; }
+            .formation-grid {
+                display: grid !important; 
+                grid-template-columns: repeat(4, 1fr); 
+                column-gap: 2px;
+                row-gap: 12px;
+                width: 100%;
+                justify-items: center;
+                margin-top: 2px !important;
+            }
+
+            .formation-unit { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; font-weight: bold;}
+            .formation-unit .img-log { width: 52px; height: 55px; } 
+            .formation-est { display: block; margin-top: 5px; margin-left: 0; white-space: normal; line-height: 1.4; text-align: left;}
+            .log-stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 15px; }
+            .stat-badge { margin: 0; padding: 6px; font-size: 12px; text-align: center; background: rgba(20,20,20,0.8); border: 1px solid #443; border-radius: 4px; display: flex; align-items: center; justify-content: center;}
+            .log-container strong { display: block; margin-bottom: 2px !important; text-align: left; font-size: 15px; letter-spacing: 0.5px;}
+            .log-unit-section { margin-top: 25px !important; } 
+            .log-unit-section:first-of-type { margin-top: 0 !important; }
+            .log-header-title { text-align: center; margin-top: 35px; margin-bottom: 15px; }
+        }
+
+        .footer-disclaimer {
+            margin-top: 40px;
+            padding: 20px 10px;
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid #222;
+            line-height: 1.5;
+        }
+        .footer-disclaimer a {
+            color: #777;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .footer-disclaimer a:hover {
+            color: #ffb86c;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Bitefight Ruins Strategy Helper</h1>
+
+<div class="layer-box">
+    <strong>LAYER:</strong> 
+    <button class="layer-mod-btn" data-amt="-10">-10</button>
+    <button class="layer-mod-btn" data-amt="-1">-1</button>
+    <input type="number" id="layerInput" value="1" min="1" max="101">
+    <button class="layer-mod-btn" data-amt="1">+1</button>
+    <button class="layer-mod-btn" data-amt="10">+10</button>
+</div>
+
+<div class="section-header">
+    <div class="sh-left">
+        <span class="title">Opponent</span>
+    </div>
+    <div class="sh-center"></div>
+    <div class="sh-right">
+        <button id="btn-enemies-all" class="race-btn active btn-filter-enemies" data-side="enemies" data-pos="all">All</button>
+        <button id="btn-enemies-vanguard" class="race-btn btn-filter-enemies" data-side="enemies" data-pos="vanguard">Vanguard</button>
+        <button id="btn-enemies-rearguard" class="race-btn btn-filter-enemies" data-side="enemies" data-pos="rearguard">Rearguard</button>
+    </div>
+</div>
+
+<div class="grid-container" id="enemiesGrid">
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Basic melee unit.</div>
+            <img src="./img/type_brute.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <input type="number" id="e1" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Skeleton</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e1" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e1" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e1" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e1" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_2.jpg" class="main-unit-img">
+            <div class="bonus-overlay">When this unit is defeated in combat for the first time, all Zombies are revived with 1 HP each.</div>
+            <img src="./img/type_brute.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">7</span></div>
+            <input type="number" id="e2" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Zombie</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e2" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e2" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e2" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e2" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_3.jpg" class="main-unit-img">
+            <div class="bonus-overlay">If this unit is still alive at the end of a turn, it boosts the damage inflicted by a random allied unit by 10% (stackable).</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">5</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <input type="number" id="e3" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Undead Cultist</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e3" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e3" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e3" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e3" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_4.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Always attacks the rearguard if possible, bypassing the vanguard. Deals 20% more damage if this unit is the first to attack this turn.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">6</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <input type="number" id="e4" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Bonewing</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e4" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e4" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e4" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e4" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_5.jpg" class="main-unit-img">
+            <div class="bonus-overlay">When defeated, this unit deals 20% of its HP as damage to the attacking unit.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">10</span></div>
+            <input type="number" id="e5" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Bloated Corpse</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e5" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e5" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e5" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e5" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_6.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Gains +50% attack for each time the target’s unit count is double or more compared to this unit’s count.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">7</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <input type="number" id="e6" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Wraith</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e6" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e6" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e6" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e6" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_7.jpg" class="main-unit-img">
+            <div class="bonus-overlay">While this unit is alive, your rearguard deals 15% less damage.</div>
+            <img src="./img/type_brute.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">8</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">12</span></div>
+            <input type="number" id="e7" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Revenant</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e7" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e7" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e7" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e7" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_8.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Gains a stacking 5% attack bonus for 1 turn every time this unit is attacked.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">10</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">25</span></div>
+            <input type="number" id="e8" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Bone Giant</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e8" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e8" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e8" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e8" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_9.jpg" class="main-unit-img" onerror="this.src='https://via.placeholder.com/135x164/222/ff4d4d?text=Broodmother'">
+            <div class="bonus-overlay">Spawns 10 Spiderlings at the end of each turn. Each Spiderling has 1 attack, 1 HP and a speed of 6.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">9</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">18</span></div>
+            <input type="number" id="e9" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Broodmother</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e9" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e9" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e9" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e9" data-amt="10">+10</button></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img src="./img/enemyUnit_10.jpg" class="main-unit-img" onerror="this.src='https://via.placeholder.com/135x164/222/ff4d4d?text=Lich'">
+            <div class="bonus-overlay">When this unit destroys a unit in the vanguard, 50% of the damage inflicted is also dealt to the slowest unit in your rearguard.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">40</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">25</span></div>
+            <input type="number" id="e10" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name">Lich</div>
+        <div class="controls"><button class="unit-mod-btn" data-target="e10" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="e10" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="e10" data-amt="1">+1</button><button class="unit-mod-btn" data-target="e10" data-amt="10">+10</button></div>
+    </div>
+</div>
+
+<div class="section-header">
+    <div class="sh-left">
+        <span class="title">Your Units</span>
+        <div style="display: flex; gap: 5px;">
+            <button id="btn-vampire" class="race-btn race-select-btn active" data-race="vampire">Vampire</button>
+            <button id="btn-werewolf" class="race-btn race-select-btn" data-race="werewolf">Werewolf</button>
+        </div>
+    </div>
+    <div class="sh-center">
+        <span class="strength-label">Used Army Strength: <span id="allyStr">0</span> / <span id="maxStrAlly">20</span></span>
+    </div>
+    <div class="sh-right">
+        <button id="btn-allies-all" class="race-btn active btn-filter-allies" data-side="allies" data-pos="all">All</button>
+        <button id="btn-allies-vanguard" class="race-btn btn-filter-allies" data-side="allies" data-pos="vanguard">Vanguard</button>
+        <button id="btn-allies-rearguard" class="race-btn btn-filter-allies" data-side="allies" data-pos="rearguard">Rearguard</button>
+    </div>
+</div>
+
+<div class="grid-container" id="alliesGrid">
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a1" src="./img/Tier1_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Causes 25% extra damage in the first round.</div>
+            <img src="./img/type_brute.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">5</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">8</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <input type="number" id="a1" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a1" class="unit-checkbox" checked> <span id="name_a1">Bats</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a1" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a1" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a1" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a1" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a1" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a2" src="./img/Tier2_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">This mob suffers 50% less damage, irrespective of enemy unit type.</div>
+            <img src="./img/type_brute.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">5</span></div>
+            <input type="number" id="a2" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a2" class="unit-checkbox" checked> <span id="name_a2">Ghouls</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a2" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a2" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a2" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a2" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a2" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a3" src="./img/Tier3_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">This unit deals 33% more damage to targets with a speed rating lower than 3.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">6</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">6</span></div>
+            <input type="number" id="a3" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a3" class="unit-checkbox" checked> <span id="name_a3">Vampire Thralls</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a3" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a3" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a3" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a3" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a3" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a4" src="./img/Tier4_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Always attacks the rearguard if possible, bypassing the vanguard. Reduces the attack of the first enemy group hit by 25% for 1 round.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">7</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">4</span></div>
+            <input type="number" id="a4" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a4" class="unit-checkbox" checked> <span id="name_a4">Banshees</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a4" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a4" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a4" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a4" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a4" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a5" src="./img/Tier5_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Gain +10% attack for every unit group that died this combat.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">2</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">9</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">5</span></div>
+            <input type="number" id="a5" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a5" class="unit-checkbox" checked> <span id="name_a5">Necromancers</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a5" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a5" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a5" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a5" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a5" class="unit-max-input" value="1" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a6" src="./img/Tier6_Frame-B-1_1.jpg" class="main-unit-img">
+            <div class="bonus-overlay">Reduces the speed rating of attacking units by 2 until the end of combat.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">12</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">12</span></div>
+            <input type="number" id="a6" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a6" class="unit-checkbox" checked> <span id="name_a6">Gargoyles</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a6" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a6" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a6" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a6" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a6" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a7" src="./img/Tier7_Frame-B-1_1.jpg" class="main-unit-img" onerror="this.src='https://via.placeholder.com/135x164/222/ff4d4d?text=T7'">
+            <div class="bonus-overlay">Unleashes 25% of its attack as damage to all rearguard units every second round.</div>
+            <img src="./img/type_occult.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">3</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">14</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">8</span></div>
+            <input type="number" id="a7" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a7" class="unit-checkbox" checked> <span id="name_a7">Blood Witches</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a7" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a7" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a7" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a7" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a7" class="unit-max-input" value="1" min="0" placeholder="∞"></div>
+    </div>
+    <div class="unit-card">
+        <div class="card-img-container">
+            <img id="img_a8" src="./img/Tier8_Frame-B-1_1.jpg" class="main-unit-img" onerror="this.src='https://via.placeholder.com/135x164/222/ff4d4d?text=T8'">
+            <div class="bonus-overlay">Overkill damage dealt by this unit transfers over to the next logical target once per turn. This unit also ignores weaknesses when attacking.</div>
+            <img src="./img/type_monstrosity.png" class="stat-icon icon-overlay pos-tl">
+            <div class="icon-overlay pos-tr"><img src="./img/speed.png" class="stat-icon"><span class="stat-val">1</span></div>
+            <div class="icon-overlay pos-bl"><img src="./img/attack.png" class="stat-icon"><span class="stat-val">30</span></div>
+            <div class="icon-overlay pos-br"><img src="./img/health.png" class="stat-icon"><span class="stat-val">90</span></div>
+            <input type="number" id="a8" value="0" class="unit-count-input">
+        </div>
+        <div class="unit-name"><input type="checkbox" id="chk_a8" class="unit-checkbox" checked> <span id="name_a8">Rotmaws</span></div>
+        <div class="controls"><button class="unit-mod-btn" data-target="a8" data-amt="-10">-10</button><button class="unit-mod-btn" data-target="a8" data-amt="-1">-1</button><button class="unit-mod-btn" data-target="a8" data-amt="1">+1</button><button class="unit-mod-btn" data-target="a8" data-amt="10">+10</button></div>
+        <div class="opt-limit" title="Maximum units to use during Optimization. Leave empty for no limit.">Max units: <input type="number" id="max_a8" class="unit-max-input" min="0" placeholder="∞"></div>
+    </div>
+</div>
+
+<div class="action-panel">
+    <div class="mode-toggle">
+        <span id="labelLite" class="mode-lite">QUICK</span>
+        <label class="switch">
+            <input type="checkbox" id="modeSwitch">
+            <span class="slider"></span>
+        </label>
+        <span id="labelPro" class="mode-pro">DEEP</span>
+    </div>
+    
+    <div>
+        <button id="btn-sim" class="main-btn btn-sim"><i class="fa-solid fa-play"></i> Simulate Custom Army</button>
+        <button id="btn-opt-best" class="main-btn btn-best"><i class="fa-solid fa-coins"></i> <span id="opt-text-best">Find Optimal Formation</span></button>
+        <button id="btn-opt-safe" class="main-btn btn-safe"><i class="fa-solid fa-shield-halved"></i> <span id="opt-text-safe">Find Safest Formation</span></button>
+    </div>
+
+    <div id="results-container">
+        <div id="async-loader"><div class="spinner"></div> <span id="progress-text">Launching Multi-Core Engine...</span></div>
+        <div id="results-list"></div>
+    </div>
+</div>
+
+<div class="log-wrapper" style="position: relative; width: 95%; max-width: 1250px; margin: 20px auto 40px auto; box-sizing: border-box;">    
+    <div class="log-actions">
+        <button id="btn-share-log" class="copy-btn"><i class="fa-solid fa-link"></i> Share Report Link</button>
+        <button id="btn-copy-log" class="copy-btn"><i class="fa-solid fa-copy"></i> Copy Report</button>
+    </div>
+    <div id="logOutput" class="log-container">
+        <div class="empty-log-msg">Battle Log will appear here...</div>
+    </div>
+</div>
+<div class="footer-disclaimer">
+    <strong>Disclaimer:</strong> All in-game images and graphic elements used on this website are the exclusive property of <a href="https://gameforge.com" target="_blank">Gameforge 4D GmbH</a>.<br> 
+    This tool is an independent, community-driven project and is not affiliated with, endorsed, or officially sponsored by Gameforge.
+</div>
+<script>
 document['addEventListener']('DOMContentLoaded', () => {
     const _0x4c2854 = [
         'Bats',
@@ -2624,3 +3193,7 @@ document['addEventListener']('DOMContentLoaded', () => {
         }, 0x12c);
     }
 });
+</script>
+
+</body>
+</html>
