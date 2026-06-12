@@ -206,7 +206,7 @@
 
     <div id="sectionRuin">
         <div id="ruinsExternalContainer" style="margin: 0 auto; max-width: 1300px; text-align: left; padding: 5px; background: transparent;">
-            <iframe class="ruins-iframe" src="ruins.js"></iframe>
+            <iframe class="ruins-iframe" src="ruins.html"></iframe>
         </div>
     </div>
 
@@ -384,7 +384,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -651,7 +651,7 @@
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
             let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Ostatnia Aktywność"];
-            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "▲" : "▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
@@ -824,11 +824,7 @@
                 if (currentSortCol === i - 1 && i !== 0) {
                     arrow = currentSortAsc ? " ▲" : " ▼";
                     arrowClass = "sort-arrow-active";
-                    if (currentSortAsc) {
-                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
-                    } else {
-                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
-                    }
+                    html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
                 } else {
                     let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
                     html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
@@ -1032,7 +1028,7 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
