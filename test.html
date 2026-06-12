@@ -206,7 +206,7 @@
     <div id="sectionItems">
         <h2>Zewnętrzny Katalog Przedmiotów</h2>
         <div style="margin: 0 auto; max-width: 1600px; height: 85vh; background: #110505; border: 1px solid #4a0d0d; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.9); overflow: hidden;">
-            <iframe src="https://bitefight.pages.dev/" style="width: 100%; height: 100%; border: none;"></iframe>
+            <iframe src="TUTAJ_WKLEJ_LINK" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 
@@ -807,4 +807,282 @@
             if (computedRankingRows.length === 0) return;
             computedRankingRows.sort((a, b) => {
                 let valA, valB; if (currentSortCol === -1) return 0; 
-                if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol ===
+                if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; } else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; } else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
+                
+                if (currentSortCol === 0 || currentSortCol === 1) {
+                    return currentSortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA)); 
+                } else {
+                    return currentSortAsc ? (Number(valA) - Number(valB)) : (Number(valB) - Number(valA)); 
+                }
+            });
+            let html = "<table><thead><tr>";
+            
+            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM", "ŁUP", "WARTOŚĆ BOJOWA", "WYGRANE", "PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (TOTAL)", "WARTOŚĆ BOJOWA", "WYGRANE (TOTAL)", "PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+            
+            headers.forEach((h, i) => { 
+                let arrow = " ⇅"; 
+                let arrowClass = "sort-arrow-inactive";
+                if (currentSortCol === i - 1 && i !== 0) {
+                    arrow = currentSortAsc ? " ▲" : " ▼";
+                    arrowClass = "sort-arrow-active";
+                    if (currentSortAsc) {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    } else {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    }
+                } else {
+                    let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
+                    html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
+                }
+            });
+            html += "</tr></thead><tbody>";
+            
+            function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
+            
+            computedRankingRows.forEach((row, idx) => {
+                let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
+                let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
+                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="przyrost-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
+            });
+            html += "</tbody></table>";
+            document.getElementById('rankingTableContainer').innerHTML = html;
+        }
+
+        function formatClanLink(klanTag, rawName) {
+            let nameStr = String(rawName || `[${klanTag}]`).replace(/^Klan\s+/i, ''); 
+            let finalName = `${nameStr} [${klanTag}]`;
+            return CLANS_LINKS[klanTag] ? `<a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${finalName}</a>` : `<span class="clan-text-plain">${finalName}</span>`;
+        }
+
+        function renderClans() {
+            if (globalClansBaza.length === 0) {
+                document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów. Upewnij się, że opublikowałeś zakładkę Klany_Baza w formacie CSV i dodałeś link w kodzie.</p>";
+                return;
+            }
+
+            let currentClanState = {};
+            globalClansBaza.forEach(w => {
+                let klan = w[0];
+                let nazwa = w[1];
+                let pieczecie = w[2];
+                let czlonkowie = w[3] || "-";
+                currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
+            });
+
+            const ALL_SEALS = [
+                { id: "Skąpstwo", img: "skapstwo.png" },
+                { id: "Zazdrość", img: "zazdrosc.png" },
+                { id: "Obżarstwo", img: "obzarstwo.png" },
+                { id: "Ociężałość", img: "ociezalosc.png" },
+                { id: "Pożądanie", img: "pozadanie.png" },
+                { id: "Gniew", img: "gniew.png" },
+                { id: "Pycha", img: "pycha.png" }
+            ];
+
+            let sealHolders = {};
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
+
+            for (let k in currentClanState) {
+                if (currentClanState[k].pieczecie !== "Brak") {
+                    let heldSeals = currentClanState[k].pieczecie.split(", ");
+                    heldSeals.forEach(s => {
+                        if (sealHolders[s]) {
+                            sealHolders[s].holder = formatClanLink(k, currentClanState[k].nazwa);
+                            sealHolders[s].klanId = k;
+                        }
+                    });
+                }
+            }
+
+            globalClansLogi.forEach(w => {
+                if (String(w[2]) === "Pieczęcie") {
+                    let klan = w[1];
+                    let oldStr = String(w[3]);
+                    let newStr = String(w[4]);
+                    
+                    let oldArr = (oldStr === "Brak" || oldStr === "START") ? [] : oldStr.split(", ");
+                    let newArr = (newStr === "Brak" || newStr === "START") ? [] : newStr.split(", ");
+                    let gained = newArr.filter(x => !oldArr.includes(x));
+                    
+                    gained.forEach(s => {
+                        if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) {
+                            sealHolders[s].date = w[0];
+                        }
+                    });
+                }
+            });
+
+            let sealsBoardHtml = "";
+            ALL_SEALS.forEach(s => {
+                let data = sealHolders[s.id];
+                let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
+                
+                sealsBoardHtml += `<div class="seal-badge">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
+                                     <div class="seal-name">${s.id}</div>
+                                     <div class="seal-holder">${data.holder}</div>
+                                     ${dateHtml}
+                                   </div>`;
+            });
+            document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
+
+            // --- TABELA UTRATY PIECZĘCI ORAZ WYKRES ---
+            let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
+            let entriesFound = false;
+            let kicksPerHour = new Array(24).fill(0); 
+
+            globalClansLogi.forEach(w => {
+                if (String(w[2]) !== "Członkowie") return;
+                let oldVal = String(w[3]);
+                let newVal = String(w[4]);
+                let oldM = oldVal.match(/(\d+)/);
+                let newM = newVal.match(/(\d+)/);
+
+                if (oldM && newM) {
+                    let oldNum = parseInt(oldM[1]);
+                    let newNum = parseInt(newM[1]);
+                    
+                    if (oldNum === 3 && newNum === 2) { 
+                        entriesFound = true;
+                        let klan = w[1];
+                        let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                        kicksHtml += `<tr><td>${w[0]}</td><td>${formatClanLink(klan, actualName)}</td><td>Spadek graczy z 3 do 2</td><td class="strata-col"><strong>Utrata pieczęci!</strong></td></tr>`;
+                        
+                        let dateStr = w[0];
+                        let timePart = dateStr.split(" ")[1];
+                        if (timePart) {
+                            let hour = parseInt(timePart.split(":")[0], 10);
+                            if (!isNaN(hour) && hour >= 0 && hour < 24) {
+                                kicksPerHour[hour]++;
+                            }
+                        }
+                    }
+                }
+            });
+            kicksHtml += "</tbody></table>";
+            if (!entriesFound) kicksHtml = "<p style='color:#777; padding:10px;'>Brak odnotowanych spadków klanów z 3 do 2 członków.</p>";
+            document.getElementById('clansKicksContainer').innerHTML = kicksHtml;
+
+            // GENEROWANIE WYKRESU 24H DLA ZNISZCZONYCH PIECZĘCI
+            if (window.kicksChartInstance) {
+                window.kicksChartInstance.destroy();
+            }
+            const ctxKicks = document.getElementById('kicksChart');
+            if (ctxKicks) {
+                let labels = Array.from({length: 24}, (_, i) => i + ':00');
+                window.kicksChartInstance = new Chart(ctxKicks.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Zniszczone pieczęcie',
+                            data: kicksPerHour,
+                            backgroundColor: 'rgba(255, 68, 68, 0.7)',
+                            borderColor: 'rgba(255, 68, 68, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: '#333' }, ticks: { color: '#aaa' } },
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { color: '#ffcc00', precision: 0, stepSize: 1 }, 
+                                grid: { color: '#333' } 
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // HISTORIA ZMIAN (LOGI KLANOWE)
+            let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
+            globalClansLogi.forEach(w => {
+                let stat = String(w[2]);
+                if (stat === "Nazwa" || stat === "Łup" || stat === "Majątek") return; 
+                if (String(w[3]) === "START") return; 
+                
+                logHtml += "<tr>";
+                let klan = w[1];
+                let oldVal = String(w[3]);
+                let newVal = String(w[4]);
+                let diffHtml = w[5];
+                
+                let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                let klasa = "";
+
+                if (stat === "Członkowie") {
+                    let oldMatch = oldVal.match(/(\d+)/);
+                    let newMatch = newVal.match(/(\d+)/);
+                    if (oldMatch && newMatch) {
+                        let diffNum = parseInt(newMatch[1]) - parseInt(oldMatch[1]);
+                        if (diffNum > 0) {
+                            klasa = ' class="przyrost-col"';
+                            diffHtml = "+" + diffNum + " graczy";
+                        } else if (diffNum < 0) {
+                            klasa = ' class="strata-col"';
+                            diffHtml = diffNum + " graczy";
+                        }
+                    }
+                } 
+                else if (stat === "Pieczęcie") {
+                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
+                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
+                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
+                    
+                    if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
+                    else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
+                    else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
+                }
+
+                for(let j = 0; j <= 5; j++) {
+                    let val = w[j];
+                    let myKlasa = "";
+                    if (j === 1) val = formatClanLink(klan, actualName);
+                    else if (j === 5) { val = diffHtml; myKlasa = klasa; }
+                    logHtml += `<td${myKlasa}>${val}</td>`;
+                }
+                logHtml += "</tr>";
+            });
+            logHtml += "</tbody></table>";
+            document.getElementById('clansLogContainer').innerHTML = logHtml;
+
+            // RENDER AKTUALNEGO STANU Z FILTREM WYBORU SORTOWANIA
+            let clansArray = [];
+            for (let klan in currentClanState) {
+                let data = currentClanState[klan];
+                if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
+                    let membersNum = parseInt(String(data.czlonkowie).match(/(\d+)/) ? String(data.czlonkowie).match(/(\d+)/)[1] : 0);
+                    let sealsCount = data.pieczecie === "Brak" ? 0 : data.pieczecie.split(",").length;
+                    clansArray.push({ tag: klan, nazwa: data.nazwa, pieczecie: data.pieczecie, czlonkowie: data.czlonkowie, membersNum: membersNum, sealsCount: sealsCount });
+                }
+            }
+
+            let sortCrit = document.getElementById('clanSortSelect') ? document.getElementById('clanSortSelect').value : 'members_desc';
+            clansArray.sort((a, b) => {
+                if (sortCrit === 'name_asc') return a.nazwa.localeCompare(b.nazwa);
+                if (sortCrit === 'name_desc') return b.nazwa.localeCompare(a.nazwa);
+                if (sortCrit === 'members_desc') return b.membersNum - a.membersNum;
+                if (sortCrit === 'members_asc') return a.membersNum - b.membersNum;
+                if (sortCrit === 'seals_desc') return b.sealsCount - a.sealsCount;
+                return 0;
+            });
+
+            let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
+            clansArray.forEach(data => {
+                let kLink = formatClanLink(data.tag, data.nazwa);
+                let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
+                currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
+            });
+            currentHtml += "</tbody></table>";
+            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
+        }
+
+    </script>
+</body>
+</html>
