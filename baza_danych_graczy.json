@@ -1,53 +1,53 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "180.742.475 / 180.786.855",
+        "Doswiadczenie": "180.782.251 / 180.786.855",
         "Sila": "3947",
         "Obrona": "3664",
         "Zwinnosc": "3488",
         "Wytrzymalosc": "3259",
         "Charyzma": "1506",
-        "Walki": "95.939",
-        "Zrabowane dobra": "273.049.163.551 krwi"
+        "Walki": "95.944",
+        "Zrabowane dobra": "273.099.557.953 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "118.714.745 / 118.735.515",
+        "Doswiadczenie": "118.750.356 / 118.784.250",
         "Sila": "2512",
         "Obrona": "2505",
         "Zwinnosc": "2255",
         "Wytrzymalosc": "1987",
         "Charyzma": "1564",
-        "Walki": "57.010",
-        "Zrabowane dobra": "185.149.449.564 krwi"
+        "Walki": "57.011",
+        "Zrabowane dobra": "185.172.422.302 krwi"
     },
     "lux": {
-        "Doswiadczenie": "107.790.933 / 107.791.885",
+        "Doswiadczenie": "107.826.725 / 107.838.320",
         "Sila": "2376",
         "Obrona": "2845",
         "Zwinnosc": "2122",
         "Wytrzymalosc": "2512",
         "Charyzma": "1879",
-        "Walki": "105.040",
-        "Zrabowane dobra": "174.399.898.661 krwi"
+        "Walki": "105.047",
+        "Zrabowane dobra": "174.422.432.519 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "382.545.721 / 382.558.790",
+        "Doswiadczenie": "382.645.810 / 382.646.265",
         "Sila": "4311",
         "Obrona": "3085",
         "Zwinnosc": "3922",
         "Wytrzymalosc": "3732",
         "Charyzma": "2836",
         "Walki": "115.622",
-        "Zrabowane dobra": "792.387.594.141 mięsa"
+        "Zrabowane dobra": "792.473.258.896 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "139.850.867 / 139.872.890",
+        "Doswiadczenie": "139.851.111 / 139.872.890",
         "Sila": "3001",
         "Obrona": "2982",
         "Zwinnosc": "2612",
         "Wytrzymalosc": "2404",
         "Charyzma": "1565",
         "Walki": "49.638",
-        "Zrabowane dobra": "246.568.294.627 krwi"
+        "Zrabowane dobra": "246.569.230.325 krwi"
     },
     "PEON": {
         "Doswiadczenie": "145.452.811 / 145.481.570",
