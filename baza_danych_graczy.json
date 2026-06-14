@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "181.017.172 / 181.027.460",
-        "Sila": "3949",
+        "Doswiadczenie": "181.153.073 / 181.208.020",
+        "Sila": "3953",
         "Obrona": "3664",
         "Zwinnosc": "3488",
         "Wytrzymalosc": "3260",
         "Charyzma": "1506",
-        "Walki": "95.950",
-        "Zrabowane dobra": "273.316.900.258 krwi"
+        "Walki": "95.955",
+        "Zrabowane dobra": "273.442.662.232 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "118.755.230 / 118.784.250",
@@ -16,38 +16,38 @@
         "Zwinnosc": "2255",
         "Wytrzymalosc": "1987",
         "Charyzma": "1564",
-        "Walki": "57.014",
+        "Walki": "57.015",
         "Zrabowane dobra": "185.172.422.302 krwi"
     },
     "lux": {
-        "Doswiadczenie": "107.868.093 / 107.884.770",
+        "Doswiadczenie": "107.940.613 / 107.977.690",
         "Sila": "2376",
         "Obrona": "2846",
         "Zwinnosc": "2122",
         "Wytrzymalosc": "2512",
         "Charyzma": "1879",
-        "Walki": "105.056",
-        "Zrabowane dobra": "174.466.441.236 krwi"
+        "Walki": "105.060",
+        "Zrabowane dobra": "174.520.587.595 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "382.876.563 / 382.908.755",
+        "Doswiadczenie": "383.033.542 / 383.083.795",
         "Sila": "4311",
-        "Obrona": "3087",
+        "Obrona": "3089",
         "Zwinnosc": "3922",
         "Wytrzymalosc": "3732",
         "Charyzma": "2836",
         "Walki": "115.622",
-        "Zrabowane dobra": "792.692.231.555 mięsa"
+        "Zrabowane dobra": "792.838.113.929 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "139.892.067 / 139.925.790",
+        "Doswiadczenie": "139.892.503 / 139.925.790",
         "Sila": "3001",
         "Obrona": "2982",
         "Zwinnosc": "2613",
         "Wytrzymalosc": "2404",
         "Charyzma": "1565",
         "Walki": "49.643",
-        "Zrabowane dobra": "246.597.048.077 krwi"
+        "Zrabowane dobra": "246.598.872.997 krwi"
     },
     "PEON": {
         "Doswiadczenie": "145.464.761 / 145.481.570",
