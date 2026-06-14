@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "182.890.734 / 182.897.565",
-        "Sila": "3968",
+        "Doswiadczenie": "183.034.344 / 183.079.055",
+        "Sila": "3972",
         "Obrona": "3664",
         "Zwinnosc": "3488",
         "Wytrzymalosc": "3260",
         "Charyzma": "1506",
-        "Walki": "96.001",
-        "Zrabowane dobra": "275.114.348.299 krwi"
+        "Walki": "96.006",
+        "Zrabowane dobra": "275.259.257.878 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "119.070.051 / 119.076.880",
@@ -16,38 +16,38 @@
         "Zwinnosc": "2260",
         "Wytrzymalosc": "1995",
         "Charyzma": "1564",
-        "Walki": "57.025",
+        "Walki": "57.026",
         "Zrabowane dobra": "185.419.187.678 krwi"
     },
     "lux": {
-        "Doswiadczenie": "108.294.219 / 108.303.230",
+        "Doswiadczenie": "108.295.487 / 108.303.230",
         "Sila": "2378",
         "Obrona": "2859",
         "Zwinnosc": "2122",
         "Wytrzymalosc": "2514",
         "Charyzma": "1879",
-        "Walki": "105.162",
+        "Walki": "105.163",
         "Zrabowane dobra": "174.772.906.678 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "384.859.405 / 384.924.150",
+        "Doswiadczenie": "385.059.493 / 385.099.655",
         "Sila": "4311",
-        "Obrona": "3107",
+        "Obrona": "3125",
         "Zwinnosc": "3922",
         "Wytrzymalosc": "3732",
         "Charyzma": "2836",
         "Walki": "115.622",
-        "Zrabowane dobra": "794.595.781.652 mięsa"
+        "Zrabowane dobra": "794.838.649.402 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "140.353.327 / 140.402.300",
+        "Doswiadczenie": "140.399.164 / 140.402.300",
         "Sila": "3003",
         "Obrona": "2982",
         "Zwinnosc": "2616",
         "Wytrzymalosc": "2404",
         "Charyzma": "1565",
-        "Walki": "49.650",
-        "Zrabowane dobra": "246.953.976.612 krwi"
+        "Walki": "49.651",
+        "Zrabowane dobra": "246.990.303.218 krwi"
     },
     "PEON": {
         "Doswiadczenie": "145.542.083 / 145.589.475",
