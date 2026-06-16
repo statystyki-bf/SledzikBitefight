@@ -84,20 +84,21 @@
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
-        /* ZAKŁADKA PRZYBORNIKA */
-        .tools-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; }
-        .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 8px; padding: 20px; width: 350px; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); text-align: left; }
-        .tool-title { font-size: 16px; color: #ffaa00; margin-bottom: 15px; border-bottom: 1px solid #330000; padding-bottom: 5px; font-weight: bold; text-transform: uppercase;}
-        .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .tool-input-row label { color: #ccc; font-size: 13px; font-weight: bold;}
-        .tool-input-row input { width: 100px; padding: 4px; text-align: right; }
-        .tool-result { margin-top: 15px; padding: 10px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 20px;}
-        .tool-btn { width: 100%; margin-top: 5px; background: #4a0d0d; border: 1px solid #ff3333; padding: 8px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s;}
+        /* ZAKŁADKA PRZYBORNIKA - KOMPAKTOWA */
+        .tools-layout { display: flex; flex-direction: column; gap: 20px; max-width: 1000px; margin: 0 auto; align-items: center; }
+        .links-section { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 350px; }
+        .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 15px; border-radius: 4px; border: 1px solid #600000; transition: 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.8); font-size: 13px; }
+        .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; box-shadow: 0 0 12px rgba(255, 51, 51, 0.6); transform: scale(1.02); }
+        
+        .tools-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
+        .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 15px; width: 300px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); text-align: left; }
+        .tool-title { font-size: 14px; color: #ffaa00; margin-bottom: 10px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
+        .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .tool-input-row label { color: #ccc; font-size: 12px; font-weight: bold;}
+        .tool-input-row input { width: 80px; padding: 3px; text-align: right; font-size: 12px;}
+        .tool-result { margin-top: 10px; padding: 8px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 18px; font-size: 12px;}
+        .tool-btn { width: 100%; margin-top: 5px; background: #4a0d0d; border: 1px solid #ff3333; padding: 6px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 12px;}
         .tool-btn:hover { background: #ff3333; color: black; }
-
-        .quick-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; font-size: 14px; flex-wrap: wrap; }
-        .quick-links a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 10px 20px; border-radius: 4px; border: 1px solid #600000; transition: 0.3s; font-weight: bold; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        .quick-links a:hover { background: #ff3333; color: white; border-color: #ffaaaa; box-shadow: 0 0 15px rgba(255, 51, 51, 0.6); transform: scale(1.05); }
 
     </style>
 </head>
@@ -223,56 +224,53 @@
     </div>
 
     <div id="sectionTools">
-        <div class="quick-links">
-            <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów (Zewnętrzny)</a>
-            <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji (Zewnętrzny)</a>
-        </div>
-
-        <div class="tools-grid">
+        <div class="tools-layout">
             
-            <div class="tool-box">
-                <div class="tool-title">Zasięg Wartości Bojowej</div>
-                <div class="tool-input-row">
-                    <label>Twoja Wartość Bojowa:</label>
-                    <input type="number" id="calc_wb" value="100000" min="1">
-                </div>
-                <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
-                <div class="tool-result" id="res_wb">-</div>
+            <div class="links-section">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
+                <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów</a>
+                <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji</a>
+                <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne Forum BiteFight</a>
             </div>
 
-            <div class="tool-box">
-                <div class="tool-title">Koszt wytrenowania cechy</div>
-                <div class="tool-input-row">
-                    <label>Obecny poziom cechy:</label>
-                    <input type="number" id="calc_skill" value="50" min="5">
-                </div>
-                <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt Awansu</button>
-                <div class="tool-result" id="res_skill">-</div>
-            </div>
+            <div style="width: 100%; max-width: 800px;">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory</h3>
+                
+                <div class="tools-grid">
+                    <div class="tool-box">
+                        <div class="tool-title">Zasięg Wartości Bojowej</div>
+                        <div class="tool-input-row">
+                            <label>Twoja Wartość Bojowa:</label>
+                            <input type="number" id="calc_wb" value="100000" min="1">
+                        </div>
+                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                        <div class="tool-result" id="res_wb">-</div>
+                    </div>
 
-            <div class="tool-box">
-                <div class="tool-title">Koszt kolejnego talentu</div>
-                <div class="tool-input-row">
-                    <label>Poziom nowego talentu:</label>
-                    <input type="number" id="calc_talent" value="10" min="1">
-                </div>
-                <button class="tool-btn" onclick="calcTalentCost()">Oblicz Koszt Talentu</button>
-                <div class="tool-result" id="res_talent">-</div>
-            </div>
+                    <div class="tool-box">
+                        <div class="tool-title">Koszt Wytrenowania Cechy</div>
+                        <div class="tool-input-row">
+                            <label>Obecny poziom cechy:</label>
+                            <input type="number" id="calc_skill" value="50" min="5">
+                        </div>
+                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt Awansu</button>
+                        <div class="tool-result" id="res_skill">-</div>
+                    </div>
 
-            <div class="tool-box" style="width: 100%; max-width: 720px;">
-                <div class="tool-title">Majątek Ukryty w Statystykach (Wydane Złoto)</div>
-                <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 10px; gap: 10px;">
-                    <div class="tool-input-row" style="flex-direction: column; align-items: center;"><label>Siła</label><input type="number" id="c_str" value="5" min="5"></div>
-                    <div class="tool-input-row" style="flex-direction: column; align-items: center;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5"></div>
-                    <div class="tool-input-row" style="flex-direction: column; align-items: center;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5"></div>
-                    <div class="tool-input-row" style="flex-direction: column; align-items: center;"><label>Wytrzymałość</label><input type="number" id="c_end" value="5" min="5"></div>
-                    <div class="tool-input-row" style="flex-direction: column; align-items: center;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5"></div>
+                    <div class="tool-box" style="width: 100%; max-width: 615px;">
+                        <div class="tool-title">Majątek Ukryty w Statystykach (Wydane Złoto)</div>
+                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5"></div>
+                        </div>
+                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Majątek</button>
+                        <div class="tool-result" id="res_total" style="font-size: 13px;">-</div>
+                    </div>
                 </div>
-                <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Majątek</button>
-                <div class="tool-result" id="res_total" style="font-size: 16px;">-</div>
             </div>
-
         </div>
     </div>
 
@@ -343,7 +341,7 @@
         let kicksChartInstance = null;
 
         // ==========================================
-        // SKRYPTY KALKULATORA Z BITEFIGHT BOT (PRZYBORNIK)
+        // SKRYPTY PRZYBORNIKA
         // ==========================================
 
         function formatNumber(num) {
@@ -362,14 +360,7 @@
             if (isNaN(val) || val < 1) val = 1;
             let min = Math.floor(val * 0.8);
             let max = Math.floor(val * 1.25);
-            document.getElementById('res_wb').innerHTML = `Możesz atakować:<br> <span style="color: #ffcc00">${formatNumber(min)}</span> do <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
-        }
-
-        function calcTalentCost() {
-            let val = parseInt(document.getElementById('calc_talent').value);
-            if (isNaN(val) || val < 1) val = 1;
-            let cost = 100 * Math.floor(Math.pow(val - 1, 2.5));
-            document.getElementById('res_talent').innerHTML = `Koszt talentu: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
+            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
         }
 
         function calcTotalGold() {
@@ -386,7 +377,7 @@
             for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
             for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
 
-            document.getElementById('res_total').innerHTML = `Łączny majątek w statystykach: <br><span style="color: #ffcc00; font-size: 20px;">${formatNumber(total)}</span> złota`;
+            document.getElementById('res_total').innerHTML = `Wydane złoto łącznie: <span style="color: #ffcc00;">${formatNumber(total)}</span>`;
         }
 
         // ==========================================
