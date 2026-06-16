@@ -12,7 +12,13 @@
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
-        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        
+        /* NOWY PASEK SZYBKICH LINKÓW */
+        .quick-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-size: 13px; flex-wrap: wrap; }
+        .quick-links a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 6px 16px; border-radius: 4px; border: 1px solid #600000; transition: 0.3s; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .quick-links a:hover { background: #ff3333; color: white; border-color: #ffaaaa; box-shadow: 0 0 8px rgba(255, 51, 51, 0.6); transform: scale(1.02); }
+
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 8px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
@@ -37,9 +43,8 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1600px; margin: 20px auto; }
         .summary-box { background: #231212; padding: 10px; border-radius: 8px; border: 1px solid #4a0d0d; margin: 0 auto 15px auto; width: 98%; max-width: 1600px; }
         
-        /* DODAŁEM NOWĄ ZAKŁADKĘ ITEMS */
-        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans, #sectionItems { display: none; }
-        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active, #sectionItems.active { display: block; }
+        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans { display: none; }
+        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active { display: block; }
         
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
@@ -85,12 +90,17 @@
 </head>
 <body>
     <h1>Statystyki BiteFight</h1>
+    
+    <div class="quick-links">
+        <a href="https://bitefight.pages.dev/" target="_blank">🎒 Wszystkie przedmioty w grze</a>
+        <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ruin</a>
+    </div>
+
     <div class="tabs">
         <button id="tabTrackerBtn" class="tab-btn active" onclick="switchTab('tracker')">Twoi Gracze (Live)</button>
         <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
-        <button id="tabItemsBtn" class="tab-btn" onclick="switchTab('items')">Katalog Przedmiotów</button>
     </div>
 
     <div id="sectionTracker" class="active">
@@ -203,13 +213,6 @@
         </div>
     </div>
 
-    <div id="sectionItems">
-        <h2>Zewnętrzny Katalog Przedmiotów</h2>
-        <div style="margin: 0 auto; max-width: 1600px; height: 85vh; background: #110505; border: 1px solid #4a0d0d; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.9); overflow: hidden;">
-            <iframe src="https://bitefight.pages.dev/" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-    </div>
-
     <script>
         // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
@@ -278,8 +281,7 @@
 
         function switchTab(tabId) {
             try {
-                // DODAŁEM NOWĄ ZAKŁADKĘ ITEMS DO TABLICY PRZEŁĄCZANIA
-                const tabs = ['tracker', 'heatmap', 'ranking', 'clans', 'items'];
+                const tabs = ['tracker', 'heatmap', 'ranking', 'clans'];
                 tabs.forEach(t => {
                     const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
                     const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
@@ -385,7 +387,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -926,7 +928,6 @@
             });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-            // --- TABELA UTRATY PIECZĘCI ORAZ WYKRES ---
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
             let entriesFound = false;
             let kicksPerHour = new Array(24).fill(0); 
@@ -963,7 +964,6 @@
             if (!entriesFound) kicksHtml = "<p style='color:#777; padding:10px;'>Brak odnotowanych spadków klanów z 3 do 2 członków.</p>";
             document.getElementById('clansKicksContainer').innerHTML = kicksHtml;
 
-            // GENEROWANIE WYKRESU 24H DLA ZNISZCZONYCH PIECZĘCI
             if (window.kicksChartInstance) {
                 window.kicksChartInstance.destroy();
             }
@@ -998,7 +998,6 @@
                 });
             }
 
-            // HISTORIA ZMIAN (LOGI KLANOWE)
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansLogi.forEach(w => {
                 let stat = String(w[2]);
@@ -1033,7 +1032,7 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
@@ -1052,7 +1051,6 @@
             logHtml += "</tbody></table>";
             document.getElementById('clansLogContainer').innerHTML = logHtml;
 
-            // RENDER AKTUALNEGO STANU Z FILTREM WYBORU SORTOWANIA
             let clansArray = [];
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
