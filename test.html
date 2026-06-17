@@ -65,7 +65,7 @@
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
-        /* PRZYBORNIK */
+        /* ZAKŁADKA PRZYBORNIKA */
         .tools-layout { display: flex; flex-direction: column; gap: 20px; max-width: 1000px; margin: 0 auto; align-items: center; }
         .links-section { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 350px; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 15px; border-radius: 4px; border: 1px solid #600000; transition: 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.8); font-size: 13px; }
@@ -80,7 +80,7 @@
         .tool-btn { width: 100%; margin-top: 5px; background: #4a0d0d; border: 1px solid #ff3333; padding: 6px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 12px;}
         .tool-btn:hover { background: #ff3333; color: black; }
 
-        /* KALENDARZ MATRYCOWY EXCEL STYLE */
+        /* ZAKŁADKA KALENDARZ EVENTÓW (MATRYCA EXCELOWA + HOVER) */
         .calendar-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px auto 25px auto; max-width: 1400px; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; border: 1px solid #444; background: #1a1a1a; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #000; }
@@ -90,8 +90,32 @@
         .calendar-table td { padding: 6px 2px; border: 1px solid #4a0d0d; font-weight: bold; font-size: 12px; color: #999; transition: 0.15s; text-align: center; }
         .calendar-table td.day-num { background: #261212; color: #ffcc00; font-size: 11px; width: 40px; }
         .calendar-table td.weekend-blank { background: #2b1c1c; color: #666; }
-        .calendar-table td:not(.day-num):not(.empty-cell):hover { filter: brightness(1.4); cursor: help; transform: scale(1.03); box-shadow: 0 0 8px rgba(255,255,255,0.3); position: relative; z-index: 5; }
+        
         .empty-cell { background: #080303 !important; border-color: #1a0505 !important; color: transparent !important; }
+
+        /* MECHANIZM TOOLTIPA DLA EVENTÓW */
+        .ev-cell { position: relative; cursor: crosshair; }
+        .ev-cell:hover { filter: brightness(1.3); transform: scale(1.05); box-shadow: 0 0 8px rgba(255,255,255,0.4); z-index: 50; }
+        .ev-cell:hover::after {
+            content: attr(data-desc);
+            position: absolute;
+            bottom: 120%; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 2, 2, 0.95);
+            color: #ccc;
+            padding: 12px;
+            border: 1px solid #ff3333;
+            border-radius: 6px;
+            white-space: pre-line;
+            z-index: 100;
+            width: 260px;
+            font-size: 12px;
+            line-height: 1.5;
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
+            text-align: left;
+        }
+
     </style>
 </head>
 <body>
@@ -208,15 +232,17 @@
     </div>
 
     <div id="sectionCalendar">
-        <h2>Kalendarz Historyczny i Prognozy Eventów</h2>
+        <h2>Kalendarz Historyczny i Prognozy Eventów (Baza 5-letnia)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Najedź kursorem na pokolorowany dzień w tabeli, aby wyświetlić szczegółowe korzyści.</div>
+        
         <div class="filter-container">
             <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Wybierz rok analizy:</span>
             <select id="calendarYearSelect" onchange="initCalendar()">
-                <option value="2026" selected>Rok 2026 (Bieżący)</option>
-                <option value="2025">Rok 2025 (Archiwum)</option>
-                <option value="2024">Rok 2024 (Archiwum)</option>
-                <option value="2023">Rok 2023 (Archiwum)</option>
-                <option value="2022">Rok 2022 (Archiwum)</option>
+                <option value="2026" selected>Rok 2026</option>
+                <option value="2025">Rok 2025</option>
+                <option value="2024">Rok 2024</option>
+                <option value="2023">Rok 2023</option>
+                <option value="2022">Rok 2022</option>
             </select>
         </div>
         <div class="calendar-legend" id="calendarLegend"></div>
@@ -235,7 +261,7 @@
             </div>
 
             <div style="width: 100%; max-width: 800px;">
-                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory</h3>
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory Bojowe</h3>
                 <div class="tools-grid">
                     <div class="tool-box">
                         <div class="tool-title">Zasięg Wartości Bojowej</div>
@@ -258,7 +284,7 @@
                     </div>
 
                     <div class="tool-box" style="width: 100%; max-width: 615px;">
-                        <div class="tool-title">Majątek Ukryty w Statystykach (Wydane Złoto)</div>
+                        <div class="tool-title">Całkowity Majątek w Atrybutach (Wydane Złoto)</div>
                         <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
                             <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5"></div>
                             <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5"></div>
@@ -326,7 +352,7 @@
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl", "Lycans"];
 
         // ==========================================
-        // BAZA STRUKTURALNA DEFINICJI EVENTÓW I KORZYŚCI (HOVER BB-CODE STYLE TOOLTIP)
+        // BAZA DANYCH - 5-LETNI KALENDARZ EVENTÓW (GENERATOR CYKLI)
         // ==========================================
         const EVENT_TYPES = {
             "wilk": { name: "Event Wilkołaków", color: "#5D4037", text: "#fff", desc: "🌙 EVENT WILKOŁAKÓW (PEŁNIA)\n\n• Złoto z polowania na ludzi zwiększone o 100%\n• Szansa na znalezienie odłamków w grocie +50%\n• Koszt aktywacji talentów obniżony o 20%" },
@@ -344,16 +370,17 @@
             "wielkanoc": { name: "Event Wielkanocny", color: "#D81B60", text: "#fff", desc: "🥚 EVENT WIELKANOCNY\n\n• Unikalne misje u Hrabiego\n• Zniżki u Kupca na całe uzbrojenie o 25%\n• Drop specjalnych pisanek wymiennych na złoto" }
         };
 
-        // INTEGRACJA HISTORYCZNYCH CYKLI PÓŁNOCNYCH (5 LAT OBROTU SYSTEMU GAMEFORGE)
-        function getEventForDate(year, month, day, dayOfWeek) {
-            let md = `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        function getEventForDate(year, month, day) {
+            let date = new Date(year, month - 1, day);
+            let time = date.getTime();
+            let baseTime = new Date(2022, 0, 1).getTime(); 
+            let diffDays = Math.floor((time - baseTime) / (1000 * 60 * 60 * 24));
             
-            // Okresowe Eventy Świąteczne stałe dla osi czasu
-            if (month === 12 && day >= 20 && day <= 28) return "klik";
+            // Stałe święta Gameforge
+            if (month === 12 && day >= 24 && day <= 28) return "klik";
             if (month === 10 && day >= 29 && day <= 31) return "wamp";
-            if (month === 11 && day >= 1 && day <= 3) return "wilk";
             
-            // Wielkanoc ruchoma (Skan osi historycznej forum)
+            // Algorytm ruchomej Wielkanocy dla 5 lat
             if (year === 2022 && month === 4 && day >= 15 && day <= 18) return "wielkanoc";
             if (year === 2023 && month === 4 && day >= 7 && day <= 10) return "wielkanoc";
             if (year === 2024 && month === 3 && day >= 29 && day <= 31) return "wielkanoc";
@@ -361,18 +388,18 @@
             if (year === 2025 && month === 4 && day >= 18 && day <= 21) return "wielkanoc";
             if (year === 2026 && month === 4 && day >= 3 && day <= 6) return "wielkanoc";
 
-            // Standardowe rotacje weekendowe (Sobota = 6, Niedziela = 0)
-            if (dayOfWeek === 6 || dayOfWeek === 0) {
-                let seed = (year + month + day) % 9;
-                let weekendEvents = ["atr30", "grota", "pk", "pa", "zadania", "hp", "grota50", "pk2", "atr30"];
-                return weekendEvents[seed];
-            }
+            // Cykle Zniżek Atrybutów (Co 14 dni, co druga to 60%)
+            let atrCycle = diffDays % 14; 
+            if (atrCycle === 0) return "atr30";
+            if (atrCycle === 7) return "atr60"; 
 
-            // Algorytm symulujący rotacje zniżek 60% w środku tygodnia (Środa / Czwartek raz na jakiś czas)
-            if ((dayOfWeek === 3 || dayOfWeek === 4) && (day % 13 === 0)) {
-                return "atr60";
+            // Standardowy cykl weekendowych mikro-eventów (cykle 4 dniowe -> 3 dni trwa event)
+            let cycleDay = diffDays % 4;
+            if (cycleDay < 3) {
+                let eventIndex = Math.floor(diffDays / 4) % 9;
+                const sequence = ["grota", "pk", "wilk", "zadania", "grota50", "pk2", "wamp", "pa", "hp"];
+                return sequence[eventIndex];
             }
-
             return null;
         }
 
@@ -395,17 +422,17 @@
                 html += `<tr><td class="day-num">${d}</td>`;
                 for(let m = 0; m < 12; m++) {
                     let testDate = new Date(year, m, d);
-                    // Sprawdzamy czy dzień istnieje w danym miesiącu (np. wycięcie 30 lutego)
+                    
                     if (testDate.getMonth() !== m) {
                         html += `<td class="empty-cell"></td>`;
                     } else {
-                        let dayOfWeek = testDate.getDay();
-                        let evKey = getEventForDate(year, m + 1, d, dayOfWeek);
-                        
+                        let evKey = getEventForDate(year, m + 1, d);
                         if(evKey && EVENT_TYPES[evKey]) {
                             let ev = EVENT_TYPES[evKey];
-                            html += `<td style="background-color: ${ev.color}; color: ${ev.text};" title="${ev.desc}">${d}</td>`;
+                            let popupText = `${ev.name}\n\n${ev.desc}`;
+                            html += `<td class="ev-cell" style="background-color: ${ev.color}; color: ${ev.text};" data-desc="${popupText}">${d}</td>`;
                         } else {
+                            let dayOfWeek = testDate.getDay();
                             if (dayOfWeek === 6 || dayOfWeek === 0) {
                                 html += `<td class="weekend-blank">${d}</td>`;
                             } else {
@@ -421,8 +448,10 @@
         }
 
         // ==========================================
-        // SILNIK PRZYBORNIKA (NARZĘDZIA OBURĘCZNE)
+        // SKRYPTY PRZYBORNIKA
         // ==========================================
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        
         function calcSkillCost() {
             let val = parseInt(document.getElementById('calc_skill').value);
             if (isNaN(val) || val < 5) val = 5;
@@ -456,8 +485,70 @@
         }
 
         // ==========================================
-        // PARSOWANIE I ŁADOWANIE LIVE ARMED RADAR
+        // GŁÓWNY SILNIK STRONY
         // ==========================================
+        let globalData = [];
+        let globalRankingData = []; 
+        let globalRutynaData = [];
+        let globalClansBaza = []; 
+        let globalClansLogi = []; 
+        let computedRankingRows = []; 
+        let currentSortCol = 5; 
+        let currentSortAsc = false; 
+        let currentSummarySortCol = 7; 
+        let currentSummarySortAsc = true; 
+        let routineChartInstance = null;
+        let kicksChartInstance = null;
+
+        function switchTab(tabId) {
+            try {
+                const tabs = ['tracker', 'heatmap', 'ranking', 'clans', 'calendar', 'tools'];
+                tabs.forEach(t => {
+                    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
+                    const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+                    if(btn) btn.classList.remove('active');
+                    if(sec) sec.classList.remove('active');
+                });
+
+                document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
+                document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+
+                if (tabId === 'ranking') {
+                    if (globalRankingData.length === 0) loadRankingData();
+                    else calculateAndRenderRanking();
+                } else if (tabId === 'heatmap') {
+                    renderChart();
+                } else if (tabId === 'clans') {
+                    renderClans();
+                } else if (tabId === 'calendar') {
+                    initCalendar();
+                }
+            } catch (e) {
+                console.error("Błąd przełączania zakładek: ", e);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
+            if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
+            if(document.getElementById('rankingPeriodSelect')) {
+                document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+                    const specSelect = document.getElementById('rankingSpecificDaySelect');
+                    if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
+                    else { specSelect.style.display = 'none'; }
+                    calculateAndRenderRanking();
+                });
+            }
+            if(document.getElementById('rankingSpecificDaySelect')) document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
+
+            loadTableData();
+            setInterval(loadTableData, 300000);
+        });
+
+        function handleFilterChange() { renderTable(); }
+
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
             for (let i = 0; i < text.length; i++) {
@@ -591,6 +682,132 @@
             }
         }
 
+        function getRangeForPeriod(period) {
+            const now = new Date();
+            let start = new Date(), end = new Date();
+            if (period === 'TODAY') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'YESTERDAY') { start.setDate(start.getDate() - 1); start.setHours(0,0,0,0); end.setDate(end.getDate() - 1); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'DAY_BEFORE_YESTERDAY') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setDate(end.getDate() - 2); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'LAST_3_DAYS' || period === 'ALL') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: "Ostatnie 3 dni" }; }
+            return null;
+        }
+
+        function sortSummary(colIndex) {
+            if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
+            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 7) ? true : false; }
+            renderSummaryTable();
+        }
+
+        function renderChart() {
+            if (!document.getElementById('heatmapPlayerSelect')) return;
+            const player = document.getElementById('heatmapPlayerSelect').value;
+            const dayFilter = document.getElementById('heatmapDaySelect').value;
+
+            if (player === 'ALL') {
+                if(routineChartInstance) routineChartInstance.destroy();
+                return;
+            }
+
+            let labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 2) {
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                }
+            }
+
+            let chartData = new Array(720).fill(0);
+
+            globalRutynaData.forEach(r => {
+                if (r[0] === player) {
+                    let parts = r[1].split('_');
+                    if (parts.length === 3) {
+                        let day = parts[0];
+                        let hour = parseInt(parts[1]);
+                        let minute = parseInt(parts[2]);
+                        let index = (hour * 30) + (minute / 2);
+                        
+                        let match = false;
+                        if (dayFilter === 'ALL') match = true;
+                        else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
+                        else if (dayFilter === 'WEEKEND' && ['6','7'].includes(day)) match = true;
+                        else if (dayFilter === day) match = true;
+
+                        if (match) {
+                            chartData[index] += parseInt(r[2]);
+                        }
+                    }
+                }
+            });
+
+            if (routineChartInstance) routineChartInstance.destroy();
+            const ctxElem = document.getElementById('routineChart');
+            if(!ctxElem) return;
+            const ctx = ctxElem.getContext('2d');
+            routineChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aktywność (kliknięcia)',
+                        data: chartData,
+                        backgroundColor: 'rgba(255, 51, 51, 0.7)',
+                        borderColor: 'rgba(192, 12, 12, 1)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        hoverBackgroundColor: 'rgba(255, 204, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#aaa',
+                                maxTicksLimit: 24, 
+                                callback: function(value) {
+                                    let label = this.getLabelForValue(value);
+                                    return label.endsWith(':00') ? label : '';
+                                }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ffcc00', precision: 0 },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#ffcc00',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) { return `Czas: ${context[0].label}`; },
+                                label: function(context) { return `Potwierdzone akcje: ${context.raw}`; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatLastSeen(dateObj) {
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
+            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
+            let diffMins = Math.floor(diffMs / 60000);
+            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
+            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
+            else {
+                let diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
+                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
+            }
+        }
+
         function renderSummaryTable() {
             if(!document.getElementById('summaryPeriodSelect')) return;
             const period = document.getElementById('summaryPeriodSelect').value;
@@ -681,7 +898,8 @@
             globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
             
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); if(!s) return;
+                const s = document.getElementById(id); 
+                if(!s) return;
                 let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
@@ -689,9 +907,11 @@
             };
 
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); if(!s) return;
+                const s = document.getElementById(id); 
+                if(!s) return;
                 let targetVal = localStorage.getItem(storageKey) || s.value;
-                s.innerHTML = `<option value="ALL">${txt}</option><option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
+                s.innerHTML = `<option value="ALL">${txt}</option>
+                               <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             }
@@ -712,7 +932,7 @@
                 return dMatch && pMatch && sMatch;
             });
 
-            if(filtered.length === 0) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów.</p>"; return; }
+            if(filtered.length === 0) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>"; return; }
 
             let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
             filtered.forEach(w => {
@@ -726,16 +946,18 @@
                     if (j === 1) {
                         val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
-                        // --- TUTAJ BYŁ KRYTYCZNY ZAMRAŻAJĄCY BŁĄD SKŁADNIOWY, ZOSTAŁ NAPRAWIONY Pancernie ---
-                        val = val ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                        let displayVal = val ? String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                        val = displayVal;
                     }
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
                 let pvpResult = (stat === 'Zrabowane złoto') ? `<span class="przyrost-col">+${w[5]}</span>` : (stat === 'Stracone złoto' ? `<span class="strata-col">-${w[5]}</span>` : '0');
-                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                
+                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? String(w[6]).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 let sakiewkaHTML = sakiewkaVal ? `<span class="suma-col">${sakiewkaVal}</span>` : "";
-                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+
+                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? String(w[7]).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 let wystajaceHTML = wystajaceVal ? `<span class="wystajace-col">${wystajaceVal}</span>` : "";
 
                 html += `<td><strong>${pvpResult}</strong></td><td>${sakiewkaHTML}</td><td>${wystajaceHTML}</td></tr>`;
@@ -746,18 +968,29 @@
         async function loadRankingData() {
             try {
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu.</p>"; return; }
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
                 calculateAndRenderRanking();
             } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
         }
 
+        function getUniqueRankingDates() {
+            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
+        }
+
+        function populateRankingSpecificDays() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect'); const currentVal = specSelect.value; specSelect.innerHTML = "";
+            let validDays = getUniqueRankingDates().slice(1).reverse(); 
+            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
+            validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
+        }
+
         function calculateAndRenderRanking() {
             if (globalRankingData.length === 0) return;
             const period = document.getElementById('rankingPeriodSelect').value; const specDay = document.getElementById('rankingSpecificDaySelect').value;
             let uniqueDates = getUniqueRankingDates();
-            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych.</p>"; return; }
+            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1]; let startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
             if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
@@ -788,6 +1021,14 @@
             sortAndRenderRankingTable(isDelta);
         }
 
+        function sortRanking(colIndex) {
+            let dataKeyIndex = colIndex - 1; 
+            if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; 
+            else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; }
+            let uniqueDates = getUniqueRankingDates(); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY';
+            sortAndRenderRankingTable(isDelta);
+        }
+
         function sortAndRenderRankingTable(isDelta) {
             if (computedRankingRows.length === 0) return;
             computedRankingRows.sort((a, b) => {
@@ -801,19 +1042,27 @@
                 }
             });
             let html = "<table><thead><tr>";
+            
             let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM", "ŁUP", "WARTOŚĆ BOJOWA", "WYGRANE", "PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (TOTAL)", "WARTOŚĆ BOJOWA", "WYGRANE (TOTAL)", "PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
             
             headers.forEach((h, i) => { 
-                let arrow = " ⇅"; let arrowClass = "sort-arrow-inactive";
+                let arrow = " ⇅"; 
+                let arrowClass = "sort-arrow-inactive";
                 if (currentSortCol === i - 1 && i !== 0) {
-                    arrow = currentSortAsc ? " ▲" : " ▼"; arrowClass = "sort-arrow-active";
-                    html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    arrow = currentSortAsc ? " ▲" : " ▼";
+                    arrowClass = "sort-arrow-active";
+                    if (currentSortAsc) {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    } else {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    }
                 } else {
                     let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
                     html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
                 }
             });
             html += "</tr></thead><tbody>";
+            
             function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
             
             computedRankingRows.forEach((row, idx) => {
@@ -821,59 +1070,117 @@
                 let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
                 html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="przyrost-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
             });
-            document.getElementById('rankingTableContainer').innerHTML = html + "</tbody></table>";
+            html += "</tbody></table>";
+            document.getElementById('rankingTableContainer').innerHTML = html;
+        }
+
+        function formatClanLink(klanTag, rawName) {
+            let nameStr = String(rawName || `[${klanTag}]`).replace(/^Klan\s+/i, ''); 
+            let finalName = `${nameStr} [${klanTag}]`;
+            return CLANS_LINKS[klanTag] ? `<a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${finalName}</a>` : `<span class="clan-text-plain">${finalName}</span>`;
         }
 
         function renderClans() {
-            if (globalClansBaza.length === 0) { document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów.</p>"; return; }
+            if (globalClansBaza.length === 0) {
+                document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów. Upewnij się, że opublikowałeś zakładkę Klany_Baza w formacie CSV i dodałeś link w kodzie.</p>";
+                return;
+            }
+
             let currentClanState = {};
             globalClansBaza.forEach(w => {
-                let klan = w[0]; let nazwa = w[1]; let pieczecie = w[2]; let czlonkowie = w[3] || "-";
+                let klan = w[0];
+                let nazwa = w[1];
+                let pieczecie = w[2];
+                let czlonkowie = w[3] || "-";
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie };
             });
 
-            const ALL_SEALS = [{ id: "Skąpstwo", img: "skapstwo.png" }, { id: "Zazdrość", img: "zazdrosc.png" }, { id: "Obżarstwo", img: "obzarstwo.png" }, { id: "Ociężałość", img: "ociezalosc.png" }, { id: "Pożądanie", img: "pozadanie.png" }, { id: "Gniew", img: "gniew.png" }, { id: "Pycha", img: "pycha.png" }];
+            const ALL_SEALS = [
+                { id: "Skąpstwo", img: "skapstwo.png" },
+                { id: "Zazdrość", img: "zazdrosc.png" },
+                { id: "Obżarstwo", img: "obzarstwo.png" },
+                { id: "Ociężałość", img: "ociezalosc.png" },
+                { id: "Pożądanie", img: "pozadanie.png" },
+                { id: "Gniew", img: "gniew.png" },
+                { id: "Pycha", img: "pycha.png" }
+            ];
+
             let sealHolders = {};
             ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
                     let heldSeals = currentClanState[k].pieczecie.split(", ");
-                    heldSeals.forEach(s => { if (sealHolders[s]) { sealHolders[s].holder = formatClanLink(k, currentClanState[k].nazwa); sealHolders[s].klanId = k; } });
+                    heldSeals.forEach(s => {
+                        if (sealHolders[s]) {
+                            sealHolders[s].holder = formatClanLink(k, currentClanState[k].nazwa);
+                            sealHolders[s].klanId = k;
+                        }
+                    });
                 }
             }
 
             globalClansLogi.forEach(w => {
                 if (String(w[2]) === "Pieczęcie") {
-                    let klan = w[1]; let oldStr = String(w[3]); let newStr = String(w[4]);
+                    let klan = w[1];
+                    let oldStr = String(w[3]);
+                    let newStr = String(w[4]);
+                    
                     let oldArr = (oldStr === "Brak" || oldStr === "START") ? [] : oldStr.split(", ");
                     let newArr = (newStr === "Brak" || newStr === "START") ? [] : newStr.split(", ");
                     let gained = newArr.filter(x => !oldArr.includes(x));
-                    gained.forEach(s => { if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) { sealHolders[s].date = w[0]; } });
+                    
+                    gained.forEach(s => {
+                        if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) {
+                            sealHolders[s].date = w[0];
+                        }
+                    });
                 }
             });
 
             let sealsBoardHtml = "";
             ALL_SEALS.forEach(s => {
-                let data = sealHolders[s.id]; let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
-                sealsBoardHtml += `<div class="seal-badge"><img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';"><div class="seal-name">${s.id}</div><div class="seal-holder">${data.holder}</div>${dateHtml}</div>`;
+                let data = sealHolders[s.id];
+                let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
+                
+                sealsBoardHtml += `<div class="seal-badge">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
+                                     <div class="seal-name">${s.id}</div>
+                                     <div class="seal-holder">${data.holder}</div>
+                                     ${dateHtml}
+                                   </div>`;
             });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
-            let entriesFound = false; let kicksPerHour = new Array(24).fill(0); 
+            let entriesFound = false;
+            let kicksPerHour = new Array(24).fill(0); 
 
             globalClansLogi.forEach(w => {
                 if (String(w[2]) !== "Członkowie") return;
-                let oldVal = String(w[3]); let newVal = String(w[4]);
-                let oldM = oldVal.match(/(\d+)/); let newM = newVal.match(/(\d+)/);
+                let oldVal = String(w[3]);
+                let newVal = String(w[4]);
+                let oldM = oldVal.match(/(\d+)/);
+                let newM = newVal.match(/(\d+)/);
+
                 if (oldM && newM) {
-                    let oldNum = parseInt(oldM[1]); let newNum = parseInt(newM[1]);
+                    let oldNum = parseInt(oldM[1]);
+                    let newNum = parseInt(newM[1]);
+                    
                     if (oldNum === 3 && newNum === 2) { 
-                        entriesFound = true; let klan = w[1]; let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                        entriesFound = true;
+                        let klan = w[1];
+                        let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
                         kicksHtml += `<tr><td>${w[0]}</td><td>${formatClanLink(klan, actualName)}</td><td>Spadek graczy z 3 do 2</td><td class="strata-col"><strong>Utrata pieczęci!</strong></td></tr>`;
-                        let dateStr = w[0]; let timePart = dateStr.split(" ")[1];
-                        if (timePart) { let hour = parseInt(timePart.split(":")[0], 10); if (!isNaN(hour) && hour >= 0 && hour < 24) { kicksPerHour[hour]++; } }
+                        
+                        let dateStr = w[0];
+                        let timePart = dateStr.split(" ")[1];
+                        if (timePart) {
+                            let hour = parseInt(timePart.split(":")[0], 10);
+                            if (!isNaN(hour) && hour >= 0 && hour < 24) {
+                                kicksPerHour[hour]++;
+                            }
+                        }
                     }
                 }
             });
@@ -881,37 +1188,92 @@
             if (!entriesFound) kicksHtml = "<p style='color:#777; padding:10px;'>Brak odnotowanych spadków klanów z 3 do 2 członków.</p>";
             document.getElementById('clansKicksContainer').innerHTML = kicksHtml;
 
-            if (window.kicksChartInstance) window.kicksChartInstance.destroy();
+            if (window.kicksChartInstance) {
+                window.kicksChartInstance.destroy();
+            }
             const ctxKicks = document.getElementById('kicksChart');
             if (ctxKicks) {
                 let labels = Array.from({length: 24}, (_, i) => i + ':00');
                 window.kicksChartInstance = new Chart(ctxKicks.getContext('2d'), {
                     type: 'bar',
-                    data: { labels: labels, datasets: [{ label: 'Zniszczone pieczęcie', data: kicksPerHour, backgroundColor: 'rgba(255, 68, 68, 0.7)', borderColor: 'rgba(255, 68, 68, 1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: '#333' }, ticks: { color: '#aaa' } }, y: { beginAtZero: true, ticks: { color: '#ffcc00', precision: 0, stepSize: 1 }, grid: { color: '#333' } } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Zniszczone pieczęcie',
+                            data: kicksPerHour,
+                            backgroundColor: 'rgba(255, 68, 68, 0.7)',
+                            borderColor: 'rgba(255, 68, 68, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: '#333' }, ticks: { color: '#aaa' } },
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { color: '#ffcc00', precision: 0, stepSize: 1 }, 
+                                grid: { color: '#333' } 
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
                 });
             }
 
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansLogi.forEach(w => {
-                let stat = String(w[2]); if (stat === "Nazwa" || stat === "Łup" || stat === "Majątek") return; if (String(w[3]) === "START") return; 
-                logHtml += "<tr>"; let klan = w[1]; let oldVal = String(w[3]); let newVal = String(w[4]); let diffHtml = w[5]; let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan; let klasa = "";
+                let stat = String(w[2]);
+                if (stat === "Nazwa" || stat === "Łup" || stat === "Majątek") return; 
+                if (String(w[3]) === "START") return; 
+                
+                logHtml += "<tr>";
+                let klan = w[1];
+                let oldVal = String(w[3]);
+                let newVal = String(w[4]);
+                let diffHtml = w[5];
+                
+                let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                let klasa = "";
+
                 if (stat === "Członkowie") {
-                    let oldMatch = oldVal.match(/(\d+)/); let newMatch = newVal.match(/(\d+)/);
+                    let oldMatch = oldVal.match(/(\d+)/);
+                    let newMatch = newVal.match(/(\d+)/);
                     if (oldMatch && newMatch) {
                         let diffNum = parseInt(newMatch[1]) - parseInt(oldMatch[1]);
-                        if (diffNum > 0) { klasa = ' class="przyrost-col"'; diffHtml = "+" + diffNum + " graczy"; } else if (diffNum < 0) { klasa = ' class="strata-col"'; diffHtml = diffNum + " graczy"; }
+                        if (diffNum > 0) {
+                            klasa = ' class="przyrost-col"';
+                            diffHtml = "+" + diffNum + " graczy";
+                        } else if (diffNum < 0) {
+                            klasa = ' class="strata-col"';
+                            diffHtml = diffNum + " graczy";
+                        }
                     }
-                } else if (stat === "Pieczęcie") {
-                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", "); let newArr = newVal === "Brak" ? [] : newVal.split(", ");
-                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", "); let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                } 
+                else if (stat === "Pieczęcie") {
+                    let oldArr = oldVal === "Brak" ? [] : oldVal.split(", ");
+                    let newArr = newVal === "Brak" ? [] : newVal.split(", ");
+                    
+                    let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", ");
+                    
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
-                    else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`; else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
+                    else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
+                    else if (lost) diffHtml = `<span style="color:#ff5555; font-weight:bold;">- ${lost}</span>`;
                 }
-                for(let j = 0; j <= 5; j++) { let val = w[j]; let myKlasa = ""; if (j === 1) val = formatClanLink(klan, actualName); else if (j === 5) { val = diffHtml; myKlasa = klasa; } logHtml += `<td${myKlasa}>${val}</td>`; }
+
+                for(let j = 0; j <= 5; j++) {
+                    let val = w[j];
+                    let myKlasa = "";
+                    if (j === 1) val = formatClanLink(klan, actualName);
+                    else if (j === 5) { val = diffHtml; myKlasa = klasa; }
+                    logHtml += `<td${myKlasa}>${val}</td>`;
+                }
                 logHtml += "</tr>";
             });
-            document.getElementById('clansLogContainer').innerHTML = logHtml + "</tbody></table>";
+            logHtml += "</tbody></table>";
+            document.getElementById('clansLogContainer').innerHTML = logHtml;
 
             let clansArray = [];
             for (let klan in currentClanState) {
@@ -925,38 +1287,27 @@
 
             let sortCrit = document.getElementById('clanSortSelect') ? document.getElementById('clanSortSelect').value : 'members_desc';
             clansArray.sort((a, b) => {
-                if (sortCrit === 'name_asc') return a.nazwa.localeCompare(b.nazwa); if (sortCrit === 'name_desc') return b.nazwa.localeCompare(a.nazwa);
-                if (sortCrit === 'members_desc') return b.membersNum - a.membersNum; if (sortCrit === 'members_asc') return a.membersNum - b.membersNum;
-                if (sortCrit === 'seals_desc') return b.sealsCount - a.sealsCount; return 0;
+                if (sortCrit === 'name_asc') return a.nazwa.localeCompare(b.nazwa);
+                if (sortCrit === 'name_desc') return b.nazwa.localeCompare(a.nazwa);
+                if (sortCrit === 'members_desc') return b.membersNum - a.membersNum;
+                if (sortCrit === 'members_asc') return a.membersNum - b.membersNum;
+                if (sortCrit === 'seals_desc') return b.sealsCount - a.sealsCount;
+                return 0;
             });
 
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             clansArray.forEach(data => {
-                let kLink = formatClanLink(data.tag, data.nazwa); let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
+                let kLink = formatClanLink(data.tag, data.nazwa);
+                let pieczecieFormat = data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`;
                 currentHtml += `<tr><td>${kLink}</td><td>${pieczecieFormat}</td><td>${data.czlonkowie}</td></tr>`;
             });
-            document.getElementById('clansCurrentContainer').innerHTML = currentHtml + "</tbody></table>";
+            currentHtml += "</tbody></table>";
+            document.getElementById('clansCurrentContainer').innerHTML = currentHtml;
         }
 
-        function switchTab(tabId) {
-            try {
-                const tabs = ['tracker', 'heatmap', 'ranking', 'clans', 'calendar', 'tools'];
-                tabs.forEach(t => {
-                    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
-                    const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
-                    if(btn) btn.classList.remove('active'); if(sec) sec.classList.remove('active');
-                });
-                document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
-                document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+        // --- INICJALIZACJA KALENDARZA PO ZAŁADOWANIU ---
+        initCalendar();
 
-                if (tabId === 'ranking') { if (globalRankingData.length === 0) loadRankingData(); else calculateAndRenderRanking(); } 
-                else if (tabId === 'heatmap') { renderChart(); } 
-                else if (tabId === 'clans') { renderClans(); } 
-                else if (tabId === 'calendar') { initCalendar(); }
-            } catch (e) { console.error("Tab switch exception: ", e); }
-        }
-
-        function getUniqueRankingDates() { const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet); }
     </script>
 </body>
 </html>
