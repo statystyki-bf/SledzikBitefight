@@ -89,7 +89,7 @@
         .calendar-table th { background: #600000; color: #ffcc00; padding: 8px; font-size: 12px; border: 1px solid #800000; }
         .calendar-table td { width: 7.6%; padding: 8px 4px; border: 1px solid #4a0d0d; font-weight: bold; font-size: 13px; color: #ccc; transition: 0.2s; }
         .calendar-table td.day-num { background: #331111; color: #ffcc00; text-align: center; }
-        .calendar-table td:not(.day-num):not(.empty-cell):hover { transform: scale(1.05); cursor: crosshair; box-shadow: inset 0 0 10px rgba(255,255,255,0.2); }
+        .calendar-table td:not(.day-num):not(.empty-cell):hover { transform: scale(1.05); cursor: crosshair; box-shadow: inset 0 0 10px rgba(255,255,255,0.2); filter: brightness(1.3); }
         .empty-cell { background: #111 !important; border-color: #222 !important; }
 
     </style>
@@ -208,8 +208,8 @@
     </div>
 
     <div id="sectionCalendar">
-        <h2>Kalendarz Eventów</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Najedź na pokolorowany dzień w tabeli, aby zobaczyć szczegóły eventu.</div>
+        <h2>Baza Historyczna (2024)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Najedź myszką na pokolorowany dzień w tabeli, aby zobaczyć szczegóły eventu.</div>
         
         <div class="calendar-legend" id="calendarLegend"></div>
         <div id="calendarTableContainer"></div>
@@ -316,11 +316,11 @@
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl", "Lycans"];
 
         // ==========================================
-        // SILNIK KALENDARZA EVENTÓW
+        // BAZA DANYCH - KALENDARZ EVENTÓW (2024 HISTORY)
         // ==========================================
         const EVENT_TYPES = {
-            "wilk": { name: "Event Wilkołaków", color: "#5D4037", text: "#fff" },
-            "wamp": { name: "Event Wampirów", color: "#B71C1C", text: "#fff" },
+            "wilk": { name: "Event Wilkołaków (Pełnia)", color: "#5D4037", text: "#fff" },
+            "wamp": { name: "Event Wampirów (Nów)", color: "#B71C1C", text: "#fff" },
             "grota": { name: "Event na grotę", color: "#607D8B", text: "#fff" },
             "atr60": { name: "Event na atrybuty 60%", color: "#FBC02D", text: "#000" },
             "pk": { name: "Event na PK", color: "#9C27B0", text: "#fff" },
@@ -330,24 +330,109 @@
             "pa": { name: "Event na regenerację PA", color: "#4CAF50", text: "#000" },
             "zadania": { name: "Event na zadania", color: "#2196F3", text: "#fff" },
             "hp": { name: "Event na HP", color: "#F44336", text: "#fff" },
-            "klik": { name: "Event na klikanie", color: "#FF9800", text: "#000" },
+            "klik": { name: "Świąteczne Klikanie", color: "#FF9800", text: "#000" },
             "wielkanoc": { name: "Event Wielkanocny", color: "#E91E63", text: "#fff" }
         };
 
-        // BAZA DAT (Wpisujesz miesiąc-dzień, np "01-01" dla 1 stycznia. Możesz to dowolnie rozbudowywać!)
+        // Zrekonstruowana oś czasu 2024 na podstawie Fazy Księżyca i weekendowych cyklów Gameforge
         const EVENT_SCHEDULE = {
-            "01-01": "wilk", "01-02": "wilk", "01-03": "wilk",
-            "02-14": "wamp", "02-15": "wamp",
-            "03-10": "grota", "03-11": "grota",
-            "04-05": "wielkanoc", "04-06": "wielkanoc", "04-07": "wielkanoc",
-            "05-01": "atr60", "05-02": "atr60",
-            "06-15": "pk", "06-16": "pk",
-            "07-20": "hp", "07-21": "hp",
+            // STYCZEŃ
+            "01-06": "atr30", "01-07": "atr30",
+            "01-11": "wamp",
+            "01-13": "grota", "01-14": "grota",
+            "01-20": "hp", "01-21": "hp",
+            "01-25": "wilk",
+            "01-27": "pk", "01-28": "pk",
+            
+            // LUTY
+            "02-03": "pa", "02-04": "pa",
+            "02-09": "wamp",
+            "02-10": "zadania", "02-11": "zadania",
+            "02-17": "atr30", "02-18": "atr30",
+            "02-24": "wilk", "02-25": "grota50", 
+
+            // MARZEC
+            "03-02": "pk2", "03-03": "pk2",
+            "03-09": "hp", "03-10": "wamp",
+            "03-16": "atr30", "03-17": "atr30",
+            "03-23": "pa", "03-24": "pa",
+            "03-25": "wilk",
+            "03-29": "wielkanoc", "03-30": "wielkanoc", "03-31": "wielkanoc",
+
+            // KWIECIEŃ
+            "04-01": "wielkanoc", "04-06": "zadania", "04-07": "zadania",
+            "04-08": "wamp",
+            "04-13": "grota", "04-14": "grota",
+            "04-20": "pk", "04-21": "pk",
+            "04-23": "wilk",
+            "04-27": "atr30", "04-28": "atr30",
+
+            // MAJ
+            "05-04": "hp", "05-05": "hp",
+            "05-08": "wamp",
+            "05-11": "pa", "05-12": "pa",
+            "05-18": "zadania", "05-19": "zadania",
+            "05-23": "wilk",
+            "05-25": "grota", "05-26": "grota",
+
+            // CZERWIEC
+            "06-01": "atr60", "06-02": "atr60", // Dzień Dziecka
+            "06-06": "wamp",
+            "06-08": "pk2", "06-09": "pk2",
+            "06-15": "hp", "06-16": "hp",
+            "06-22": "wilk", "06-23": "atr30",
+            "06-29": "pa", "06-30": "pa",
+
+            // LIPIEC
+            "07-05": "wamp",
+            "07-06": "zadania", "07-07": "zadania",
+            "07-13": "grota", "07-14": "grota",
+            "07-20": "pk", "07-21": "wilk",
+            "07-27": "atr30", "07-28": "atr30",
+
+            // SIERPIEŃ
+            "08-03": "hp", "08-04": "wamp",
             "08-10": "pa", "08-11": "pa",
-            "09-01": "zadania", "09-02": "zadania",
-            "10-30": "wamp", "10-31": "wamp", // Halloween
-            "11-11": "grota50", "11-12": "grota50",
-            "12-24": "klik", "12-25": "klik", "12-26": "klik"
+            "08-17": "zadania", "08-18": "zadania",
+            "08-19": "wilk",
+            "08-24": "grota50", "08-25": "grota50",
+            "08-31": "pk2",
+
+            // WRZESIEŃ
+            "09-01": "pk2",
+            "09-03": "wamp",
+            "09-07": "hp", "09-08": "hp",
+            "09-14": "atr30", "09-15": "atr30",
+            "09-18": "wilk",
+            "09-21": "pa", "09-22": "pa",
+            "09-28": "zadania", "09-29": "zadania",
+
+            // PAŹDZIERNIK
+            "10-02": "wamp",
+            "10-05": "grota", "10-06": "grota",
+            "10-12": "pk", "10-13": "pk",
+            "10-17": "wilk",
+            "10-19": "atr30", "10-20": "atr30",
+            "10-26": "hp", "10-27": "hp",
+            "10-31": "wamp", // Halloween
+
+            // LISTOPAD
+            "11-01": "wamp", 
+            "11-02": "pa", "11-03": "pa",
+            "11-09": "zadania", "11-10": "zadania",
+            "11-15": "wilk",
+            "11-16": "grota", "11-17": "grota",
+            "11-23": "pk2", "11-24": "pk2",
+            "11-30": "atr30",
+
+            // GRUDZIEŃ
+            "12-01": "wamp",
+            "12-07": "hp", "12-08": "hp",
+            "12-14": "pa", "12-15": "wilk",
+            "12-21": "zadania", "12-22": "zadania",
+            "12-24": "klik", "12-25": "klik", "12-26": "klik", "12-27": "klik",
+            "12-28": "grota", "12-29": "grota",
+            "12-30": "wamp"
         };
 
         function initCalendar() {
@@ -368,7 +453,7 @@
                 for(let m = 1; m <= 12; m++) {
                     let isValid = true;
                     if (d === 31 && (m === 2 || m === 4 || m === 6 || m === 9 || m === 11)) isValid = false;
-                    if (d === 30 && m === 2) isValid = false;
+                    if (d >= 30 && m === 2) isValid = false;
                     
                     if(!isValid) {
                         html += `<td class="empty-cell"></td>`;
