@@ -20,7 +20,7 @@
         button.action-btn:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 12px; margin-bottom: 15px;}
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
-        select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
+        select, input[type="date"], input[type="number"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
@@ -41,6 +41,7 @@
         #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active, #sectionTools.active { display: block; }
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
+        .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         .kicks-chart-container { width: 95%; max-width: 1000px; margin: 20px auto; height: 250px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
@@ -52,7 +53,7 @@
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
-        .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
+        .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; font-family: monospace; }
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
@@ -64,6 +65,7 @@
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
         .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
         .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
@@ -110,10 +112,13 @@
             <div id="protectionBlock" class="top-dashboard-box protection">
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
                     <h3 style="color: #00e5ff; margin: 0; font-size: 14px; text-transform: uppercase;">🛡️ Ochrona (Blok - 30 min)</h3>
-                    <label class="switch-sound" title="Dźwięk powiadomień">
-                        <input type="checkbox" id="soundToggle" checked>
-                        <span class="slider-sound"></span>
-                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: #ccc; font-size: 12px; font-weight: bold;">Dźwięk:</span>
+                        <label class="switch-sound" title="Dźwięk powiadomień">
+                            <input type="checkbox" id="soundToggle" checked>
+                            <span class="slider-sound"></span>
+                        </label>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 5px; width: 100%; max-width: 400px; margin-bottom: 10px;">
                     <input type="text" id="pasteBlockInput" placeholder="Naciśnij Ctrl+V lub wpisz datę ataku..." style="flex: 1; padding: 4px; font-size: 12px; text-align: center;">
@@ -221,45 +226,49 @@
         <div class="tools-layout">
             
             <div class="links-section">
-                <h3>Szybkie Linki</h3>
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
                 <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
                 <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne forum</a>
                 <a href="https://bitefight.pages.dev/" target="_blank">🎒 Wszystkie przedmioty</a>
                 <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ruin</a>
             </div>
 
-            <div class="tools-grid">
-                <div class="tool-box">
-                    <div class="tool-title">Zasięg Wartości Bojowej</div>
-                    <div class="tool-input-row">
-                        <label>Twoja Wartość Bojowa:</label>
-                        <input type="number" id="calc_wb" value="100000" min="1">
+            <div style="width: 100%; max-width: 800px; margin-top: 10px;">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory Bojowe</h3>
+                
+                <div class="tools-grid">
+                    <div class="tool-box">
+                        <div class="tool-title">Zasięg Wartości Bojowej</div>
+                        <div class="tool-input-row">
+                            <label>Twoja Wartość Bojowa:</label>
+                            <input type="number" id="calc_wb" value="100000" min="1">
+                        </div>
+                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                        <div class="tool-result" id="res_wb">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
-                    <div class="tool-result" id="res_wb">-</div>
-                </div>
 
-                <div class="tool-box">
-                    <div class="tool-title">Cena skilla</div>
-                    <div class="tool-input-row">
-                        <label>Obecny poziom cechy:</label>
-                        <input type="number" id="calc_skill" value="50" min="5">
+                    <div class="tool-box">
+                        <div class="tool-title">Cena skilla</div>
+                        <div class="tool-input-row">
+                            <label>Obecny poziom cechy:</label>
+                            <input type="number" id="calc_skill" value="50" min="5">
+                        </div>
+                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
+                        <div class="tool-result" id="res_skill">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
-                    <div class="tool-result" id="res_skill">-</div>
-                </div>
 
-                <div class="tool-box" style="width: 100%; max-width: 535px;">
-                    <div class="tool-title">Łączna cena zakupionych skilli</div>
-                    <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
+                    <div class="tool-box" style="width: 100%; max-width: 535px;">
+                        <div class="tool-title">Łączna cena zakupionych skilli</div>
+                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
+                        </div>
+                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
+                        <div class="tool-result" id="res_total">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
-                    <div class="tool-result" id="res_total">-</div>
                 </div>
             </div>
 
@@ -311,6 +320,7 @@
         // ==========================================
         let blockEndTime = 0;
         let blockInterval = null;
+        let titleBlinkInterval = null;
         let warningBeepPlayed = false;
         let endBeepPlayed = false;
 
@@ -323,7 +333,6 @@
                 ctx.resume(); 
                 
                 if (type === 'warning') {
-                    // Pojedynczy ostrzegawczy
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain); gain.connect(ctx.destination);
@@ -332,7 +341,6 @@
                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
                     osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
                 } else if (type === 'end') {
-                    // Trzy szybkie bipnięcia
                     for(let i=0; i<3; i++) {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
@@ -365,6 +373,10 @@
                 alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM");
                 return;
             }
+            
+            if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
+            document.title = "BiteFight - Centrum Dowodzenia";
+
             blockEndTime = t + (30 * 60 * 1000); 
             warningBeepPlayed = false;
             endBeepPlayed = false;
@@ -383,6 +395,8 @@
         function clearBlockData() {
             if(blockInterval) clearInterval(blockInterval);
             blockInterval = null;
+            if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
+            
             document.getElementById('pasteBlockInput').value = '';
             let display = document.getElementById('blockCountdown');
             let box = document.getElementById('protectionBlock');
@@ -413,13 +427,20 @@
                 display.style.color = "#ff5555";
                 box.style.borderColor = "#600000";
                 box.style.boxShadow = "none";
-                document.title = "⚠️ KONIEC OCHRONY! Można Cię zaatakować!";
                 titleTab.style.backgroundColor = "#ff5555";
                 titleTab.style.color = "#fff";
                 
                 if (!endBeepPlayed) {
                     playBeep('end');
                     endBeepPlayed = true;
+                }
+
+                if (!titleBlinkInterval) {
+                    let blinkState = false;
+                    titleBlinkInterval = setInterval(() => {
+                        document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!";
+                        blinkState = !blinkState;
+                    }, 1000);
                 }
                 return;
             }
@@ -431,7 +452,7 @@
             
             display.innerHTML = `🛡️ Czas do końca ochrony: ${timeStr}`;
 
-            if (totalSeconds <= 60) { // <= 1 minuta
+            if (totalSeconds <= 60) { 
                 display.style.color = "#ff3333";
                 box.style.borderColor = "#ff3333";
                 box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
@@ -442,7 +463,7 @@
                     playBeep('warning');
                     warningBeepPlayed = true;
                 }
-            } else if (totalSeconds <= 180) { // <= 3 minuty
+            } else if (totalSeconds <= 180) { 
                 display.style.color = "#ffcc00";
                 box.style.borderColor = "#ffcc00";
                 box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
@@ -472,7 +493,7 @@
         });
 
         // ==========================================
-        // SKRYPTY PRZYBORNIKA KROK 2
+        // SKRYPTY PRZYBORNIKA 
         // ==========================================
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -697,9 +718,7 @@
                 renderSummaryTable();
                 updateFilters(); 
                 renderTable(); 
-            } catch (e) { 
-                console.error("Błąd ładowania silnika głównego: ", e); 
-            }
+            } catch (e) { console.error("Błąd ładownia: ", e); }
         }
 
         function getRangeForPeriod(period) {
@@ -1165,7 +1184,7 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
-                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
                                      <div class="seal-name">${s.id}</div>
                                      <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
