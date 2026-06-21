@@ -12,7 +12,7 @@
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
-        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; flex-wrap: wrap;}
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 8px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
@@ -20,7 +20,7 @@
         button.action-btn:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 12px; margin-bottom: 15px;}
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
-        select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
+        select, input[type="date"], input[type="number"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
@@ -50,46 +50,29 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
-        
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
-        .seal-badge { 
-            background: #110505; 
-            border: 1px solid #3a0a0a; 
-            border-radius: 2px; 
-            padding: 8px; 
-            width: 130px; 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
-            display: flex; flex-direction: column; align-items: center; 
-        }
-
-        .seal-img {
-            width: 44px;
-            height: 44px;
-            border: 2px ridge #808080; 
-            border-radius: 2px;
-            box-shadow: 0 0 6px rgba(0,0,0,1);
-            margin-bottom: 8px;
-        }
-
+        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
+        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
-        /* STYLE PRZYBORNIKA */
-        .tools-layout { display: flex; flex-direction: column; gap: 20px; max-width: 1000px; margin: 0 auto; align-items: center; }
-        .links-section { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 350px; }
-        .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 15px; border-radius: 4px; border: 1px solid #600000; transition: 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.8); font-size: 13px; }
-        .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; box-shadow: 0 0 12px rgba(255, 51, 51, 0.6); transform: scale(1.02); }
+        /* NOWY SUPER-KOMPAKTOWY UKŁAD PRZYBORNIKA */
+        .tools-layout { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
         
-        .tools-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
-        .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 15px; width: 300px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); text-align: left; }
-        .tool-title { font-size: 14px; color: #ffaa00; margin-bottom: 10px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
-        .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .tool-input-row label { color: #ccc; font-size: 12px; font-weight: bold;}
-        .tool-input-row input { width: 80px; padding: 3px; text-align: right; font-size: 12px; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none; }
-        .tool-result { margin-top: 10px; padding: 8px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 18px; font-size: 12px;}
-        .tool-btn { width: 100%; margin-top: 5px; background: #4a0d0d; border: 1px solid #ff3333; padding: 6px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 12px;}
+        .links-section { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; background: #1a0a0a; padding: 15px; border-radius: 6px; border: 1px solid #600000; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
+        .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
+        .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+        .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
+        .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
+        .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
+        .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
+        .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .tool-input-row label { color: #ccc; font-size: 11px; font-weight: bold;}
+        .tool-input-row input { width: 65px; padding: 2px; text-align: right; font-size: 12px; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none; }
+        .tool-result { margin-top: 8px; padding: 6px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 16px; font-size: 12px;}
+        .tool-btn { width: 100%; margin-top: 4px; background: #4a0d0d; border: 1px solid #ff3333; padding: 5px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 11px;}
         .tool-btn:hover { background: #ff3333; color: black; }
     </style>
 </head>
@@ -155,7 +138,6 @@
                 <option value="7">Niedziele</option>
             </select>
         </div>
-        
         <div class="chart-container">
             <canvas id="routineChart"></canvas>
         </div>
@@ -205,49 +187,45 @@
         <div class="tools-layout">
             
             <div class="links-section">
-                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
+                <h3>Szybkie Linki</h3>
                 <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
                 <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne forum</a>
                 <a href="https://bitefight.pages.dev/" target="_blank">🎒 Wszystkie przedmioty</a>
                 <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ruin</a>
             </div>
 
-            <div style="width: 100%; max-width: 800px; margin-top: 10px;">
-                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory</h3>
-                
-                <div class="tools-grid">
-                    <div class="tool-box">
-                        <div class="tool-title">Zasięg Wartości Bojowej</div>
-                        <div class="tool-input-row">
-                            <label>Twoja Wartość Bojowa:</label>
-                            <input type="number" id="calc_wb" value="100000" min="1">
-                        </div>
-                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
-                        <div class="tool-result" id="res_wb">-</div>
+            <div class="tools-grid">
+                <div class="tool-box">
+                    <div class="tool-title">Zasięg Wartości Bojowej</div>
+                    <div class="tool-input-row">
+                        <label>Twoja Wartość Bojowa:</label>
+                        <input type="number" id="calc_wb" value="100000" min="1">
                     </div>
+                    <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                    <div class="tool-result" id="res_wb">-</div>
+                </div>
 
-                    <div class="tool-box">
-                        <div class="tool-title">Cena skilla</div>
-                        <div class="tool-input-row">
-                            <label>Obecny poziom cechy:</label>
-                            <input type="number" id="calc_skill" value="50" min="5">
-                        </div>
-                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
-                        <div class="tool-result" id="res_skill">-</div>
+                <div class="tool-box">
+                    <div class="tool-title">Cena skilla</div>
+                    <div class="tool-input-row">
+                        <label>Obecny poziom cechy:</label>
+                        <input type="number" id="calc_skill" value="50" min="5">
                     </div>
+                    <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
+                    <div class="tool-result" id="res_skill">-</div>
+                </div>
 
-                    <div class="tool-box" style="width: 100%; max-width: 615px;">
-                        <div class="tool-title">Łączna cena zakupionych skilli</div>
-                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
-                        </div>
-                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
-                        <div class="tool-result" id="res_total" style="font-size: 13px;">-</div>
+                <div class="tool-box" style="width: 100%; max-width: 535px;">
+                    <div class="tool-title">Łączna cena zakupionych skilli</div>
+                    <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
                     </div>
+                    <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
+                    <div class="tool-result" id="res_total">-</div>
                 </div>
             </div>
 
@@ -259,7 +237,6 @@
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
@@ -293,11 +270,11 @@
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
+        let sealsChartInstance = null;
 
         // ==========================================
         // SKRYPTY PRZYBORNIKA
         // ==========================================
-
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
@@ -331,13 +308,12 @@
             for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
             for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
 
-            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <br><span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
+            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55;">${formatNumber(total)}</span> złota`;
         }
 
         // ==========================================
         // GŁÓWNY SILNIK STRONY
         // ==========================================
-
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
@@ -374,17 +350,24 @@
         }
 
         function handleFilterChange() { renderTable(); }
-        document.getElementById('filterDate').addEventListener('change', handleFilterChange);
-        document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
-        document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
-        document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
-            const specSelect = document.getElementById('rankingSpecificDaySelect');
-            if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
-            else { specSelect.style.display = 'none'; }
-            calculateAndRenderRanking();
+        document.addEventListener("DOMContentLoaded", function() {
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
+            if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
+            if(document.getElementById('rankingPeriodSelect')) {
+                document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+                    const specSelect = document.getElementById('rankingSpecificDaySelect');
+                    if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
+                    else { specSelect.style.display = 'none'; }
+                    calculateAndRenderRanking();
+                });
+            }
+            if(document.getElementById('rankingSpecificDaySelect')) document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
+
+            loadTableData();
+            setInterval(loadTableData, 300000);
         });
-        document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
@@ -418,8 +401,7 @@
         async function loadTableData() {
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
-                const nowInfo = new Date();
-                document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + new Date().toLocaleTimeString('pl-PL');
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 
@@ -448,7 +430,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -475,7 +457,10 @@
                     } catch(ex) {}
                 }
 
-                if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; 
+                    return; 
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -512,7 +497,9 @@
                 renderSummaryTable();
                 updateFilters(); 
                 renderTable(); 
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Błąd ładowania silnika głównego: ", e); 
+            }
         }
 
         function getRangeForPeriod(period) {
@@ -532,6 +519,7 @@
         }
 
         function renderChart() {
+            if (!document.getElementById('heatmapPlayerSelect')) return;
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
@@ -572,8 +560,9 @@
             });
 
             if (routineChartInstance) routineChartInstance.destroy();
-
-            const ctx = document.getElementById('routineChart').getContext('2d');
+            const ctxElem = document.getElementById('routineChart');
+            if(!ctxElem) return;
+            const ctx = ctxElem.getContext('2d');
             routineChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -640,6 +629,7 @@
         }
 
         function renderSummaryTable() {
+            if(!document.getElementById('summaryPeriodSelect')) return;
             const period = document.getElementById('summaryPeriodSelect').value;
             const range = getRangeForPeriod(period); if (!range) return;
             let summary = {}; let absoluteLastSeen = {}; let fightTimestamps = {};
@@ -707,7 +697,7 @@
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
             let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Ostatnia Aktywność"];
-            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
@@ -728,14 +718,18 @@
             globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
             
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
 
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>
                                <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
@@ -748,6 +742,7 @@
         }
 
         function renderTable() {
+            if(!document.getElementById('filterDate')) return;
             const fD = document.getElementById('filterDate').value; const fP = document.getElementById('filterPlayer').value; const fS = document.getElementById('filterStat').value;
             let range = getRangeForPeriod(fD);
             let filtered = globalData.filter(w => {
@@ -771,7 +766,7 @@
                     if (j === 1) {
                         val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
-                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        val = val ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
                     }
                     html += `<td${klasa}>${val}</td>`;
                 }
@@ -792,7 +787,7 @@
         async function loadRankingData() {
             try {
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu.</p>"; return; }
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
                 calculateAndRenderRanking();
@@ -898,10 +893,9 @@
             document.getElementById('rankingTableContainer').innerHTML = html;
         }
 
-        function formatClanLink(klanTag, rawName) {
-            let nameStr = String(rawName || `[${klanTag}]`).replace(/^Klan\s+/i, ''); 
-            let finalName = `${nameStr} [${klanTag}]`;
-            return CLANS_LINKS[klanTag] ? `<a href="${CLANS_LINKS[klanTag]}" class="player-link" target="_blank">${finalName}</a>` : `<span class="clan-text-plain">${finalName}</span>`;
+        function formatClanLink(nazwa, url) {
+            if (!url || url === "") return `<span class="clan-text-plain">${nazwa}</span>`;
+            return `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`;
         }
 
         function renderClans() {
@@ -970,7 +964,7 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
-                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
                                      <div class="seal-name">${s.id}</div>
                                      <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
@@ -978,6 +972,9 @@
             });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
+            // ==========================================
+            // MODUŁ - TABELA I WYKRES UTRATY PIECZĘCI (SPADEK Z 3 NA 2)
+            // ==========================================
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
             let entriesFound = false;
             let kicksPer5Min = new Array(288).fill(0); 
@@ -1079,6 +1076,9 @@
                 });
             }
 
+            // ==========================================
+            // HISTORIA ZMIAN LOGÓW OGÓLNYCH
+            // ==========================================
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansLogi.forEach(w => {
                 let stat = String(w[2]);
@@ -1139,6 +1139,7 @@
             logHtml += "</tbody></table>";
             document.getElementById('clansLogContainer').innerHTML = logHtml;
 
+            // AKTUALNY STAN KLANÓW WROGA
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) {
                 let data = currentClanState[klan];
