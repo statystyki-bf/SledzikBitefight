@@ -52,10 +52,11 @@
         
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
-        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
+        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
-        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
+        .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
+        
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
@@ -65,6 +66,7 @@
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
         .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
         .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
@@ -109,7 +111,7 @@
             </div>
             
             <div id="protectionBlock" class="top-dashboard-box protection">
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px;">
                     <h3 style="color: #00e5ff; margin: 0; font-size: 14px; text-transform: uppercase;">🛡️ Ochrona (Blok - 30 min)</h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="color: #ccc; font-size: 12px; font-weight: bold;">Dźwięk:</span>
@@ -119,8 +121,9 @@
                         </label>
                     </div>
                 </div>
+                <div style="font-size: 11px; color: #888; margin-bottom: 8px; width: 100%; text-align: left;">Wymagany format daty: <strong style="color: #aaa;">DD.MM.YYYY HH:MM</strong></div>
                 <div style="display: flex; gap: 5px; width: 100%; max-width: 400px; margin-bottom: 10px;">
-                    <input type="text" id="pasteBlockInput" placeholder="Naciśnij Ctrl+V lub wpisz datę ataku..." style="flex: 1; padding: 4px; font-size: 12px; text-align: center;">
+                    <input type="text" id="pasteBlockInput" placeholder="Wklej (Ctrl+V) datę ataku..." style="flex: 1; padding: 4px; font-size: 12px; text-align: center; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none;">
                     <button class="action-btn" style="margin: 0; padding: 4px 12px; font-size: 12px;" onclick="startBlockFromInput()">Start</button>
                     <button class="action-btn" style="margin: 0; padding: 4px 12px; font-size: 12px; background: #7a1f1f; border-color: #ff4d4d;" onclick="clearBlockData()">Kasuj</button>
                 </div>
@@ -310,7 +313,7 @@
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 8; 
+        let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
@@ -378,7 +381,7 @@
             document.title = "BiteFight - Centrum Dowodzenia";
 
             blockEndTime = t + (30 * 60 * 1000); 
-            sessionStorage.setItem('bf_blockEndTime', blockEndTime); // Pamięć sesji
+            sessionStorage.setItem('bf_blockEndTime', blockEndTime); 
             warningBeepPlayed = false;
             endBeepPlayed = false;
             
@@ -398,7 +401,7 @@
             if(blockInterval) clearInterval(blockInterval);
             blockInterval = null;
             if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
-            sessionStorage.removeItem('bf_blockEndTime'); // Czyszczenie pamięci sesji
+            sessionStorage.removeItem('bf_blockEndTime'); 
             
             document.getElementById('pasteBlockInput').value = '';
             let display = document.getElementById('blockCountdown');
@@ -506,7 +509,7 @@
         });
 
         // ==========================================
-        // SKRYPTY PRZYBORNIKA 
+        // SKRYPTY PRZYBORNIKA
         // ==========================================
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -1170,7 +1173,12 @@
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { 
+                holder: '<span style="color: #55ff55; font-weight: bold; font-size: 13px; text-shadow: 0 0 8px rgba(85,255,85,0.9);">U nas!</span>', 
+                img: s.img, 
+                klanId: null, 
+                date: "" 
+            });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
