@@ -56,6 +56,7 @@
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
+        
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
@@ -65,6 +66,7 @@
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
         .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
         .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
@@ -83,10 +85,13 @@
         input:checked + .slider-sound { background-color: #1f7244; border-color: #103c23; }
         input:checked + .slider-sound:before { transform: translateX(16px); background-color: #fff; }
 
-        /* GÓRNY PANEL: RAPORT + OCHRONA */
+        /* GÓRNY PANEL: RAPORT + OCHRONA + RADAR */
         .top-dashboard-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 1600px; margin-left: auto; margin-right: auto; }
         .top-dashboard-box { flex: 1; min-width: 300px; max-width: 600px; background: #231212; border-radius: 8px; border: 1px solid #4a0d0d; padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
+        
+        .radar-box { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 8px 12px; border-radius: 6px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8); width: 160px; display: flex; flex-direction: column; align-items: center; }
+        .radar-box strong { font-size: 14px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -104,7 +109,7 @@
         <div class="top-dashboard-panel">
             <div class="top-dashboard-box">
                 <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
-                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
+                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów (Co 5 min).</div>
                 <button class="action-btn" style="margin-bottom: 0;" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
             </div>
             
@@ -126,6 +131,14 @@
                     <button class="action-btn" style="margin: 0; padding: 4px 12px; font-size: 12px; background: #7a1f1f; border-color: #ff4d4d;" onclick="clearBlockData()">Kasuj</button>
                 </div>
                 <div id="blockCountdown" style="font-size: 18px; font-weight: bold; color: #555; text-shadow: 0 0 5px rgba(0,0,0,0.8);">Brak aktywnej ochrony</div>
+            </div>
+        </div>
+
+        <div class="summary-box" style="border-color: #600000; margin-bottom: 20px;">
+            <h3 style="color: #ff5555; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;">🎯 Radar Celów (Zablokowani wrogowie)</h3>
+            <div style="font-size: 11px; color: #888; margin-bottom: 15px;">System namierza graczy, u których w ostatnich 30 minutach wykryto "Stracone złoto" (przegraną walkę w obronie).</div>
+            <div id="enemyBlocksContainer" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; font-size: 13px;">
+                <span style="color:#888;">Trwa skanowanie celów z arkusza...</span>
             </div>
         </div>
 
@@ -226,45 +239,49 @@
         <div class="tools-layout">
             
             <div class="links-section">
-                <h3>Szybkie Linki</h3>
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
                 <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
                 <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne forum</a>
                 <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów</a>
                 <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji</a>
             </div>
 
-            <div class="tools-grid">
-                <div class="tool-box">
-                    <div class="tool-title">Zasięg Wartości Bojowej</div>
-                    <div class="tool-input-row">
-                        <label>Twoja Wartość Bojowa:</label>
-                        <input type="number" id="calc_wb" value="100000" min="1">
+            <div style="width: 100%; max-width: 800px; margin-top: 10px;">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory Bojowe</h3>
+                
+                <div class="tools-grid">
+                    <div class="tool-box">
+                        <div class="tool-title">Zasięg Wartości Bojowej</div>
+                        <div class="tool-input-row">
+                            <label>Twoja Wartość Bojowa:</label>
+                            <input type="number" id="calc_wb" value="100000" min="1">
+                        </div>
+                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                        <div class="tool-result" id="res_wb">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
-                    <div class="tool-result" id="res_wb">-</div>
-                </div>
 
-                <div class="tool-box">
-                    <div class="tool-title">Cena skilla</div>
-                    <div class="tool-input-row">
-                        <label>Obecny poziom cechy:</label>
-                        <input type="number" id="calc_skill" value="50" min="5">
+                    <div class="tool-box">
+                        <div class="tool-title">Cena skilla</div>
+                        <div class="tool-input-row">
+                            <label>Obecny poziom cechy:</label>
+                            <input type="number" id="calc_skill" value="50" min="5">
+                        </div>
+                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
+                        <div class="tool-result" id="res_skill">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
-                    <div class="tool-result" id="res_skill">-</div>
-                </div>
 
-                <div class="tool-box" style="width: 100%; max-width: 535px;">
-                    <div class="tool-title">Łączna cena zakupionych skilli</div>
-                    <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
-                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
+                    <div class="tool-box" style="width: 100%; max-width: 535px;">
+                        <div class="tool-title">Łączna cena zakupionych skilli</div>
+                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
+                        </div>
+                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
+                        <div class="tool-result" id="res_total">-</div>
                     </div>
-                    <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
-                    <div class="tool-result" id="res_total">-</div>
                 </div>
             </div>
 
@@ -303,17 +320,18 @@
         let globalRutynaData = [];
         let globalClansBaza = []; 
         let globalClansLogi = []; 
+        let globalEnemyBlocks = {}; // Słownik trzymający czasy do radaru wrogów
         
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 7; 
+        let currentSummarySortCol = 8; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
 
         // ==========================================
-        // MODUŁ OCHRONY PRZED ATAKIEM (30 MIN) Z PAMIĘCIĄ SESJI
+        // MODUŁ OCHRONY PRZED ATAKIEM (Przyjazne Dźwięki)
         // ==========================================
         let blockEndTime = 0;
         let blockInterval = null;
@@ -330,23 +348,32 @@
                 ctx.resume(); 
                 
                 if (type === 'warning') {
+                    // Przyjazny dźwięk "Ding" (ostrzeżenie, 1 min)
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain); gain.connect(ctx.destination);
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
-                    gain.gain.setValueAtTime(1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
-                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    gain.gain.setValueAtTime(0, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 1.5);
                 } else if (type === 'end') {
-                    for(let i=0; i<3; i++) {
+                    // Przyjazny, melodyjny dźwięk zakończenia (Arpeggio: C5-E5-G5-C6)
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
                         osc.connect(gain); gain.connect(ctx.destination);
-                        osc.type = 'square'; osc.frequency.setValueAtTime(440, ctx.currentTime + i*0.3);
-                        gain.gain.setValueAtTime(1, ctx.currentTime + i*0.3);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.3 + 0.2);
-                        osc.start(ctx.currentTime + i*0.3); osc.stop(ctx.currentTime + i*0.3 + 0.2);
-                    }
+                        osc.type = 'sine'; // Bardzo miękki dźwięk
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+                        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
+                        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.15 + 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 1);
+                        osc.start(ctx.currentTime + i * 0.15);
+                        osc.stop(ctx.currentTime + i * 0.15 + 1);
+                    });
                 }
             } catch (e) { console.error("Beep error: ", e); }
         }
@@ -503,46 +530,44 @@
         });
 
         // ==========================================
-        // SKRYPTY PRZYBORNIKA 
+        // SYSTEM RADARU ZABLOKOWANYCH WROGÓW
         // ==========================================
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        function updateEnemyBlocksTimer() {
+            let now = new Date().getTime();
+            let html = "";
+            let anyBlock = false;
+            
+            // Sortowanie wrogów od najkrótszego czasu do najdłuższego
+            let sortedEnemies = Object.keys(globalEnemyBlocks).sort((a, b) => globalEnemyBlocks[a] - globalEnemyBlocks[b]);
+
+            sortedEnemies.forEach(gracz => {
+                let diff = globalEnemyBlocks[gracz] - now;
+                if (diff > 0) {
+                    anyBlock = true;
+                    let m = Math.floor(diff / 60000);
+                    let s = Math.floor((diff % 60000) / 1000);
+                    let timeStr = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    let pLink = PLAYERS[gracz] ? `<a href="${PLAYERS[gracz]}" target="_blank" style="color:#ffcc00; text-decoration:none;">${gracz}</a>` : gracz;
+                    
+                    let bgCol = m < 2 ? "rgba(255,51,51,0.2)" : "transparent";
+                    let bCol = m < 2 ? "#ff3333" : "#4a0d0d";
+                    
+                    html += `<div class="radar-box" style="background-color: ${bgCol}; border-color: ${bCol};">
+                                <strong>${pLink}</strong> ma ochronę<br>
+                                Koniec za: <span style="color: #fff; font-weight: bold;">${timeStr}</span>
+                             </div>`;
+                }
+            });
+
+            let container = document.getElementById('enemyBlocksContainer');
+            if (container) {
+                container.innerHTML = anyBlock ? html : "<span style='color:#888;'>Brak graczy na radarze (nikt nie stracił złota w ostatnich 30 min).</span>";
+            }
         }
-
-        function calcSkillCost() {
-            let val = parseInt(document.getElementById('calc_skill').value);
-            if (isNaN(val) || val < 5) val = 5;
-            let cost = Math.floor(Math.pow(val - 4, 2.4));
-            document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
-        }
-
-        function calcBattleValue() {
-            let val = parseInt(document.getElementById('calc_wb').value);
-            if (isNaN(val) || val < 1) val = 1;
-            let min = Math.floor(val * 0.8);
-            let max = Math.floor(val * 1.25);
-            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
-        }
-
-        function calcTotalGold() {
-            let str = parseInt(document.getElementById('c_str').value) || 5;
-            let def = parseInt(document.getElementById('c_def').value) || 5;
-            let dex = parseInt(document.getElementById('c_dex').value) || 5;
-            let end = parseInt(document.getElementById('c_end').value) || 5;
-            let chr = parseInt(document.getElementById('c_chr').value) || 5;
-
-            let total = 0;
-            for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
-
-            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
-        }
+        setInterval(updateEnemyBlocksTimer, 1000); // Radar odświeża się płynnie na ekranie co sekundę
 
         // ==========================================
-        // GŁÓWNY SILNIK STRONY
+        // GŁÓWNY SILNIK STRONY I POBIERANIE Z ARKUSZA
         // ==========================================
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
@@ -597,7 +622,7 @@
 
             checkExistingBlock(); 
             loadTableData();
-            setInterval(loadTableData, 300000);
+            setInterval(loadTableData, 300000); // 300000 ms to 5 minut.
         });
 
         function parseCSVLine(text) {
@@ -708,12 +733,23 @@
                 let playerAccumulator = {}; 
                 let playerLevel = {};
                 globalData = [];
+                globalEnemyBlocks = {}; // Kasowanie starych radarów przed wczytaniem nowych
 
                 rawData.forEach(row => {
                     let gracz = row[1];
                     if (BLACKLIST.includes(gracz)) return;
                     let stat = row[2];
                     let przyrost = parseInt(row[5]) || 0;
+                    
+                    // ŁAPAMY WROGÓW DO RADARU
+                    if (stat === "Stracone złoto" && przyrost > 0) {
+                        let logDate = parseLogDate(row[0]);
+                        let blockEnd = logDate.getTime() + (30 * 60 * 1000);
+                        if (!globalEnemyBlocks[gracz] || blockEnd > globalEnemyBlocks[gracz]) {
+                            globalEnemyBlocks[gracz] = blockEnd;
+                        }
+                    }
+
                     if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
                     const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
@@ -1194,9 +1230,9 @@
             ];
 
             let sealHolders = {};
-            // Twarde formatowanie liniowe dla "U nas!" z zielonym cieniem (glow)
+            // MOCNO WYMUSZONY ZIELONY STYL "U NAS!" ABY PRZEGLĄDARKI GO NIE IGNOROWAŁY
             ALL_SEALS.forEach(s => sealHolders[s.id] = { 
-                holder: '<span style="color: #55ff55; font-weight: bold; font-size: 13px; text-shadow: 0 0 8px rgba(85,255,85,0.9);">U nas!</span>', 
+                holder: '<span style="color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block;">U nas!</span>', 
                 img: s.img, 
                 klanId: null, 
                 date: "" 
@@ -1428,7 +1464,7 @@
         }
 
         loadTableData();
-        setInterval(loadTableData, 300000);
+        setInterval(loadTableData, 300000); // 300000 ms to 5 minut.
     </script>
 </body>
 </html>
