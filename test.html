@@ -50,15 +50,12 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
-
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
-        
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
@@ -68,7 +65,6 @@
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
-        
         .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
         .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
@@ -108,7 +104,7 @@
         <div class="top-dashboard-panel">
             <div class="top-dashboard-box">
                 <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
-                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów. Odświeżanie co 5 minut.</div>
+                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
                 <button class="action-btn" style="margin-bottom: 0;" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
             </div>
             
@@ -230,49 +226,45 @@
         <div class="tools-layout">
             
             <div class="links-section">
-                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
+                <h3>Szybkie Linki</h3>
                 <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
                 <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne forum</a>
                 <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów</a>
                 <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji</a>
             </div>
 
-            <div style="width: 100%; max-width: 800px; margin-top: 10px;">
-                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory Bojowe</h3>
-                
-                <div class="tools-grid">
-                    <div class="tool-box">
-                        <div class="tool-title">Zasięg Wartości Bojowej</div>
-                        <div class="tool-input-row">
-                            <label>Twoja Wartość Bojowa:</label>
-                            <input type="number" id="calc_wb" value="100000" min="1">
-                        </div>
-                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
-                        <div class="tool-result" id="res_wb">-</div>
+            <div class="tools-grid">
+                <div class="tool-box">
+                    <div class="tool-title">Zasięg Wartości Bojowej</div>
+                    <div class="tool-input-row">
+                        <label>Twoja Wartość Bojowa:</label>
+                        <input type="number" id="calc_wb" value="100000" min="1">
                     </div>
+                    <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                    <div class="tool-result" id="res_wb">-</div>
+                </div>
 
-                    <div class="tool-box">
-                        <div class="tool-title">Cena skilla</div>
-                        <div class="tool-input-row">
-                            <label>Obecny poziom cechy:</label>
-                            <input type="number" id="calc_skill" value="50" min="5">
-                        </div>
-                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
-                        <div class="tool-result" id="res_skill">-</div>
+                <div class="tool-box">
+                    <div class="tool-title">Cena skilla</div>
+                    <div class="tool-input-row">
+                        <label>Obecny poziom cechy:</label>
+                        <input type="number" id="calc_skill" value="50" min="5">
                     </div>
+                    <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
+                    <div class="tool-result" id="res_skill">-</div>
+                </div>
 
-                    <div class="tool-box" style="width: 100%; max-width: 535px;">
-                        <div class="tool-title">Łączna cena zakupionych skilli</div>
-                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
-                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
-                        </div>
-                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
-                        <div class="tool-result" id="res_total">-</div>
+                <div class="tool-box" style="width: 100%; max-width: 535px;">
+                    <div class="tool-title">Łączna cena zakupionych skilli</div>
+                    <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
+                        <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
                     </div>
+                    <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
+                    <div class="tool-result" id="res_total">-</div>
                 </div>
             </div>
 
@@ -311,18 +303,18 @@
         let globalRutynaData = [];
         let globalClansBaza = []; 
         let globalClansLogi = []; 
-        let globalEnemyBlocks = {}; // Słownik trzymający czasy do radaru wrogów
+        let globalEnemyBlocks = {}; 
         
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 9; // Aktualizacja indeksu: Ostatnia aktywność na końcu
+        let currentSummarySortCol = 9; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
 
         // ==========================================
-        // SILNIK TIMERÓW W TABELI - ODLICZANIE NA ŻYWO (CO 1 SEKUNDĘ)
+        // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI
         // ==========================================
         setInterval(() => {
             document.querySelectorAll('.live-block-timer').forEach(el => {
