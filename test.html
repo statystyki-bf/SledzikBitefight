@@ -52,7 +52,7 @@
         
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
-        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
+        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
@@ -313,7 +313,7 @@
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 7; 
+        let currentSummarySortCol = 8; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
@@ -509,7 +509,7 @@
         });
 
         // ==========================================
-        // SKRYPTY PRZYBORNIKA
+        // SKRYPTY PRZYBORNIKA 
         // ==========================================
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -732,7 +732,10 @@
                 });
 
                 globalData.reverse(); 
+                
+                // MIEJSCE NAPRAWY LOGIKI WALK!
                 renderSummaryTable();
+                
                 updateFilters(); 
                 renderTable(); 
             } catch (e) { console.error("Błąd ładowania silnika głównego: ", e); }
@@ -864,40 +867,74 @@
             }
         }
 
+        // ==========================================
+        // NAPRAWIONA FUNKCJA RENDERUJĄCA PODSUMOWANIE (LOGIKA WALK)
+        // ==========================================
         function renderSummaryTable() {
             if(!document.getElementById('summaryPeriodSelect')) return;
             const period = document.getElementById('summaryPeriodSelect').value;
             const range = getRangeForPeriod(period); if (!range) return;
-            let summary = {}; let absoluteLastSeen = {}; let fightTimestamps = {};
+            
+            let summary = {}; 
+            let absoluteLastSeen = {}; 
+            let fightLogs = {};
             let currentExposed = {};
 
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
-                let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
+                let gracz = w[1]; 
+                let stat = w[2]; 
+                let logDate = parseLogDate(w[0]);
+                let przyrost = parseInt(w[5]) || 0;
                 
                 if (currentExposed[gracz] === undefined) {
                     currentExposed[gracz] = (w[7] !== undefined && w[7] !== "") ? parseInt(w[7]) : 0;
                 }
 
                 const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
-                const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
                 
                 if (aktywneStatystyki.includes(stat)) {
-                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = logDate; }
-                } else if (walkiStatystyki.includes(stat)) {
-                    if (!fightTimestamps[gracz]) fightTimestamps[gracz] = new Set();
-                    fightTimestamps[gracz].add(logDate.getTime());
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { 
+                        absoluteLastSeen[gracz] = logDate; 
+                    }
+                } else if (stat === "Walki") {
+                    if (!fightLogs[gracz]) fightLogs[gracz] = [];
+                    // Zapisujemy timestamp ORAZ ilość walk (przyrost) z tego loga
+                    fightLogs[gracz].push({ time: logDate.getTime(), count: przyrost });
                 }
             });
 
-            for (let gracz in fightTimestamps) {
-                let times = Array.from(fightTimestamps[gracz]).sort((a, b) => b - a);
-                for (let i = 0; i < times.length - 1; i++) {
-                    let t1 = times[i]; let t2 = times[i+1];
-                    if ((t1 - t2) <= 29 * 60 * 1000) {
-                        let inferredDate = new Date(t1);
-                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { absoluteLastSeen[gracz] = inferredDate; }
-                        break; 
+            // Analiza logów walk i okien 30-minutowych
+            for (let gracz in fightLogs) {
+                let logs = fightLogs[gracz].sort((a, b) => b.time - a.time); // sortuj od najnowszych
+                for (let i = 0; i < logs.length; i++) {
+                    let currentLog = logs[i];
+                    
+                    // Jeśli w jednym momencie przybyło >= 2 walk, gracz MUSI być aktywny
+                    if (currentLog.count >= 2) {
+                        let inferredDate = new Date(currentLog.time);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                            absoluteLastSeen[gracz] = inferredDate; 
+                        }
+                    } 
+                    // Jeśli przybyła tylko 1 walka, szukamy czy 30 min wcześniej była inna walka
+                    else if (currentLog.count === 1) {
+                        let acc = 1;
+                        for (let j = i + 1; j < logs.length; j++) {
+                            let olderLog = logs[j];
+                            if ((currentLog.time - olderLog.time) <= 30 * 60 * 1000) {
+                                acc += olderLog.count;
+                                if (acc >= 2) {
+                                    let inferredDate = new Date(currentLog.time);
+                                    if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                                        absoluteLastSeen[gracz] = inferredDate; 
+                                    }
+                                    break; // Skoro znaleźliśmy drugą walkę w 30 minut, to wiemy, że był aktywny.
+                                }
+                            } else {
+                                break; // Logi są posortowane, jeśli ten przekracza 30 min, kolejne też przekroczą.
+                            }
+                        }
                     }
                 }
             }
@@ -1173,12 +1210,7 @@
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { 
-                holder: '<span style="color: #55ff55; font-weight: bold; font-size: 13px; text-shadow: 0 0 8px rgba(85,255,85,0.9);">U nas!</span>', 
-                img: s.img, 
-                klanId: null, 
-                date: "" 
-            });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
