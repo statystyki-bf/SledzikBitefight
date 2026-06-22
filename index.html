@@ -12,15 +12,15 @@
         body { background-color: #1e0e0e; color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
         h1 { font-size: 28px; color: #c00c0c; margin-bottom: 5px; margin-top: 10px; }
         h2 { font-size: 20px; color: #ffcc00; margin-top: 15px; margin-bottom: 10px; text-transform: uppercase; }
-        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; }
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;}
         .tab-btn { background: #2b1717; color: #888; border: 2px solid #600000; padding: 8px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         .tab-btn:hover { background: #4a2727; color: white; }
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
-        button.action-btn { background: #1f7244; color: white; border: 2px solid #103c23; padding: 6px 15px; font-size: 14px; cursor: pointer; border-radius: 6px; font-weight: bold; margin-bottom: 15px; transition: 0.3s; }
+        button.action-btn { background: #1f7244; color: white; border: 2px solid #103c23; padding: 6px 15px; font-size: 14px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         button.action-btn:hover { background: #165231; transform: scale(1.05); }
         #status { color: #888; font-size: 12px; margin-bottom: 15px;}
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
-        select, input[type="date"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
+        select, input[type="date"], input[type="number"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
@@ -37,44 +37,58 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1600px; margin: 20px auto; }
         .summary-box { background: #231212; padding: 10px; border-radius: 8px; border: 1px solid #4a0d0d; margin: 0 auto 15px auto; width: 98%; max-width: 1600px; }
         
-        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans { display: none; }
-        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active { display: block; }
+        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans, #sectionTools { display: none; }
+        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active, #sectionTools.active { display: block; }
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
         
         .chart-container { width: 95%; max-width: 1400px; margin: 20px auto; height: 500px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .kicks-chart-container { width: 95%; max-width: 1000px; margin: 20px auto; height: 250px; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         
         a.player-link { color: #00e5ff; text-decoration: none; font-weight: bold; transition: 0.2s; position: relative; z-index: 10; pointer-events: auto; }
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
-        .holder-us { color: #55ff55; font-weight: bold; font-size: 12px; text-shadow: 0 0 5px rgba(85,255,85,0.5);}
-        
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
-        .seal-badge { 
-            background: #110505; 
-            border: 1px solid #3a0a0a; 
-            border-radius: 2px; 
-            padding: 8px; 
-            width: 130px; 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
-            display: flex; flex-direction: column; align-items: center; 
-        }
-
-        .seal-img {
-            width: 44px;
-            height: 44px;
-            border: 2px ridge #808080; 
-            border-radius: 2px;
-            box-shadow: 0 0 6px rgba(0,0,0,1);
-            margin-bottom: 8px;
-        }
-
+        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
+        .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         
+        .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
+        .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
+
+        /* PRZYBORNIK - STYLE KOMPAKTOWE */
+        .tools-layout { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
+        .links-section { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; background: #1a0a0a; padding: 15px; border-radius: 6px; border: 1px solid #600000; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
+        .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
+        .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+        .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
+        .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
+        .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
+        .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
+        .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .tool-input-row label { color: #ccc; font-size: 11px; font-weight: bold;}
+        .tool-input-row input { width: 65px; padding: 2px; text-align: right; font-size: 12px; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none; }
+        .tool-result { margin-top: 8px; padding: 6px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 16px; font-size: 12px;}
+        .tool-btn { width: 100%; margin-top: 4px; background: #4a0d0d; border: 1px solid #ff3333; padding: 5px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 11px;}
+        .tool-btn:hover { background: #ff3333; color: black; }
+
+        /* SUWAK DŹWIĘKU */
+        .switch-sound { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch-sound input { opacity: 0; width: 0; height: 0; }
+        .slider-sound { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4a0d0d; transition: .2s; border-radius: 18px; border: 1px solid #600000; }
+        .slider-sound:before { position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px; background-color: #888; transition: .2s; border-radius: 50%; }
+        input:checked + .slider-sound { background-color: #1f7244; border-color: #103c23; }
+        input:checked + .slider-sound:before { transform: translateX(16px); background-color: #fff; }
+
+        /* GÓRNY PANEL: RAPORT + OCHRONA */
+        .top-dashboard-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 1600px; margin-left: auto; margin-right: auto; }
+        .top-dashboard-box { flex: 1; min-width: 300px; max-width: 600px; background: #231212; border-radius: 8px; border: 1px solid #4a0d0d; padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -84,13 +98,38 @@
         <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
+        <button id="tabToolsBtn" class="tab-btn" onclick="switchTab('tools')">Przybornik</button>
     </div>
 
-    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
-        <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 8px; font-weight: bold;"></div>
-        <div id="status">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
-        <button class="action-btn" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
+        
+        <div class="top-dashboard-panel">
+            <div class="top-dashboard-box">
+                <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
+                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów.</div>
+                <button class="action-btn" style="margin-bottom: 0;" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
+            </div>
+            
+            <div id="protectionBlock" class="top-dashboard-box protection">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px;">
+                    <h3 style="color: #00e5ff; margin: 0; font-size: 14px; text-transform: uppercase;">🛡️ Ochrona (Blok - 30 min)</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: #ccc; font-size: 12px; font-weight: bold;">Dźwięk:</span>
+                        <label class="switch-sound" title="Dźwięk powiadomień">
+                            <input type="checkbox" id="soundToggle" checked>
+                            <span class="slider-sound"></span>
+                        </label>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #888; margin-bottom: 8px; width: 100%; text-align: left;">Wymagany format daty: <strong style="color: #aaa;">DD.MM.YYYY HH:MM</strong></div>
+                <div style="display: flex; gap: 5px; width: 100%; max-width: 400px; margin-bottom: 10px;">
+                    <input type="text" id="pasteBlockInput" placeholder="Wklej (Ctrl+V) datę ataku..." style="flex: 1; padding: 4px; font-size: 12px; text-align: center; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none;">
+                    <button class="action-btn" style="margin: 0; padding: 4px 12px; font-size: 12px;" onclick="startBlockFromInput()">Start</button>
+                    <button class="action-btn" style="margin: 0; padding: 4px 12px; font-size: 12px; background: #7a1f1f; border-color: #ff4d4d;" onclick="clearBlockData()">Kasuj</button>
+                </div>
+                <div id="blockCountdown" style="font-size: 18px; font-weight: bold; color: #555; text-shadow: 0 0 5px rgba(0,0,0,0.8);">Brak aktywnej ochrony</div>
+            </div>
+        </div>
 
         <div class="summary-box">
             <div class="filter-container" style="margin-top: 0; margin-bottom: 8px;">
@@ -119,7 +158,6 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
-    <!-- ZAKŁADKA: WYKRES RUTYNY (2 MIN) -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -147,7 +185,6 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
-    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -164,11 +201,18 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
-    <!-- ZAKŁADKA PIECZĘCI I WROGÓW -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
         
+        <hr class="separator">
+        <h2>Zniszczone Pieczęcie (Spadek z 3 na 2 graczy)</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Monitorowanie zjawiska utraty pieczęci przez klany. Wykres prezentuje przedziały 5-minutowe.</div>
+        <div id="clansKicksContainer"><p>Trwa analizowanie rotacji graczy...</p></div>
+        <div class="chart-container" style="height: 300px; margin-top: 20px; max-width: 1200px;">
+            <canvas id="sealsChart"></canvas>
+        </div>
+
         <hr class="separator">
         <h2>Historia Przekazywania Pieczęci i Zmian u wrogów</h2>
         <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
@@ -180,12 +224,64 @@
         </div>
     </div>
 
+    <div id="sectionTools">
+        <div class="tools-layout">
+            
+            <div class="links-section">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 0 0 5px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Przydatne Linki</h3>
+                <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
+                <a href="https://forum.bitefight.gameforge.com/" target="_blank">💬 Oficjalne forum</a>
+                <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów</a>
+                <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji</a>
+            </div>
+
+            <div style="width: 100%; max-width: 800px; margin-top: 10px;">
+                <h3 style="color: #ffcc00; font-size: 16px; margin: 10px 0 10px 0; border-bottom: 1px solid #600000; padding-bottom: 5px;">Kalkulatory Bojowe</h3>
+                
+                <div class="tools-grid">
+                    <div class="tool-box">
+                        <div class="tool-title">Zasięg Wartości Bojowej</div>
+                        <div class="tool-input-row">
+                            <label>Twoja Wartość Bojowa:</label>
+                            <input type="number" id="calc_wb" value="100000" min="1">
+                        </div>
+                        <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
+                        <div class="tool-result" id="res_wb">-</div>
+                    </div>
+
+                    <div class="tool-box">
+                        <div class="tool-title">Cena skilla</div>
+                        <div class="tool-input-row">
+                            <label>Obecny poziom cechy:</label>
+                            <input type="number" id="calc_skill" value="50" min="5">
+                        </div>
+                        <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
+                        <div class="tool-result" id="res_skill">-</div>
+                    </div>
+
+                    <div class="tool-box" style="width: 100%; max-width: 535px;">
+                        <div class="tool-title">Łączna cena zakupionych skilli</div>
+                        <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Siła</label><input type="number" id="c_str" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Obrona</label><input type="number" id="c_def" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Zwinność</label><input type="number" id="c_dex" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Wytrzym.</label><input type="number" id="c_end" value="5" min="5" style="width:50px;"></div>
+                            <div class="tool-input-row" style="flex-direction: column; align-items: center; margin-bottom:0;"><label>Charyzma</label><input type="number" id="c_chr" value="5" min="5" style="width:50px;"></div>
+                        </div>
+                        <button class="tool-btn" onclick="calcTotalGold()">Oblicz Całkowity Koszt</button>
+                        <div class="tool-result" id="res_total">-</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
         // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
-        
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         // =========================================================
@@ -201,7 +297,8 @@
             "albin": "https://s60-pl.bitefight.gameforge.com/profile/player/1305276",
             "misssiek555": "https://s60-pl.bitefight.gameforge.com/profile/player/815896",
             "NecromanceR": "https://s60-pl.bitefight.gameforge.com/profile/player/2954971",
-            "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689"
+            "espablo": "https://s60-pl.bitefight.gameforge.com/profile/player/2197689",
+            "CostaCoffee": "https://s60-pl.bitefight.gameforge.com/profile/player/2489025"
         };
         
         const BLACKLIST = ["Kark23", "Darksun"]; 
@@ -219,17 +316,252 @@
         let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
+        let sealsChartInstance = null;
 
+        // ==========================================
+        // MODUŁ OCHRONY PRZED ATAKIEM (30 MIN) Z PAMIĘCIĄ SESJI
+        // ==========================================
+        let blockEndTime = 0;
+        let blockInterval = null;
+        let titleBlinkInterval = null;
+        let warningBeepPlayed = false;
+        let endBeepPlayed = false;
+
+        function playBeep(type) {
+            if (!document.getElementById('soundToggle').checked) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                ctx.resume(); 
+                
+                if (type === 'warning') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    gain.gain.setValueAtTime(1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
+                } else if (type === 'end') {
+                    for(let i=0; i<3; i++) {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain); gain.connect(ctx.destination);
+                        osc.type = 'square'; osc.frequency.setValueAtTime(440, ctx.currentTime + i*0.3);
+                        gain.gain.setValueAtTime(1, ctx.currentTime + i*0.3);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.3 + 0.2);
+                        osc.start(ctx.currentTime + i*0.3); osc.stop(ctx.currentTime + i*0.3 + 0.2);
+                    }
+                }
+            } catch (e) { console.error("Beep error: ", e); }
+        }
+
+        function parseAttackDate(str) {
+            let m = str.match(/(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})/);
+            if(m) {
+                return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime();
+            }
+            return null;
+        }
+
+        function startBlockFromInput() {
+            let val = document.getElementById('pasteBlockInput').value;
+            startBlockCountdown(val);
+        }
+
+        function startBlockCountdown(attackTimeStr) {
+            let t = parseAttackDate(attackTimeStr);
+            if(!t) {
+                alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM");
+                return;
+            }
+            
+            if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
+            document.title = "BiteFight - Centrum Dowodzenia";
+
+            blockEndTime = t + (30 * 60 * 1000); 
+            sessionStorage.setItem('bf_blockEndTime', blockEndTime); 
+            warningBeepPlayed = false;
+            endBeepPlayed = false;
+            
+            let now = new Date().getTime();
+            if (blockEndTime <= now) {
+                alert("Ochrona z tego ataku już dawno wygasła!");
+                clearBlockData();
+                return;
+            }
+
+            if(blockInterval) clearInterval(blockInterval);
+            blockInterval = setInterval(updateBlockTimer, 1000);
+            updateBlockTimer();
+        }
+
+        function clearBlockData() {
+            if(blockInterval) clearInterval(blockInterval);
+            blockInterval = null;
+            if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
+            sessionStorage.removeItem('bf_blockEndTime'); 
+            
+            document.getElementById('pasteBlockInput').value = '';
+            let display = document.getElementById('blockCountdown');
+            let box = document.getElementById('protectionBlock');
+            let titleTab = document.getElementById('tabTrackerBtn');
+            
+            display.innerHTML = "Brak aktywnej ochrony";
+            display.style.color = "#555";
+            box.style.borderColor = "#00e5ff";
+            box.style.boxShadow = "none";
+            document.title = "BiteFight - Centrum Dowodzenia";
+            titleTab.style.backgroundColor = "";
+            titleTab.style.color = "";
+            
+            warningBeepPlayed = false;
+            endBeepPlayed = false;
+        }
+
+        function updateBlockTimer() {
+            let now = new Date().getTime();
+            let diff = blockEndTime - now;
+            let display = document.getElementById('blockCountdown');
+            let box = document.getElementById('protectionBlock');
+            let titleTab = document.getElementById('tabTrackerBtn'); 
+            
+            if (diff <= 0) {
+                clearInterval(blockInterval);
+                display.innerHTML = "Ochrona wygasła! Możesz zostać zaatakowany!";
+                display.style.color = "#ff5555";
+                box.style.borderColor = "#600000";
+                box.style.boxShadow = "none";
+                titleTab.style.backgroundColor = "#ff5555";
+                titleTab.style.color = "#fff";
+                
+                if (!endBeepPlayed) {
+                    playBeep('end');
+                    endBeepPlayed = true;
+                }
+
+                if (!titleBlinkInterval) {
+                    let blinkState = false;
+                    titleBlinkInterval = setInterval(() => {
+                        document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!";
+                        blinkState = !blinkState;
+                    }, 1000);
+                }
+                return;
+            }
+
+            let totalSeconds = Math.floor(diff / 1000);
+            let m = Math.floor(totalSeconds / 60);
+            let s = totalSeconds % 60;
+            let timeStr = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            
+            display.innerHTML = `🛡️ Czas do końca ochrony: ${timeStr}`;
+
+            if (totalSeconds <= 60) { 
+                display.style.color = "#ff3333";
+                box.style.borderColor = "#ff3333";
+                box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
+                document.title = `🔴 [${timeStr}] Ochrona zanika!`;
+                titleTab.style.backgroundColor = "#ff3333";
+                titleTab.style.color = "#fff";
+                if (!warningBeepPlayed) {
+                    playBeep('warning');
+                    warningBeepPlayed = true;
+                }
+            } else if (totalSeconds <= 180) { 
+                display.style.color = "#ffcc00";
+                box.style.borderColor = "#ffcc00";
+                box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
+                document.title = `🟡 [${timeStr}] Ochrona wygasa!`;
+                titleTab.style.backgroundColor = "#ffcc00";
+                titleTab.style.color = "#000";
+            } else { 
+                display.style.color = "#55ff55";
+                box.style.borderColor = "#00e5ff";
+                box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
+                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`;
+                titleTab.style.backgroundColor = "#00e5ff";
+                titleTab.style.color = "#000";
+            }
+        }
+
+        function checkExistingBlock() {
+            let savedTime = sessionStorage.getItem('bf_blockEndTime');
+            if (savedTime) {
+                blockEndTime = parseInt(savedTime);
+                if(blockInterval) clearInterval(blockInterval);
+                blockInterval = setInterval(updateBlockTimer, 1000);
+                updateBlockTimer();
+            }
+        }
+
+        window.addEventListener('paste', (e) => {
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            if (paste) {
+                if (/\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}/.test(paste)) {
+                    let match = paste.match(/(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})/)[0];
+                    document.getElementById('pasteBlockInput').value = match;
+                    startBlockCountdown(match);
+                    switchTab('tracker'); 
+                }
+            }
+        });
+
+        // ==========================================
+        // SKRYPTY PRZYBORNIKA
+        // ==========================================
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function calcSkillCost() {
+            let val = parseInt(document.getElementById('calc_skill').value);
+            if (isNaN(val) || val < 5) val = 5;
+            let cost = Math.floor(Math.pow(val - 4, 2.4));
+            document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
+        }
+
+        function calcBattleValue() {
+            let val = parseInt(document.getElementById('calc_wb').value);
+            if (isNaN(val) || val < 1) val = 1;
+            let min = Math.floor(val * 0.8);
+            let max = Math.floor(val * 1.25);
+            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
+        }
+
+        function calcTotalGold() {
+            let str = parseInt(document.getElementById('c_str').value) || 5;
+            let def = parseInt(document.getElementById('c_def').value) || 5;
+            let dex = parseInt(document.getElementById('c_dex').value) || 5;
+            let end = parseInt(document.getElementById('c_end').value) || 5;
+            let chr = parseInt(document.getElementById('c_chr').value) || 5;
+
+            let total = 0;
+            for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
+
+            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
+        }
+
+        // ==========================================
+        // GŁÓWNY SILNIK STRONY
+        // ==========================================
         function switchTab(tabId) {
             document.getElementById('tabTrackerBtn').classList.remove('active');
             document.getElementById('tabRankingBtn').classList.remove('active');
             document.getElementById('tabHeatmapBtn').classList.remove('active');
             document.getElementById('tabClansBtn').classList.remove('active');
+            document.getElementById('tabToolsBtn').classList.remove('active');
             
             document.getElementById('sectionTracker').classList.remove('active');
             document.getElementById('sectionRanking').classList.remove('active');
             document.getElementById('sectionHeatmap').classList.remove('active');
             document.getElementById('sectionClans').classList.remove('active');
+            document.getElementById('sectionTools').classList.remove('active');
 
             if (tabId === 'tracker') {
                 document.getElementById('tabTrackerBtn').classList.add('active');
@@ -247,21 +579,32 @@
                 document.getElementById('tabClansBtn').classList.add('active');
                 document.getElementById('sectionClans').classList.add('active');
                 renderClans();
+            } else if (tabId === 'tools') {
+                document.getElementById('tabToolsBtn').classList.add('active');
+                document.getElementById('sectionTools').classList.add('active');
             }
         }
 
         function handleFilterChange() { renderTable(); }
-        document.getElementById('filterDate').addEventListener('change', handleFilterChange);
-        document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
-        document.getElementById('filterStat').addEventListener('change', handleFilterChange);
-        document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
-        document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
-            const specSelect = document.getElementById('rankingSpecificDaySelect');
-            if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
-            else { specSelect.style.display = 'none'; }
-            calculateAndRenderRanking();
+        document.addEventListener("DOMContentLoaded", function() {
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
+            if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
+            if(document.getElementById('rankingPeriodSelect')) {
+                document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
+                    const specSelect = document.getElementById('rankingSpecificDaySelect');
+                    if (this.value === 'SPECIFIC_DAY') { specSelect.style.display = 'inline-block'; populateRankingSpecificDays(); } 
+                    else { specSelect.style.display = 'none'; }
+                    calculateAndRenderRanking();
+                });
+            }
+            if(document.getElementById('rankingSpecificDaySelect')) document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
+
+            checkExistingBlock(); 
+            loadTableData();
+            setInterval(loadTableData, 300000);
         });
-        document.getElementById('rankingSpecificDaySelect').addEventListener('change', calculateAndRenderRanking);
 
         function parseCSVLine(text) {
             let ret = [], val = "", inQuotes = false;
@@ -296,7 +639,7 @@
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
                 const nowInfo = new Date();
-                document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
                 const text = await response.text();
                 const wiersze = text.trim().split('\n');
                 
@@ -325,7 +668,7 @@
                             let line = cbWiersze[i].trim();
                             if (!line) continue;
                             let kom = parseCSVLine(line);
-                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
                                 globalClansBaza.push(kom);
                             }
                         }
@@ -352,7 +695,10 @@
                     } catch(ex) {}
                 }
 
-                if (wiersze.length <= 1) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; 
+                    return; 
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -389,7 +735,7 @@
                 renderSummaryTable();
                 updateFilters(); 
                 renderTable(); 
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Błąd ładowania silnika głównego: ", e); }
         }
 
         function getRangeForPeriod(period) {
@@ -404,11 +750,12 @@
 
         function sortSummary(colIndex) {
             if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
-            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 7) ? true : false; }
+            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 8) ? true : false; }
             renderSummaryTable();
         }
 
         function renderChart() {
+            if (!document.getElementById('heatmapPlayerSelect')) return;
             const player = document.getElementById('heatmapPlayerSelect').value;
             const dayFilter = document.getElementById('heatmapDaySelect').value;
 
@@ -449,8 +796,9 @@
             });
 
             if (routineChartInstance) routineChartInstance.destroy();
-
-            const ctx = document.getElementById('routineChart').getContext('2d');
+            const ctxElem = document.getElementById('routineChart');
+            if(!ctxElem) return;
+            const ctx = ctxElem.getContext('2d');
             routineChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -517,13 +865,20 @@
         }
 
         function renderSummaryTable() {
+            if(!document.getElementById('summaryPeriodSelect')) return;
             const period = document.getElementById('summaryPeriodSelect').value;
             const range = getRangeForPeriod(period); if (!range) return;
             let summary = {}; let absoluteLastSeen = {}; let fightTimestamps = {};
+            let currentExposed = {};
 
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
                 let gracz = w[1]; let stat = w[2]; let logDate = parseLogDate(w[0]);
+                
+                if (currentExposed[gracz] === undefined) {
+                    currentExposed[gracz] = (w[7] !== undefined && w[7] !== "") ? parseInt(w[7]) : 0;
+                }
+
                 const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
                 const walkiStatystyki = ["Walki", "Zwycięstwa", "Porażki"];
                 
@@ -547,7 +902,7 @@
                 }
             }
 
-            globalData.forEach(w => { if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0 }; });
+            globalData.forEach(w => { if(w[1] && !summary[w[1]]) summary[w[1]] = { dobra: 0, zlotoPvP: 0, walki: 0, wygrane: 0, przegrane: 0, poziomy: 0, wystajace: currentExposed[w[1]] || 0 }; });
             globalData.forEach(w => {
                 if (!w[0]) return; const logDate = parseLogDate(w[0]);
                 if (logDate >= range.start && logDate <= range.end) {
@@ -565,7 +920,7 @@
             let summaryArray = [];
             for (let gracz in summary) {
                 let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
-                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, lastSeen: lSeen });
+                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, wystajace: summary[gracz].wystajace, lastSeen: lSeen });
             }
 
             summaryArray.sort((a, b) => {
@@ -577,14 +932,16 @@
                 else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
                 else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
                 else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
-                else if (currentSummarySortCol === 7) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                else if (currentSummarySortCol === 7) { valA = a.wystajace; valB = b.wystajace; }
+                else if (currentSummarySortCol === 8) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                
                 if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
                 else { return currentSummarySortAsc ? valB - valA : valA - valB; }
             });
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
-            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Ostatnia Aktywność"];
-            headers.forEach((h, i) => { let arrow = "⇕"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? "↑" : "↓"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Ostatnia Aktywność"];
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
@@ -595,7 +952,9 @@
                 let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
                 let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
                 let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
-                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
+                let wystajaceStr = data.wystajace > 0 ? `<span class="wystajace-col">${formatNumber(data.wystajace)}</span>` : "0";
+                
+                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
         }
@@ -605,14 +964,18 @@
             globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
             
             const populateGeneric = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
                 if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
             };
 
             const populateStatSelect = (id, set, txt, storageKey) => {
-                const s = document.getElementById(id); let targetVal = localStorage.getItem(storageKey) || s.value;
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
                 s.innerHTML = `<option value="ALL">${txt}</option>
                                <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
                 Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
@@ -625,6 +988,7 @@
         }
 
         function renderTable() {
+            if(!document.getElementById('filterDate')) return;
             const fD = document.getElementById('filterDate').value; const fP = document.getElementById('filterPlayer').value; const fS = document.getElementById('filterStat').value;
             let range = getRangeForPeriod(fD);
             let filtered = globalData.filter(w => {
@@ -648,17 +1012,18 @@
                     if (j === 1) {
                         val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
                     } else if (j === 5 && isLoot && val !== "") {
-                        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        let parsedVal = parseInt(val) || 0;
+                        val = parsedVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                     html += `<td${klasa}>${val}</td>`;
                 }
                 
                 let pvpResult = (stat === 'Zrabowane złoto') ? `<span class="przyrost-col">+${w[5]}</span>` : (stat === 'Stracone złoto' ? `<span class="strata-col">-${w[5]}</span>` : '0');
                 
-                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? w[6].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? parseInt(w[6]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 let sakiewkaHTML = sakiewkaVal ? `<span class="suma-col">${sakiewkaVal}</span>` : "";
 
-                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? w[7].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? parseInt(w[7]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
                 let wystajaceHTML = wystajaceVal ? `<span class="wystajace-col">${wystajaceVal}</span>` : "";
 
                 html += `<td><strong>${pvpResult}</strong></td><td>${sakiewkaHTML}</td><td>${wystajaceHTML}</td></tr>`;
@@ -669,7 +1034,7 @@
         async function loadRankingData() {
             try {
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych w bazie historycznej rankingu.</p>"; return; }
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
                 globalRankingData = [];
                 for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
                 calculateAndRenderRanking();
@@ -735,34 +1100,51 @@
             computedRankingRows.sort((a, b) => {
                 let valA, valB; if (currentSortCol === -1) return 0; 
                 if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; } else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; } else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
-                if (currentSortCol === 0 || currentSortCol === 1) return currentSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); 
-                else return currentSortAsc ? valA - valB : valB - valA; 
+                
+                if (currentSortCol === 0 || currentSortCol === 1) {
+                    return currentSortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA)); 
+                } else {
+                    return currentSortAsc ? (Number(valA) - Number(valB)) : (Number(valB) - Number(valA)); 
+                }
             });
             let html = "<table><thead><tr>";
-            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM (PRZYROST)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE", "WALKI PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "WARTOŚĆ BOJOWA", "WALKI WYGRANE (TOTAL)", "WALKI PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
-            headers.forEach((h, i) => { let arrow = ""; if (currentSortCol === i - 1 && i !== 0) arrow = currentSortAsc ? "↑" : "↓"; let sortClass = i !== 0 ? 'class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(' + i + ')"' : ''; html += `<th ${sortClass}>${h} <span style="color:#ff3333;">${arrow}</span></th>`; });
+            
+            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM", "ŁUP", "WARTOŚĆ BOJOWA", "WYGRANE", "PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (TOTAL)", "WARTOŚĆ BOJOWA", "WYGRANE (TOTAL)", "PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+            
+            headers.forEach((h, i) => { 
+                let arrow = " ⇅"; 
+                let arrowClass = "sort-arrow-inactive";
+                if (currentSortCol === i - 1 && i !== 0) {
+                    arrow = currentSortAsc ? " ▲" : " ▼";
+                    arrowClass = "sort-arrow-active";
+                    if (currentSortAsc) {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    } else {
+                        html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`;
+                    }
+                } else {
+                    let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; 
+                    html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; 
+                }
+            });
             html += "</tr></thead><tbody>";
+            
             function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
+            
             computedRankingRows.forEach((row, idx) => {
                 let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : "");
                 let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`;
-                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
+                html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="przyrost-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`;
             });
             html += "</tbody></table>";
             document.getElementById('rankingTableContainer').innerHTML = html;
         }
 
-        // ==========================================
-        //  CZYSTY TEKST KLANU JAKO DYNAMICZNY LINK
-        // ==========================================
         function formatClanLink(nazwa, url) {
             if (!url || url === "") return `<span class="clan-text-plain">${nazwa}</span>`;
             return `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`;
         }
 
-        // ==========================================
-        //  RENDEROWANIE KLANÓW I PIECZĘCI Z BAZY
-        // ==========================================
         function renderClans() {
             if (globalClansBaza.length === 0) {
                 document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów. Upewnij się, że opublikowałeś zakładkę Klany_Baza w formacie CSV i dodałeś link w kodzie.</p>";
@@ -776,11 +1158,10 @@
                 let nazwa = w[1] || klan;
                 let pieczecie = w[2] || "Brak";
                 let czlonkowie = w[3] || "-";
-                let url = w[4] || ""; // Dynamiczny URL wyciągnięty z excela
+                let url = w[4] || ""; 
                 currentClanState[klan] = { nazwa: nazwa, pieczecie: pieczecie, czlonkowie: czlonkowie, url: url };
             });
 
-            // GŁÓWNA STRUKTURA 7 PIECZĘCI LOKALNYCH
             const ALL_SEALS = [
                 { id: "Skąpstwo", img: "skapstwo.png" },
                 { id: "Zazdrość", img: "zazdrosc.png" },
@@ -792,7 +1173,12 @@
             ];
 
             let sealHolders = {};
-            ALL_SEALS.forEach(s => sealHolders[s.id] = { holder: '<span class="holder-us">U nas!</span>', img: s.img, klanId: null, date: "" });
+            ALL_SEALS.forEach(s => sealHolders[s.id] = { 
+                holder: '<span style="color: #55ff55; font-weight: bold; font-size: 13px; text-shadow: 0 0 8px rgba(85,255,85,0.9);">U nas!</span>', 
+                img: s.img, 
+                klanId: null, 
+                date: "" 
+            });
 
             for (let k in currentClanState) {
                 if (currentClanState[k].pieczecie !== "Brak") {
@@ -830,7 +1216,7 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`;
                 
                 sealsBoardHtml += `<div class="seal-badge">
-                                     <img src="${data.img}" class="seal-img" alt="${s.id}">
+                                     <img src="${data.img}" class="seal-img" alt="${s.id}" onerror="this.style.display='none';">
                                      <div class="seal-name">${s.id}</div>
                                      <div class="seal-holder">${data.holder}</div>
                                      ${dateHtml}
@@ -838,7 +1224,113 @@
             });
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
-            // HISTORIA ZMIAN
+            // ==========================================
+            // MODUŁ - TABELA I WYKRES UTRATY PIECZĘCI (SPADEK Z 3 NA 2)
+            // ==========================================
+            let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>";
+            let entriesFound = false;
+            let kicksPer5Min = new Array(288).fill(0); 
+
+            globalClansLogi.forEach(w => {
+                let stat = String(w[2]);
+                if (stat === "Członkowie") {
+                    let oldVal = String(w[3]);
+                    let newVal = String(w[4]);
+                    let oldMatch = oldVal.match(/(\d+)/);
+                    let newMatch = newVal.match(/(\d+)/);
+
+                    if (oldMatch && newMatch) {
+                        let oldNum = parseInt(oldMatch[1]);
+                        let newNum = parseInt(newMatch[1]);
+                        
+                        if (oldNum === 3 && newNum === 2) { 
+                            entriesFound = true;
+                            let klan = w[1];
+                            let actualName = currentClanState[klan] ? currentClanState[klan].nazwa : klan;
+                            let actualUrl = currentClanState[klan] ? currentClanState[klan].url : "";
+                            
+                            kicksHtml += `<tr><td>${w[0]}</td><td>${formatClanLink(actualName, actualUrl)}</td><td>Spadek graczy z 3 do 2</td><td class="strata-col"><strong>Utrata pieczęci!</strong></td></tr>`;
+                            
+                            let logDate = parseLogDate(w[0]);
+                            if (logDate.getTime() > 0) {
+                                let hour = logDate.getHours();
+                                let minute = logDate.getMinutes();
+                                let index = (hour * 12) + Math.floor(minute / 5);
+                                kicksPer5Min[index]++;
+                            }
+                        }
+                    }
+                }
+            });
+            kicksHtml += "</tbody></table>";
+            if (!entriesFound) kicksHtml = "<p style='color:#777; padding:10px;'>Brak odnotowanych spadków klanów z 3 do 2 członków.</p>";
+            document.getElementById('clansKicksContainer').innerHTML = kicksHtml;
+
+            if (window.sealsChartInstance) {
+                window.sealsChartInstance.destroy();
+            }
+            const ctxSeals = document.getElementById('sealsChart');
+            if (ctxSeals) {
+                let labels = [];
+                for (let h = 0; h < 24; h++) {
+                    for (let m = 0; m < 60; m += 5) {
+                        labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                    }
+                }
+                
+                window.sealsChartInstance = new Chart(ctxSeals.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Zniszczone pieczęcie',
+                            data: kicksPer5Min,
+                            backgroundColor: 'rgba(255, 68, 68, 0.8)',
+                            borderColor: 'rgba(255, 68, 68, 1)',
+                            borderWidth: 1,
+                            borderRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { 
+                                grid: { color: '#333' }, 
+                                ticks: { 
+                                    color: '#aaa',
+                                    maxTicksLimit: 24,
+                                    callback: function(value) {
+                                        let label = this.getLabelForValue(value);
+                                        return label.endsWith(':00') ? label : '';
+                                    }
+                                } 
+                            },
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { color: '#ffcc00', precision: 0, stepSize: 1 }, 
+                                grid: { color: '#333' } 
+                            }
+                        },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.9)',
+                                titleColor: '#ffcc00',
+                                bodyColor: '#fff',
+                                callbacks: {
+                                    title: function(context) { return `Godzina: ${context[0].label}`; },
+                                    label: function(context) { return `Zniszczone pieczęcie: ${context.raw}`; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ==========================================
+            // HISTORIA ZMIAN LOGÓW OGÓLNYCH
+            // ==========================================
             let logHtml = "<table><thead><tr><th>Data operacji</th><th>Nazwa Klanu</th><th>Zmieniona statystyka</th><th>Stara wartość</th><th>Nowa wartość</th><th>Przyrost (Różnica)</th></tr></thead><tbody>";
             globalClansLogi.forEach(w => {
                 let stat = String(w[2]);
@@ -874,7 +1366,7 @@
                     let newArr = newVal === "Brak" ? [] : newVal.split(", ");
                     
                     let gained = newArr.filter(x => !oldArr.includes(x)).join(", ");
-                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", "); // POPRAWKA: szukamy tego, czego już nie ma w nowej tablicy!
+                    let lost = oldArr.filter(x => !newArr.includes(x)).join(", "); 
                     
                     if (gained && lost) diffHtml = `<span style="color:#55ff55;">+ ${gained}</span> / <span style="color:#ff5555;">- ${lost}</span>`;
                     else if (gained) diffHtml = `<span style="color:#55ff55; font-weight:bold;">+ ${gained}</span>`;
