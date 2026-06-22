@@ -59,6 +59,9 @@
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
+        /* KLASA DLA NAPISU U NAS */
+        .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
+
         /* PRZYBORNIK - STYLE KOMPAKTOWE */
         .tools-layout { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
         .links-section { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; background: #1a0a0a; padding: 15px; border-radius: 6px; border: 1px solid #600000; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
@@ -303,7 +306,7 @@
         let globalRutynaData = [];
         let globalClansBaza = []; 
         let globalClansLogi = []; 
-        let globalEnemyBlocks = {}; 
+        let globalEnemyBlocks = {}; // Słownik trzymający czasy do radaru wrogów
         
         let computedRankingRows = []; 
         let currentSortCol = 3; 
@@ -314,7 +317,7 @@
         let sealsChartInstance = null;
 
         // ==========================================
-        // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI
+        // SILNIK TIMERÓW W TABELI - ODLICZANIE NA ŻYWO (CO 1 SEKUNDĘ)
         // ==========================================
         setInterval(() => {
             document.querySelectorAll('.live-block-timer').forEach(el => {
@@ -332,7 +335,7 @@
         }, 1000);
 
         // ==========================================
-        // MODUŁ OCHRONY PRZED ATAKIEM (WŁASNA)
+        // MODUŁ OCHRONY PRZED ATAKIEM (30 MIN) Z PAMIĘCIĄ SESJI
         // ==========================================
         let blockEndTime = 0;
         let blockInterval = null;
@@ -352,32 +355,29 @@
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain); gain.connect(ctx.destination);
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
-                    gain.gain.setValueAtTime(0, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.5);
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    gain.gain.setValueAtTime(1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
                 } else if (type === 'end') {
-                    const notes = [523.25, 659.25, 783.99, 1046.50];
-                    notes.forEach((freq, i) => {
+                    for(let i=0; i<3; i++) {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
                         osc.connect(gain); gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
-                        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
-                        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.15 + 0.05);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 1);
-                        osc.start(ctx.currentTime + i * 0.15);
-                        osc.stop(ctx.currentTime + i * 0.15 + 1);
-                    });
+                        osc.type = 'square'; osc.frequency.setValueAtTime(440, ctx.currentTime + i*0.3);
+                        gain.gain.setValueAtTime(1, ctx.currentTime + i*0.3);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.3 + 0.2);
+                        osc.start(ctx.currentTime + i*0.3); osc.stop(ctx.currentTime + i*0.3 + 0.2);
+                    }
                 }
             } catch (e) { console.error("Beep error: ", e); }
         }
 
         function parseAttackDate(str) {
             let m = str.match(/(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})/);
-            if(m) { return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime(); }
+            if(m) {
+                return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime();
+            }
             return null;
         }
 
@@ -388,7 +388,11 @@
 
         function startBlockCountdown(attackTimeStr) {
             let t = parseAttackDate(attackTimeStr);
-            if(!t) { alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM"); return; }
+            if(!t) {
+                alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM");
+                return;
+            }
+            
             if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
             document.title = "BiteFight - Centrum Dowodzenia";
 
@@ -398,7 +402,11 @@
             endBeepPlayed = false;
             
             let now = new Date().getTime();
-            if (blockEndTime <= now) { alert("Ochrona z tego ataku już dawno wygasła!"); clearBlockData(); return; }
+            if (blockEndTime <= now) {
+                alert("Ochrona z tego ataku już dawno wygasła!");
+                clearBlockData();
+                return;
+            }
 
             if(blockInterval) clearInterval(blockInterval);
             blockInterval = setInterval(updateBlockTimer, 1000);
@@ -444,10 +452,17 @@
                 titleTab.style.backgroundColor = "#ff5555";
                 titleTab.style.color = "#fff";
                 
-                if (!endBeepPlayed) { playBeep('end'); endBeepPlayed = true; }
+                if (!endBeepPlayed) {
+                    playBeep('end');
+                    endBeepPlayed = true;
+                }
+
                 if (!titleBlinkInterval) {
                     let blinkState = false;
-                    titleBlinkInterval = setInterval(() => { document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!"; blinkState = !blinkState; }, 1000);
+                    titleBlinkInterval = setInterval(() => {
+                        document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!";
+                        blinkState = !blinkState;
+                    }, 1000);
                 }
                 return;
             }
@@ -456,18 +471,34 @@
             let m = Math.floor(totalSeconds / 60);
             let s = totalSeconds % 60;
             let timeStr = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            
             display.innerHTML = `🛡️ Czas do końca ochrony: ${timeStr}`;
 
             if (totalSeconds <= 60) { 
-                display.style.color = "#ff3333"; box.style.borderColor = "#ff3333"; box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
-                document.title = `🔴 [${timeStr}] Ochrona zanika!`; titleTab.style.backgroundColor = "#ff3333"; titleTab.style.color = "#fff";
-                if (!warningBeepPlayed) { playBeep('warning'); warningBeepPlayed = true; }
+                display.style.color = "#ff3333";
+                box.style.borderColor = "#ff3333";
+                box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
+                document.title = `🔴 [${timeStr}] Ochrona zanika!`;
+                titleTab.style.backgroundColor = "#ff3333";
+                titleTab.style.color = "#fff";
+                if (!warningBeepPlayed) {
+                    playBeep('warning');
+                    warningBeepPlayed = true;
+                }
             } else if (totalSeconds <= 180) { 
-                display.style.color = "#ffcc00"; box.style.borderColor = "#ffcc00"; box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
-                document.title = `🟡 [${timeStr}] Ochrona wygasa!`; titleTab.style.backgroundColor = "#ffcc00"; titleTab.style.color = "#000";
+                display.style.color = "#ffcc00";
+                box.style.borderColor = "#ffcc00";
+                box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
+                document.title = `🟡 [${timeStr}] Ochrona wygasa!`;
+                titleTab.style.backgroundColor = "#ffcc00";
+                titleTab.style.color = "#000";
             } else { 
-                display.style.color = "#55ff55"; box.style.borderColor = "#00e5ff"; box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
-                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`; titleTab.style.backgroundColor = "#00e5ff"; titleTab.style.color = "#000";
+                display.style.color = "#55ff55";
+                box.style.borderColor = "#00e5ff";
+                box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
+                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`;
+                titleTab.style.backgroundColor = "#00e5ff";
+                titleTab.style.color = "#000";
             }
         }
 
@@ -496,32 +527,85 @@
         // ==========================================
         // SKRYPTY PRZYBORNIKA 
         // ==========================================
-        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-        function calcSkillCost() { let val = parseInt(document.getElementById('calc_skill').value); if (isNaN(val) || val < 5) val = 5; let cost = Math.floor(Math.pow(val - 4, 2.4)); document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`; }
-        function calcBattleValue() { let val = parseInt(document.getElementById('calc_wb').value); if (isNaN(val) || val < 1) val = 1; let min = Math.floor(val * 0.8); let max = Math.floor(val * 1.25); document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`; }
-        function calcTotalGold() { let str = parseInt(document.getElementById('c_str').value) || 5; let def = parseInt(document.getElementById('c_def').value) || 5; let dex = parseInt(document.getElementById('c_dex').value) || 5; let end = parseInt(document.getElementById('c_end').value) || 5; let chr = parseInt(document.getElementById('c_chr').value) || 5; let total = 0; for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4)); document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`; }
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function calcSkillCost() {
+            let val = parseInt(document.getElementById('calc_skill').value);
+            if (isNaN(val) || val < 5) val = 5;
+            let cost = Math.floor(Math.pow(val - 4, 2.4));
+            document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
+        }
+
+        function calcBattleValue() {
+            let val = parseInt(document.getElementById('calc_wb').value);
+            if (isNaN(val) || val < 1) val = 1;
+            let min = Math.floor(val * 0.8);
+            let max = Math.floor(val * 1.25);
+            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
+        }
+
+        function calcTotalGold() {
+            let str = parseInt(document.getElementById('c_str').value) || 5;
+            let def = parseInt(document.getElementById('c_def').value) || 5;
+            let dex = parseInt(document.getElementById('c_dex').value) || 5;
+            let end = parseInt(document.getElementById('c_end').value) || 5;
+            let chr = parseInt(document.getElementById('c_chr').value) || 5;
+
+            let total = 0;
+            for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
+
+            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
+        }
 
         // ==========================================
         // GŁÓWNY SILNIK STRONY
         // ==========================================
         function switchTab(tabId) {
-            ['tracker', 'ranking', 'heatmap', 'clans', 'tools'].forEach(t => {
-                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn').classList.remove('active');
-                document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
-            });
-            document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
-            document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+            document.getElementById('tabTrackerBtn').classList.remove('active');
+            document.getElementById('tabRankingBtn').classList.remove('active');
+            document.getElementById('tabHeatmapBtn').classList.remove('active');
+            document.getElementById('tabClansBtn').classList.remove('active');
+            document.getElementById('tabToolsBtn').classList.remove('active');
+            
+            document.getElementById('sectionTracker').classList.remove('active');
+            document.getElementById('sectionRanking').classList.remove('active');
+            document.getElementById('sectionHeatmap').classList.remove('active');
+            document.getElementById('sectionClans').classList.remove('active');
+            document.getElementById('sectionTools').classList.remove('active');
 
-            if (tabId === 'ranking') { if (globalRankingData.length === 0) loadRankingData(); else calculateAndRenderRanking(); } 
-            else if (tabId === 'heatmap') { renderChart(); } 
-            else if (tabId === 'clans') { renderClans(); }
+            if (tabId === 'tracker') {
+                document.getElementById('tabTrackerBtn').classList.add('active');
+                document.getElementById('sectionTracker').classList.add('active');
+            } else if (tabId === 'ranking') {
+                document.getElementById('tabRankingBtn').classList.add('active');
+                document.getElementById('sectionRanking').classList.add('active');
+                if (globalRankingData.length === 0) loadRankingData();
+                else calculateAndRenderRanking();
+            } else if (tabId === 'heatmap') {
+                document.getElementById('tabHeatmapBtn').classList.add('active');
+                document.getElementById('sectionHeatmap').classList.add('active');
+                renderChart();
+            } else if (tabId === 'clans') {
+                document.getElementById('tabClansBtn').classList.add('active');
+                document.getElementById('sectionClans').classList.add('active');
+                renderClans();
+            } else if (tabId === 'tools') {
+                document.getElementById('tabToolsBtn').classList.add('active');
+                document.getElementById('sectionTools').classList.add('active');
+            }
         }
 
         function handleFilterChange() { renderTable(); }
         document.addEventListener("DOMContentLoaded", function() {
-            ['filterDate', 'filterPlayer', 'filterStat'].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).addEventListener('change', handleFilterChange);
-            });
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
             if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
             if(document.getElementById('rankingPeriodSelect')) {
                 document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
@@ -538,32 +622,99 @@
             setInterval(loadTableData, 300000);
         });
 
+        function parseCSVLine(text) {
+            let ret = [], val = "", inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"') { if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; } else { inQuotes = false; } } else { val += ch; }
+                } else {
+                    if (ch === '"') { inQuotes = true; } else if (ch === ',') { ret.push(val); val = ""; } else { val += ch; }
+                }
+            }
+            ret.push(val); return ret;
+        }
+
+        function parseLogDate(dateStr) {
+            if(!dateStr) return new Date(0);
+            const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
+            const parts = cleanStr.trim().split(/\s+/);
+            if(parts.length < 2) { let d = new Date(cleanStr); return isNaN(d) ? new Date(0) : d; }
+            const dParts = parts[0].split(/[\.\-\/]/); 
+            const tParts = parts[1].split(':');
+            if (dParts.length === 3) {
+                let year = dParts[2].length === 4 ? dParts[2] : dParts[0];
+                let day = dParts[2].length === 4 ? dParts[0] : dParts[2];
+                let month = dParts[1];
+                return new Date(year, month - 1, day, tParts[0], tParts[1], tParts[2] || 0);
+            }
+            return new Date(0);
+        }
+
         async function loadTableData() {
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
-                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + new Date().toLocaleTimeString('pl-PL');
-                const wiersze = (await response.text()).trim().split('\n');
+                const nowInfo = new Date();
+                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+                const text = await response.text();
+                const wiersze = text.trim().split('\n');
                 
-                try {
-                    const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
-                    globalRutynaData = [];
-                    (await rRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom); } });
-                } catch(ex) {}
+                if (urlRutynaSheet.includes("docs.google.com")) {
+                    try {
+                        const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
+                        const rText = await rRes.text();
+                        const rWiersze = rText.trim().split('\n');
+                        globalRutynaData = [];
+                        for (let i = 1; i < rWiersze.length; i++) {
+                            let line = rWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom);
+                        }
+                    } catch(ex) {}
+                }
 
-                try {
-                    const cbRes = await fetch(urlClansBazaSheet + '&t=' + new Date().getTime());
-                    globalClansBaza = [];
-                    (await cbRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 3 && kom[0] && !CLAN_BLACKLIST.includes(kom[0])) globalClansBaza.push(kom); } });
-                } catch(ex) {}
+                if (urlClansBazaSheet.includes("docs.google.com")) {
+                    try {
+                        const cbRes = await fetch(urlClansBazaSheet + '&t=' + new Date().getTime());
+                        const cbText = await cbRes.text();
+                        const cbWiersze = cbText.trim().split('\n');
+                        globalClansBaza = [];
+                        for (let i = 1; i < cbWiersze.length; i++) {
+                            let line = cbWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                                globalClansBaza.push(kom);
+                            }
+                        }
+                    } catch(ex) {}
+                }
 
-                try {
-                    const clRes = await fetch(urlClansLogiSheet + '&t=' + new Date().getTime());
-                    globalClansLogi = [];
-                    (await clRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 5 && kom[0] && kom[1] && !CLAN_BLACKLIST.includes(kom[1])) globalClansLogi.push(kom); } });
-                    globalClansLogi.reverse(); 
-                } catch(ex) {}
+                if (urlClansLogiSheet.includes("docs.google.com")) {
+                    try {
+                        const clRes = await fetch(urlClansLogiSheet + '&t=' + new Date().getTime());
+                        const clText = await clRes.text();
+                        const clWiersze = clText.trim().split('\n');
+                        globalClansLogi = [];
+                        for (let i = 1; i < clWiersze.length; i++) {
+                            let line = clWiersze[i].trim();
+                            if (!line) continue; 
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
+                                if (!CLAN_BLACKLIST.includes(kom[1])) {
+                                    globalClansLogi.push(kom);
+                                }
+                            }
+                        }
+                        globalClansLogi.reverse(); 
+                    } catch(ex) {}
+                }
 
-                if (wiersze.length <= 1) { if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; 
+                    return; 
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -571,51 +722,101 @@
                     if (!line) continue;
                     let komorki = parseCSVLine(line);
                     if (komorki.length < 6) continue;
-                    komorki[0] = komorki[0].trim().replace(',', '');
+                    let rawDate = komorki[0].trim().replace(',', '');
+                    komorki[0] = rawDate;
                     rawData.push(komorki.map(k => k.trim()));
                 }
 
-                let playerAccumulator = {}, playerLevel = {};
-                globalData = []; globalEnemyBlocks = {}; 
-
+                let playerAccumulator = {}; 
+                let playerLevel = {};
+                globalData = [];
+                globalEnemyBlocks = {}; // reset przed wczytaniem
+                
                 rawData.forEach(row => {
-                    let gracz = row[1], stat = row[2], przyrost = parseInt(row[5]) || 0;
+                    let gracz = row[1];
                     if (BLACKLIST.includes(gracz)) return;
+                    let stat = row[2];
+                    let przyrost = parseInt(row[5]) || 0;
                     
                     if (stat === "Stracone złoto" && przyrost > 0) {
-                        let blockEnd = parseLogDate(row[0]).getTime() + (30 * 60 * 1000);
-                        if (!globalEnemyBlocks[gracz] || blockEnd > globalEnemyBlocks[gracz]) globalEnemyBlocks[gracz] = blockEnd;
+                        let logDate = parseLogDate(row[0]);
+                        let blockEnd = logDate.getTime() + (30 * 60 * 1000);
+                        if (!globalEnemyBlocks[gracz] || blockEnd > globalEnemyBlocks[gracz]) {
+                            globalEnemyBlocks[gracz] = blockEnd;
+                        }
                     }
 
                     if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
-                    if (["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(stat)) playerAccumulator[gracz] = 0; 
-                    else if (["Zrabowane dobra", "Zrabowane złoto"].includes(stat)) playerAccumulator[gracz] += przyrost; 
+                    const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                    if (atrybuty.includes(stat)) { playerAccumulator[gracz] = 0; } 
+                    else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") { playerAccumulator[gracz] += przyrost; } 
                     else if (stat === "Stracone złoto") { playerAccumulator[gracz] -= przyrost; if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0; }
-                    let lvl = playerLevel[gracz] || 0, exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
+                    let lvl = playerLevel[gracz] || 0;
+                    let exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
                     globalData.push([...row, playerAccumulator[gracz], exposed]);
                 });
 
                 globalData.reverse(); 
-                renderSummaryTable(); updateFilters(); renderTable(); 
+                renderSummaryTable();
+                updateFilters(); 
+                renderTable(); 
             } catch (e) { console.error("Błąd ładowania silnika głównego: ", e); }
+        }
+
+        function getRangeForPeriod(period) {
+            const now = new Date();
+            let start = new Date(), end = new Date();
+            if (period === 'TODAY') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'YESTERDAY') { start.setDate(start.getDate() - 1); start.setHours(0,0,0,0); end.setDate(end.getDate() - 1); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'DAY_BEFORE_YESTERDAY') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setDate(end.getDate() - 2); end.setHours(23,59,59,999); return { start, end, label: start.toLocaleDateString('pl-PL') }; }
+            if (period === 'LAST_3_DAYS' || period === 'ALL') { start.setDate(start.getDate() - 2); start.setHours(0,0,0,0); end.setHours(23,59,59,999); return { start, end, label: "Ostatnie 3 dni" }; }
+            return null;
+        }
+
+        function sortSummary(colIndex) {
+            if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
+            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 9) ? true : false; }
+            renderSummaryTable();
         }
 
         function renderChart() {
             if (!document.getElementById('heatmapPlayerSelect')) return;
-            const player = document.getElementById('heatmapPlayerSelect').value, dayFilter = document.getElementById('heatmapDaySelect').value;
-            if (player === 'ALL') { if(routineChartInstance) routineChartInstance.destroy(); return; }
+            const player = document.getElementById('heatmapPlayerSelect').value;
+            const dayFilter = document.getElementById('heatmapDaySelect').value;
 
-            let labels = [], chartData = new Array(720).fill(0);
-            for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 2) labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+            if (player === 'ALL') {
+                if(routineChartInstance) routineChartInstance.destroy();
+                return;
+            }
+
+            let labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 2) {
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                }
+            }
+
+            let chartData = new Array(720).fill(0);
 
             globalRutynaData.forEach(r => {
                 if (r[0] === player) {
                     let parts = r[1].split('_');
                     if (parts.length === 3) {
-                        let day = parts[0], match = false;
-                        if (dayFilter === 'ALL' || dayFilter === day || (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) || (dayFilter === 'WEEKEND' && ['6','7'].includes(day))) match = true;
-                        if (match) chartData[(parseInt(parts[1]) * 30) + (parseInt(parts[2]) / 2)] += parseInt(r[2]);
+                        let day = parts[0];
+                        let hour = parseInt(parts[1]);
+                        let minute = parseInt(parts[2]);
+                        let index = (hour * 30) + (minute / 2);
+                        
+                        let match = false;
+                        if (dayFilter === 'ALL') match = true;
+                        else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
+                        else if (dayFilter === 'WEEKEND' && ['6','7'].includes(day)) match = true;
+                        else if (dayFilter === day) match = true;
+
+                        if (match) {
+                            chartData[index] += parseInt(r[2]);
+                        }
                     }
                 }
             });
@@ -623,22 +824,99 @@
             if (routineChartInstance) routineChartInstance.destroy();
             const ctxElem = document.getElementById('routineChart');
             if(!ctxElem) return;
-            routineChartInstance = new Chart(ctxElem.getContext('2d'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Aktywność', data: chartData, backgroundColor: 'rgba(255, 51, 51, 0.7)', borderColor: 'rgba(192, 12, 12, 1)', borderWidth: 1, borderRadius: 3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            const ctx = ctxElem.getContext('2d');
+            routineChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aktywność (kliknięcia)',
+                        data: chartData,
+                        backgroundColor: 'rgba(255, 51, 51, 0.7)',
+                        borderColor: 'rgba(192, 12, 12, 1)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        hoverBackgroundColor: 'rgba(255, 204, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#aaa',
+                                maxTicksLimit: 24, 
+                                callback: function(value) {
+                                    let label = this.getLabelForValue(value);
+                                    return label.endsWith(':00') ? label : '';
+                                }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ffcc00', precision: 0 },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#ffcc00',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) { return `Czas: ${context[0].label}`; },
+                                label: function(context) { return `Potwierdzone akcje: ${context.raw}`; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatLastSeen(dateObj) {
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
+            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
+            let diffMins = Math.floor(diffMs / 60000);
+            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
+            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
+            else {
+                let diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
+                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
+            }
         }
 
         function renderSummaryTable() {
             if(!document.getElementById('summaryPeriodSelect')) return;
-            const range = getRangeForPeriod(document.getElementById('summaryPeriodSelect').value); if (!range) return;
+            const period = document.getElementById('summaryPeriodSelect').value;
+            const range = getRangeForPeriod(period); if (!range) return;
             
-            let summary = {}, absoluteLastSeen = {}, fightLogs = {}, currentExposed = {};
+            let summary = {}; 
+            let absoluteLastSeen = {}; 
+            let fightLogs = {};
+            let currentExposed = {};
 
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
-                let gracz = w[1], stat = w[2], logDate = parseLogDate(w[0]), przyrost = parseInt(w[5]) || 0;
+                let gracz = w[1]; 
+                let stat = w[2]; 
+                let logDate = parseLogDate(w[0]);
+                let przyrost = parseInt(w[5]) || 0;
                 
-                if (currentExposed[gracz] === undefined) currentExposed[gracz] = w[7] ? parseInt(w[7]) : 0;
-                if (["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(stat)) {
-                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = logDate; 
+                if (currentExposed[gracz] === undefined) {
+                    currentExposed[gracz] = (w[7] !== undefined && w[7] !== "") ? parseInt(w[7]) : 0;
+                }
+
+                const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                
+                if (aktywneStatystyki.includes(stat)) {
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { 
+                        absoluteLastSeen[gracz] = logDate; 
+                    }
                 } else if (stat === "Walki") {
                     if (!fightLogs[gracz]) fightLogs[gracz] = [];
                     fightLogs[gracz].push({ time: logDate.getTime(), count: przyrost });
@@ -649,15 +927,29 @@
                 let logs = fightLogs[gracz].sort((a, b) => b.time - a.time); 
                 for (let i = 0; i < logs.length; i++) {
                     let currentLog = logs[i];
+                    
                     if (currentLog.count >= 2) {
-                        if (!absoluteLastSeen[gracz] || new Date(currentLog.time) > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = new Date(currentLog.time); 
-                    } else if (currentLog.count === 1) {
+                        let inferredDate = new Date(currentLog.time);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                            absoluteLastSeen[gracz] = inferredDate; 
+                        }
+                    } 
+                    else if (currentLog.count === 1) {
                         let acc = 1;
                         for (let j = i + 1; j < logs.length; j++) {
-                            if ((currentLog.time - logs[j].time) <= 30 * 60 * 1000) {
-                                acc += logs[j].count;
-                                if (acc >= 2) { if (!absoluteLastSeen[gracz] || new Date(currentLog.time) > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = new Date(currentLog.time); break; }
-                            } else break; 
+                            let olderLog = logs[j];
+                            if ((currentLog.time - olderLog.time) <= 30 * 60 * 1000) {
+                                acc += olderLog.count;
+                                if (acc >= 2) {
+                                    let inferredDate = new Date(currentLog.time);
+                                    if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                                        absoluteLastSeen[gracz] = inferredDate; 
+                                    }
+                                    break; 
+                                }
+                            } else {
+                                break; 
+                            }
                         }
                     }
                 }
@@ -678,35 +970,162 @@
                 }
             });
 
-            let summaryArray = Object.keys(summary).map(g => ({ gracz: g, dobra: summary[g].dobra, zlotoPvP: summary[g].zlotoPvP, walki: summary[g].walki, wygrane: summary[g].wygrane, przegrane: summary[g].przegrane, poziomy: summary[g].poziomy, wystajace: summary[g].wystajace, blockEndTime: globalEnemyBlocks[g] || 0, lastSeen: absoluteLastSeen[g] || new Date(0) }));
+            let summaryArray = [];
+            for (let gracz in summary) {
+                let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
+                summaryArray.push({ 
+                    gracz: gracz, 
+                    dobra: summary[gracz].dobra, 
+                    zlotoPvP: summary[gracz].zlotoPvP, 
+                    walki: summary[gracz].walki, 
+                    wygrane: summary[gracz].wygrane, 
+                    przegrane: summary[gracz].przegrane, 
+                    poziomy: summary[gracz].poziomy, 
+                    wystajace: summary[gracz].wystajace, 
+                    blockEndTime: globalEnemyBlocks[gracz] || 0,
+                    lastSeen: lSeen 
+                });
+            }
 
             summaryArray.sort((a, b) => {
-                let vA, vB;
-                if (currentSummarySortCol === 0) { vA = a.gracz; vB = b.gracz; } else if (currentSummarySortCol === 1) { vA = a.dobra; vB = b.dobra; } else if (currentSummarySortCol === 2) { vA = a.zlotoPvP; vB = b.zlotoPvP; } else if (currentSummarySortCol === 3) { vA = a.walki; vB = b.walki; } else if (currentSummarySortCol === 4) { vA = a.wygrane; vB = b.wygrane; } else if (currentSummarySortCol === 5) { vA = a.przegrane; vB = b.przegrane; } else if (currentSummarySortCol === 6) { vA = a.poziomy; vB = b.poziomy; } else if (currentSummarySortCol === 7) { vA = a.wystajace; vB = b.wystajace; } else if (currentSummarySortCol === 8) { vA = a.blockEndTime; vB = b.blockEndTime; } else if (currentSummarySortCol === 9) { vA = a.lastSeen.getTime(); vB = b.lastSeen.getTime(); }
-                return (currentSummarySortCol === 0) ? (currentSummarySortAsc ? vA.localeCompare(vB) : vB.localeCompare(vA)) : (currentSummarySortAsc ? vB - vA : vA - vB);
+                let valA, valB;
+                if (currentSummarySortCol === 0) { valA = a.gracz; valB = b.gracz; }
+                else if (currentSummarySortCol === 1) { valA = a.dobra; valB = b.dobra; }
+                else if (currentSummarySortCol === 2) { valA = a.zlotoPvP; valB = b.zlotoPvP; }
+                else if (currentSummarySortCol === 3) { valA = a.walki; valB = b.walki; }
+                else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
+                else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
+                else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
+                else if (currentSummarySortCol === 7) { valA = a.wystajace; valB = b.wystajace; }
+                else if (currentSummarySortCol === 8) { valA = a.blockEndTime; valB = b.blockEndTime; }
+                else if (currentSummarySortCol === 9) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                
+                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
+                else { return currentSummarySortAsc ? valB - valA : valA - valB; }
             });
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
-            ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"].forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
+            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"];
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
-                let dobraStr = data.dobra > 0 ? formatNumber(data.dobra) : "0", zlotoPvPStr = formatNumber(data.zlotoPvP), poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
-                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : ""), wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0", przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
+
+                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
+                let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
+                let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
                 let wystajaceStr = data.wystajace > 0 ? `<span class="wystajace-col">${formatNumber(data.wystajace)}</span>` : "0";
                 
                 let blockHtml = '<span style="color:#55ff55;">Brak</span>';
-                if (data.blockEndTime > new Date().getTime()) blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
-
+                if (data.blockEndTime > new Date().getTime()) {
+                    blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
+                }
+                
                 html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${blockHtml}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
         }
 
+        function updateFilters() {
+            const gracze = new Set(), statystyki = new Set();
+            globalData.forEach(w => { if(w[0]) { if(w[1]) gracze.add(w[1]); if(w[2]) statystyki.add(w[2]); } });
+            
+            const populateGeneric = (id, set, txt, storageKey) => {
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                s.innerHTML = `<option value="ALL">${txt}</option>`;
+                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
+            };
+
+            const populateStatSelect = (id, set, txt, storageKey) => {
+                const s = document.getElementById(id); 
+                if(!s) return;
+                let targetVal = localStorage.getItem(storageKey) || s.value;
+                s.innerHTML = `<option value="ALL">${txt}</option>
+                               <option value="SKILLS">-- Tylko Skille (Atrybuty) --</option>`;
+                Array.from(set).sort().forEach(o => { let el = document.createElement('option'); el.value = o; el.textContent = o; if(o === targetVal) el.selected = true; s.appendChild(el); });
+                if (s.value !== targetVal) localStorage.setItem(storageKey, 'ALL');
+            }
+            
+            populateGeneric('filterPlayer', gracze, 'Wszyscy gracze', 'bf_filterPlayer');
+            populateGeneric('heatmapPlayerSelect', gracze, 'Wybierz gracza...', 'bf_heatmapPlayer');
+            populateStatSelect('filterStat', statystyki, 'Wszystkie statystyki', 'bf_filterStat');
+        }
+
+        function renderTable() {
+            if(!document.getElementById('filterDate')) return;
+            const fD = document.getElementById('filterDate').value; const fP = document.getElementById('filterPlayer').value; const fS = document.getElementById('filterStat').value;
+            let range = getRangeForPeriod(fD);
+            let filtered = globalData.filter(w => {
+                let logDate = parseLogDate(w[0]); let dMatch = (range && logDate >= range.start && logDate <= range.end);
+                let pMatch = (fP === 'ALL' || w[1] === fP);
+                let sMatch = (fS === 'ALL' || (fS === 'SKILLS' && ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(w[2])) || w[2] === fS);
+                return dMatch && pMatch && sMatch;
+            });
+
+            if(filtered.length === 0) { document.getElementById('tableContainer').innerHTML = "<p>Brak logów pasujących do obecnych filtrów daty i gracza.</p>"; return; }
+
+            let html = "<table><thead><tr><th>Data i godzina</th><th>Gracz</th><th>Statystyka</th><th>Stara wartosc</th><th>Nowa wartosc</th><th>Przyrost</th><th>Wynik PvP (Złoto)</th><th>Sakiewka od skilla</th><th>Wystające złoto</th></tr></thead><tbody>";
+            filtered.forEach(w => {
+                html += "<tr>";
+                let stat = w[2], isPoziom = (stat === 'Poziom'), isLoot = (stat === 'Zrabowane dobra' || stat === 'Zrabowane złoto' || stat === 'Stracone złoto');
+                
+                for(let j = 0; j <= 5; j++) {
+                    let klasa = (j === 5 && (isLoot || stat === 'Walki' || stat === 'Zwycięstwa' || stat === 'Porażki')) ? ' class="przyrost-col"' : (j === 5 && (stat === 'Stracone złoto' || stat === 'Porażki') ? ' class="strata-col"' : (j === 5 && isPoziom ? ' class="level-col"' : ''));
+                    let val = w[j]; 
+                    
+                    if (j === 1) {
+                        val = PLAYERS[val] ? `<a href="${PLAYERS[val]}" class="player-link" target="_blank"><strong>${val}</strong></a>` : `<strong>${val}</strong>`;
+                    } else if (j === 5 && isLoot && val !== "") {
+                        let parsedVal = parseInt(val) || 0;
+                        val = parsedVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                    html += `<td${klasa}>${val}</td>`;
+                }
+                
+                let pvpResult = (stat === 'Zrabowane złoto') ? `<span class="przyrost-col">+${w[5]}</span>` : (stat === 'Stracone złoto' ? `<span class="strata-col">-${w[5]}</span>` : '0');
+                
+                let sakiewkaVal = (isLoot && w[6] !== undefined && w[6] !== "") ? parseInt(w[6]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let sakiewkaHTML = sakiewkaVal ? `<span class="suma-col">${sakiewkaVal}</span>` : "";
+
+                let wystajaceVal = (isLoot && w[7] !== undefined && w[7] !== "") ? parseInt(w[7]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+                let wystajaceHTML = wystajaceVal ? `<span class="wystajace-col">${wystajaceVal}</span>` : "";
+
+                html += `<td><strong>${pvpResult}</strong></td><td>${sakiewkaHTML}</td><td>${wystajaceHTML}</td></tr>`;
+            });
+            document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
+        }
+
+        async function loadRankingData() {
+            try {
+                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
+                globalRankingData = [];
+                for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
+                calculateAndRenderRanking();
+            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
+        }
+
+        function getUniqueRankingDates() {
+            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
+        }
+
+        function populateRankingSpecificDays() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect'); const currentVal = specSelect.value; specSelect.innerHTML = "";
+            let validDays = getUniqueRankingDates().slice(1).reverse(); 
+            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
+            validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
+        }
+
         function calculateAndRenderRanking() {
             if (globalRankingData.length === 0) return;
             const period = document.getElementById('rankingPeriodSelect').value, specDay = document.getElementById('rankingSpecificDaySelect').value;
-            let uniqueDates = Array.from(new Set(globalRankingData.map(r => r[0])));
+            let uniqueDates = getUniqueRankingDates();
             if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
             
             let endDateStr = uniqueDates[uniqueDates.length - 1], startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
