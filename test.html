@@ -50,6 +50,8 @@
         a.player-link:hover { color: #ffffff !important; text-decoration: underline !important; }
         .clan-text-plain { color: #ccc; }
         
+        .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
+
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
         .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
@@ -60,14 +62,13 @@
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
-        .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
-
         /* PRZYBORNIK - STYLE KOMPAKTOWE */
         .tools-layout { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
         .links-section { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; background: #1a0a0a; padding: 15px; border-radius: 6px; border: 1px solid #600000; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
         .links-section a { color: #ffcc00; text-decoration: none; background: #2b1717; padding: 8px 12px; border-radius: 4px; border: 1px solid #4a0d0d; transition: 0.2s; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .links-section a:hover { background: #ff3333; color: white; border-color: #ffaaaa; transform: translateX(5px); }
+        
         .tools-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; flex: 1; max-width: 800px; }
         .tool-box { background: #1a0a0a; border: 1px solid #600000; border-radius: 6px; padding: 12px; width: 240px; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); text-align: left; }
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
@@ -107,7 +108,7 @@
         <div class="top-dashboard-panel">
             <div class="top-dashboard-box">
                 <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
-                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów (Co 5 min).</div>
+                <div id="status" style="margin-bottom: 10px;">Skrypt pobiera z arkusza maksymalnie 7 dni logów. Odświeżanie co 5 minut.</div>
                 <button class="action-btn" style="margin-bottom: 0;" onclick="window.location.href = urlGoogleSheet">Pobierz pełny raport (.csv)</button>
             </div>
             
@@ -310,18 +311,18 @@
         let globalRutynaData = [];
         let globalClansBaza = []; 
         let globalClansLogi = []; 
-        let globalEnemyBlocks = {}; 
+        let globalEnemyBlocks = {}; // Słownik trzymający czasy do radaru wrogów
         
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 9; 
+        let currentSummarySortCol = 9; // Aktualizacja indeksu: Ostatnia aktywność na końcu
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
 
         // ==========================================
-        // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI
+        // SILNIK TIMERÓW W TABELI - ODLICZANIE NA ŻYWO (CO 1 SEKUNDĘ)
         // ==========================================
         setInterval(() => {
             document.querySelectorAll('.live-block-timer').forEach(el => {
