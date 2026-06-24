@@ -1,62 +1,62 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "194.800.223 / 194.819.060",
+        "Doswiadczenie": "194.970.066 / 195.006.370",
         "Sila": "4000",
         "Obrona": "3670",
         "Zwinnosc": "3493",
-        "Wytrzymalosc": "3287",
+        "Wytrzymalosc": "3288",
         "Charyzma": "1506",
-        "Walki": "96.484",
-        "Zrabowane dobra": "286.123.381.344 krwi"
+        "Walki": "96.485",
+        "Zrabowane dobra": "286.289.929.479 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "123.534.492 / 123.559.175",
+        "Doswiadczenie": "123.606.100 / 123.608.890",
         "Sila": "2518",
         "Obrona": "2506",
         "Zwinnosc": "2285",
         "Wytrzymalosc": "2005",
         "Charyzma": "1567",
         "Walki": "57.175",
-        "Zrabowane dobra": "189.086.114.083 krwi"
+        "Zrabowane dobra": "189.132.427.918 krwi"
     },
     "lux": {
-        "Doswiadczenie": "113.401.011 / 113.435.605",
+        "Doswiadczenie": "113.473.304 / 113.483.240",
         "Sila": "2382",
         "Obrona": "2871",
-        "Zwinnosc": "2128",
+        "Zwinnosc": "2129",
         "Wytrzymalosc": "2538",
         "Charyzma": "1907",
         "Walki": "105.790",
-        "Zrabowane dobra": "179.111.906.250 krwi"
+        "Zrabowane dobra": "179.158.068.692 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "407.012.749 / 407.081.665",
+        "Doswiadczenie": "407.318.934 / 407.352.405",
         "Sila": "4311",
-        "Obrona": "3260",
+        "Obrona": "3261",
         "Zwinnosc": "3923",
         "Wytrzymalosc": "3733",
         "Charyzma": "2836",
         "Walki": "115.624",
-        "Zrabowane dobra": "817.735.321.828 mięsa"
+        "Zrabowane dobra": "818.009.550.705 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "145.797.611 / 145.805.400",
+        "Doswiadczenie": "145.850.758 / 145.859.405",
         "Sila": "3008",
         "Obrona": "2994",
         "Zwinnosc": "2625",
-        "Wytrzymalosc": "2420",
+        "Wytrzymalosc": "2421",
         "Charyzma": "1579",
-        "Walki": "50.009",
-        "Zrabowane dobra": "251.235.193.181 krwi"
+        "Walki": "50.016",
+        "Zrabowane dobra": "251.272.272.437 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "146.038.970 / 146.075.530",
+        "Doswiadczenie": "146.039.258 / 146.075.530",
         "Sila": "4793",
         "Obrona": "3288",
         "Zwinnosc": "3003",
         "Wytrzymalosc": "3046",
         "Charyzma": "1775",
-        "Walki": "30.702",
-        "Zrabowane dobra": "299.159.608.498 mięsa"
+        "Walki": "30.703",
+        "Zrabowane dobra": "299.160.816.046 mięsa"
     }
 }
