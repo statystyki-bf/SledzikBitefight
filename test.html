@@ -18,9 +18,11 @@
         .tab-btn.active { background: #c00c0c; color: white; border-color: #ff3333; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
         button.action-btn { background: #1f7244; color: white; border: 2px solid #103c23; padding: 6px 15px; font-size: 14px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
         button.action-btn:hover { background: #165231; transform: scale(1.05); }
+        button.cancel-btn { background: #7a1f1f; color: white; border: 1px solid #ff4d4d; padding: 4px 10px; font-size: 11px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; }
+        button.cancel-btn:hover { background: #ff3333; }
         #status { color: #888; font-size: 12px; margin-bottom: 15px;}
         .filter-container { margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
-        select, input[type="date"], input[type="number"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
+        select, input[type="date"], input[type="datetime-local"], input[type="text"], input[type="number"] { background-color: #2b1717; color: white; border: 1px solid #600000; padding: 5px 10px; font-size: 13px; border-radius: 4px; outline: none; cursor: pointer; transition: 0.2s; color-scheme: dark; }
         
         table { margin: 0 auto; border-collapse: collapse; width: 98%; max-width: 1600px; background-color: #2b1717; box-shadow: 0 0 10px rgba(0,0,0,0.8); font-size: 12px; }
         th, td { border: 1px solid #600000; padding: 5px 6px; text-align: center; }
@@ -37,8 +39,8 @@
         .separator { border: 1px solid #600000; width: 95%; max-width: 1600px; margin: 20px auto; }
         .summary-box { background: #231212; padding: 10px; border-radius: 8px; border: 1px solid #4a0d0d; margin: 0 auto 15px auto; width: 98%; max-width: 1600px; }
         
-        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans, #sectionTools { display: none; }
-        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active, #sectionTools.active { display: block; }
+        #sectionTracker, #sectionRanking, #sectionHeatmap, #sectionClans, #sectionTools, #sectionWar { display: none; }
+        #sectionTracker.active, #sectionRanking.active, #sectionHeatmap.active, #sectionClans.active, #sectionTools.active, #sectionWar.active { display: block; }
         .rasa-wampir { color: #ff4444; font-weight: bold; text-transform: uppercase; }
         .rasa-wilkolak { color: #aaaaaa; font-weight: bold; text-transform: uppercase; }
         .rank-num { font-size: 13px; color: #ffcc00; font-weight: bold; }
@@ -59,10 +61,9 @@
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
 
-        /* KLASA DLA NAPISU U NAS */
         .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
 
-        /* PRZYBORNIK - STYLE KOMPAKTOWE */
+        /* PRZYBORNIK */
         .tools-layout { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
         .links-section { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; background: #1a0a0a; padding: 15px; border-radius: 6px; border: 1px solid #600000; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
         .links-section h3 { color: #ffcc00; font-size: 14px; margin: 0 0 10px 0; border-bottom: 1px solid #4a0d0d; padding-bottom: 5px; text-transform: uppercase; text-align: center; }
@@ -73,7 +74,6 @@
         .tool-title { font-size: 13px; color: #ffaa00; margin-bottom: 8px; border-bottom: 1px solid #330000; padding-bottom: 4px; font-weight: bold; text-transform: uppercase; text-align: center;}
         .tool-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .tool-input-row label { color: #ccc; font-size: 11px; font-weight: bold;}
-        .tool-input-row input { width: 65px; padding: 2px; text-align: right; font-size: 12px; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px; outline: none; }
         .tool-result { margin-top: 8px; padding: 6px; background: #000; border: 1px solid #333; color: #55ff55; font-weight: bold; text-align: center; border-radius: 4px; min-height: 16px; font-size: 12px;}
         .tool-btn { width: 100%; margin-top: 4px; background: #4a0d0d; border: 1px solid #ff3333; padding: 5px; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s; font-size: 11px;}
         .tool-btn:hover { background: #ff3333; color: black; }
@@ -90,6 +90,17 @@
         .top-dashboard-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 1600px; margin-left: auto; margin-right: auto; }
         .top-dashboard-box { flex: 1; min-width: 300px; max-width: 600px; background: #231212; border-radius: 8px; border: 1px solid #4a0d0d; padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
+        
+        /* STYLE DLA OPERACJI WOJENNYCH */
+        .war-container { display: flex; gap: 20px; justify-content: center; align-items: flex-start; margin-top: 15px; flex-wrap: wrap; }
+        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 15px; border-radius: 6px; width: 320px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .war-col h3 { color: #ffcc00; font-size: 15px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #600000; padding-bottom: 5px; }
+        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; transition: 0.2s; border-radius: 4px; font-size: 13px; font-weight: bold; color: #ccc; }
+        .war-tile:hover { background: #4a2727; color: white; transform: translateX(3px); }
+        .war-tile.active-our { background: #1f7244 !important; border-color: #55ff55 !important; color: white !important; box-shadow: 0 0 8px rgba(85,255,85,0.5); }
+        .war-tile.active-enemy { background: #c00c0c !important; border-color: #ff3333 !important; color: white !important; box-shadow: 0 0 8px rgba(255,51,51,0.5); }
+        .war-actions { margin: 20px auto; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; }
     </style>
 </head>
 <body>
@@ -99,11 +110,11 @@
         <button id="tabHeatmapBtn" class="tab-btn" onclick="switchTab('heatmap')">Analiza Rutyny (2-min)</button>
         <button id="tabRankingBtn" class="tab-btn" onclick="switchTab('ranking')">Ranking Serwera TOP 100</button>
         <button id="tabClansBtn" class="tab-btn" onclick="switchTab('clans')">Pieczątki i Klany</button>
+        <button id="tabWarBtn" class="tab-btn" onclick="switchTab('war')">Operacje Wojenne</button>
         <button id="tabToolsBtn" class="tab-btn" onclick="switchTab('tools')">Przybornik</button>
     </div>
 
     <div id="sectionTracker" class="active">
-        
         <div class="top-dashboard-panel">
             <div class="top-dashboard-box">
                 <div id="lastRefresh" style="color: #00e5ff; font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
@@ -163,26 +174,16 @@
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
         <div class="filter-container">
-            <select id="heatmapPlayerSelect" onchange="renderChart()">
-                <option value="ALL">Wybierz gracza...</option>
-            </select>
+            <select id="heatmapPlayerSelect" onchange="renderChart()"><option value="ALL">Wybierz gracza...</option></select>
             <select id="heatmapDaySelect" onchange="renderChart()">
                 <option value="ALL" selected>Cały Tydzień (Suma Aktywności)</option>
                 <option value="WORKDAYS">Dni robocze (Poniedziałek - Piątek)</option>
                 <option value="WEEKEND">Weekend (Sobota - Niedziela)</option>
-                <option value="1">Poniedziałki</option>
-                <option value="2">Wtorki</option>
-                <option value="3">Środy</option>
-                <option value="4">Czwartki</option>
-                <option value="5">Piątki</option>
-                <option value="6">Soboty</option>
-                <option value="7">Niedziele</option>
+                <option value="1">Poniedziałki</option><option value="2">Wtorki</option><option value="3">Środy</option>
+                <option value="4">Czwartki</option><option value="5">Piątki</option><option value="6">Soboty</option><option value="7">Niedziele</option>
             </select>
         </div>
-        
-        <div class="chart-container">
-            <canvas id="routineChart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="routineChart"></canvas></div>
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
@@ -191,10 +192,10 @@
         <div class="filter-container">
             <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Wybierz zakres przyrostów:</span>
             <select id="rankingPeriodSelect">
-                <option value="LAST_24H" id="opt_24h">Ostatnie 24h</option>
-                <option value="LAST_3_DAYS" id="opt_3d">Ostatnie 3 dni</option>
-                <option value="LAST_WEEK" id="opt_1w">Ostatni tydzień</option>
-                <option value="THIS_MONTH" id="opt_1m">Bieżący miesiąc</option>
+                <option value="LAST_24H">Ostatnie 24h (Ostatni dzień)</option>
+                <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
+                <option value="LAST_WEEK">Ostatni tydzień (7 dni)</option>
+                <option value="THIS_MONTH">Bieżący miesiąc (od 1-go dnia miesiąca)</option>
                 <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień (24h)...</option>
             </select>
             <select id="rankingSpecificDaySelect" style="display: none;"></select>
@@ -205,29 +206,62 @@
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
-        
         <hr class="separator">
         <h2>Zniszczone Pieczęcie (Spadek z 3 na 2 graczy)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Monitorowanie zjawiska utraty pieczęci przez klany. Wykres prezentuje przedziały 5-minutowe.</div>
         <div id="clansKicksContainer"><p>Trwa analizowanie rotacji graczy...</p></div>
-        <div class="chart-container" style="height: 300px; margin-top: 20px; max-width: 1200px;">
-            <canvas id="sealsChart"></canvas>
-        </div>
-
+        <div class="chart-container" style="height: 300px; margin-top: 20px; max-width: 1200px;"><canvas id="sealsChart"></canvas></div>
         <hr class="separator">
         <h2>Historia Przekazywania Pieczęci i Zmian u wrogów</h2>
         <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
-        
         <hr class="separator">
         <h2>Aktualny stan Klanów Wroga</h2>
-        <div class="summary-box">
-            <div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div>
+        <div class="summary-box"><div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div></div>
+    </div>
+
+    <div id="sectionWar">
+        <h2>Zaplanuj Operację Wojenną</h2>
+        <div style="margin-bottom: 20px;">
+            <input type="text" id="warWebhookInput" placeholder="Wklej link Webhooka Discord do powiadomień..." style="width: 400px;" onchange="saveWarWebhook()">
+            <button class="action-btn" onclick="saveWarWebhook()">Zapisz Webhook</button>
+        </div>
+        
+        <div class="war-container">
+            <div class="war-col">
+                <h3>🟢 Nasze Klany</h3>
+                <div id="warOurClansList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+            </div>
+            
+            <div class="war-col">
+                <h3>🔴 Klany Wroga</h3>
+                <div id="warEnemyClansList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                    <p style="color:#888; font-size: 12px;">Ładowanie listy wrogów...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="war-actions">
+            <label style="color: #ffcc00; font-weight: bold; margin-right: 10px;">Godzina Ataku:</label>
+            <input type="datetime-local" id="warTimeInput" style="margin-right: 10px;">
+            <button class="action-btn" onclick="scheduleWar()">⚔️ GENERUJ PRZYPOMNIENIE</button>
+        </div>
+
+        <hr class="separator">
+        <h2>Zharmonogramowane Akcje</h2>
+        <div class="summary-box" style="border-color: #600000;">
+            <table id="scheduledWarsTable">
+                <thead>
+                    <tr><th>Data i Godzina</th><th>Atakujący (Nasz)</th><th>Cel (Wróg)</th><th>Pozostało</th><th>Akcja</th></tr>
+                </thead>
+                <tbody id="scheduledWarsBody">
+                    <tr><td colspan="5" style="color:#888;">Brak zaplanowanych akcji...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <div id="sectionTools">
         <div class="tools-layout">
-            
             <div class="links-section">
                 <h3>Szybkie Linki</h3>
                 <a href="https://lobby.bitefight.gameforge.com/en_GB/" target="_blank">🎮 Lobby gry</a>
@@ -235,28 +269,19 @@
                 <a href="https://bitefight.pages.dev/" target="_blank">🎒 Katalog Przedmiotów</a>
                 <a href="https://ruins-helper.site/" target="_blank">💀 Kalkulator Ekspedycji</a>
             </div>
-
             <div class="tools-grid">
                 <div class="tool-box">
                     <div class="tool-title">Zasięg Wartości Bojowej</div>
-                    <div class="tool-input-row">
-                        <label>Twoja Wartość Bojowa:</label>
-                        <input type="number" id="calc_wb" value="100000" min="1">
-                    </div>
+                    <div class="tool-input-row"><label>Twoja Wartość Bojowa:</label><input type="number" id="calc_wb" value="100000" min="1"></div>
                     <button class="tool-btn" onclick="calcBattleValue()">Sprawdź Zasięg</button>
                     <div class="tool-result" id="res_wb">-</div>
                 </div>
-
                 <div class="tool-box">
                     <div class="tool-title">Cena skilla</div>
-                    <div class="tool-input-row">
-                        <label>Obecny poziom cechy:</label>
-                        <input type="number" id="calc_skill" value="50" min="5">
-                    </div>
+                    <div class="tool-input-row"><label>Obecny poziom cechy:</label><input type="number" id="calc_skill" value="50" min="5"></div>
                     <button class="tool-btn" onclick="calcSkillCost()">Oblicz Koszt</button>
                     <div class="tool-result" id="res_skill">-</div>
                 </div>
-
                 <div class="tool-box" style="width: 100%; max-width: 535px;">
                     <div class="tool-title">Łączna cena zakupionych skilli</div>
                     <div style="display:flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 8px; gap: 8px;">
@@ -270,7 +295,6 @@
                     <div class="tool-result" id="res_total">-</div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -300,26 +324,42 @@
         
         const BLACKLIST = ["Kark23", "Darksun"]; 
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
+        
+        // Zdefiniowane nasze klany
+        const OUR_CLANS_LIST = [
+            "Obojętnie jakim klanem",
+            "LYCANS [.L.Y.C.]", "Brahmassie [-BSP-]", "ZADYMIACZ [RAMBO]", "Bobas_Gangs [.B.G.]",
+            "Turniej [TU.R]", "Terribilis [S.RT]", "AleTuNudno. [NTA]", "Dark Werewolves [vzd]",
+            "LYCANS_pl [LYCANS_pl]", "Silent_Assassins [.S.A.]", "OKAZLYKANIN [OKAZ]", "lycany [=LYC=]",
+            "Hardstyle [LYC]", "od_A_do_Z [A-Z]", "Abecede [ABCD]", "Legia Warszawa [C.W.K.S]",
+            "Polska_Elita [P-O-L]", "KIBELSKI [W=C]", "POLSKA [=PL=]", "Tanczacy z Wilkam [RH-]",
+            "Manchester#pl6 [MCFC]", "Huwdu [Atnn]", "Krwiopijce [KRW]"
+        ];
 
         let globalData = [];
         let globalRankingData = []; 
         let globalRutynaData = [];
         let globalClansBaza = []; 
         let globalClansLogi = []; 
-        let globalEnemyBlocks = {}; // Słownik trzymający czasy do radaru wrogów
         
         let computedRankingRows = []; 
         let currentSortCol = 3; 
         let currentSortAsc = false; 
-        let currentSummarySortCol = 9; 
+        let currentSummarySortCol = 7; 
         let currentSummarySortAsc = true; 
         let routineChartInstance = null;
         let sealsChartInstance = null;
+        
+        // Stan do Operacji Wojennych
+        let selectedOurClan = null;
+        let selectedEnemyClan = null;
+        let warSchedules = JSON.parse(localStorage.getItem('bf_war_schedules') || '[]');
 
         // ==========================================
-        // SILNIK TIMERÓW W TABELI - ODLICZANIE NA ŻYWO (CO 1 SEKUNDĘ)
+        // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI (NA ŻYWO)
         // ==========================================
         setInterval(() => {
+            // Tabela live blokad graczy
             document.querySelectorAll('.live-block-timer').forEach(el => {
                 let endTime = parseInt(el.getAttribute('data-endtime'));
                 let diff = endTime - new Date().getTime();
@@ -332,7 +372,29 @@
                     el.innerHTML = `🛡️ <span style="color:#ffcc00;">${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}</span>`;
                 }
             });
+            
+            // Tabela zaplanowanych wojen
+            document.querySelectorAll('.war-countdown').forEach(el => {
+                let targetTime = parseInt(el.getAttribute('data-target'));
+                let diff = targetTime - new Date().getTime();
+                if (diff <= 0) {
+                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">WYKONANO!</span>';
+                } else {
+                    let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    let s = Math.floor((diff % (1000 * 60)) / 1000);
+                    let timeStr = "";
+                    if (d > 0) timeStr += `${d}d `;
+                    if (h > 0 || d > 0) timeStr += `${h.toString().padStart(2,'0')}h `;
+                    timeStr += `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+                    el.innerHTML = timeStr;
+                }
+            });
         }, 1000);
+
+        // Zawsze sprawdzaj czy nie pora wykonać alarmu na Discord
+        setInterval(checkWarSchedules, 5000);
 
         // ==========================================
         // MODUŁ OCHRONY PRZED ATAKIEM (30 MIN) Z PAMIĘCIĄ SESJI
@@ -355,32 +417,29 @@
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain); gain.connect(ctx.destination);
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
-                    gain.gain.setValueAtTime(0, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.5);
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    gain.gain.setValueAtTime(1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
                 } else if (type === 'end') {
-                    const notes = [523.25, 659.25, 783.99, 1046.50];
-                    notes.forEach((freq, i) => {
+                    for(let i=0; i<3; i++) {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
                         osc.connect(gain); gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
-                        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
-                        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.15 + 0.05);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 1);
-                        osc.start(ctx.currentTime + i * 0.15);
-                        osc.stop(ctx.currentTime + i * 0.15 + 1);
-                    });
+                        osc.type = 'square'; osc.frequency.setValueAtTime(440, ctx.currentTime + i*0.3);
+                        gain.gain.setValueAtTime(1, ctx.currentTime + i*0.3);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.3 + 0.2);
+                        osc.start(ctx.currentTime + i*0.3); osc.stop(ctx.currentTime + i*0.3 + 0.2);
+                    }
                 }
             } catch (e) { console.error("Beep error: ", e); }
         }
 
         function parseAttackDate(str) {
             let m = str.match(/(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})/);
-            if(m) { return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime(); }
+            if(m) {
+                return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime();
+            }
             return null;
         }
 
@@ -391,7 +450,11 @@
 
         function startBlockCountdown(attackTimeStr) {
             let t = parseAttackDate(attackTimeStr);
-            if(!t) { alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM"); return; }
+            if(!t) {
+                alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM");
+                return;
+            }
+            
             if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
             document.title = "BiteFight - Centrum Dowodzenia";
 
@@ -401,7 +464,11 @@
             endBeepPlayed = false;
             
             let now = new Date().getTime();
-            if (blockEndTime <= now) { alert("Ochrona z tego ataku już dawno wygasła!"); clearBlockData(); return; }
+            if (blockEndTime <= now) {
+                alert("Ochrona z tego ataku już dawno wygasła!");
+                clearBlockData();
+                return;
+            }
 
             if(blockInterval) clearInterval(blockInterval);
             blockInterval = setInterval(updateBlockTimer, 1000);
@@ -447,10 +514,17 @@
                 titleTab.style.backgroundColor = "#ff5555";
                 titleTab.style.color = "#fff";
                 
-                if (!endBeepPlayed) { playBeep('end'); endBeepPlayed = true; }
+                if (!endBeepPlayed) {
+                    playBeep('end');
+                    endBeepPlayed = true;
+                }
+
                 if (!titleBlinkInterval) {
                     let blinkState = false;
-                    titleBlinkInterval = setInterval(() => { document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!"; blinkState = !blinkState; }, 1000);
+                    titleBlinkInterval = setInterval(() => {
+                        document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!";
+                        blinkState = !blinkState;
+                    }, 1000);
                 }
                 return;
             }
@@ -459,18 +533,34 @@
             let m = Math.floor(totalSeconds / 60);
             let s = totalSeconds % 60;
             let timeStr = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            
             display.innerHTML = `🛡️ Czas do końca ochrony: ${timeStr}`;
 
             if (totalSeconds <= 60) { 
-                display.style.color = "#ff3333"; box.style.borderColor = "#ff3333"; box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
-                document.title = `🔴 [${timeStr}] Ochrona zanika!`; titleTab.style.backgroundColor = "#ff3333"; titleTab.style.color = "#fff";
-                if (!warningBeepPlayed) { playBeep('warning'); warningBeepPlayed = true; }
+                display.style.color = "#ff3333";
+                box.style.borderColor = "#ff3333";
+                box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
+                document.title = `🔴 [${timeStr}] Ochrona zanika!`;
+                titleTab.style.backgroundColor = "#ff3333";
+                titleTab.style.color = "#fff";
+                if (!warningBeepPlayed) {
+                    playBeep('warning');
+                    warningBeepPlayed = true;
+                }
             } else if (totalSeconds <= 180) { 
-                display.style.color = "#ffcc00"; box.style.borderColor = "#ffcc00"; box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
-                document.title = `🟡 [${timeStr}] Ochrona wygasa!`; titleTab.style.backgroundColor = "#ffcc00"; titleTab.style.color = "#000";
+                display.style.color = "#ffcc00";
+                box.style.borderColor = "#ffcc00";
+                box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
+                document.title = `🟡 [${timeStr}] Ochrona wygasa!`;
+                titleTab.style.backgroundColor = "#ffcc00";
+                titleTab.style.color = "#000";
             } else { 
-                display.style.color = "#55ff55"; box.style.borderColor = "#00e5ff"; box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
-                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`; titleTab.style.backgroundColor = "#00e5ff"; titleTab.style.color = "#000";
+                display.style.color = "#55ff55";
+                box.style.borderColor = "#00e5ff";
+                box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
+                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`;
+                titleTab.style.backgroundColor = "#00e5ff";
+                titleTab.style.color = "#000";
             }
         }
 
@@ -499,32 +589,94 @@
         // ==========================================
         // SKRYPTY PRZYBORNIKA 
         // ==========================================
-        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-        function calcSkillCost() { let val = parseInt(document.getElementById('calc_skill').value); if (isNaN(val) || val < 5) val = 5; let cost = Math.floor(Math.pow(val - 4, 2.4)); document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`; }
-        function calcBattleValue() { let val = parseInt(document.getElementById('calc_wb').value); if (isNaN(val) || val < 1) val = 1; let min = Math.floor(val * 0.8); let max = Math.floor(val * 1.25); document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`; }
-        function calcTotalGold() { let str = parseInt(document.getElementById('c_str').value) || 5; let def = parseInt(document.getElementById('c_def').value) || 5; let dex = parseInt(document.getElementById('c_dex').value) || 5; let end = parseInt(document.getElementById('c_end').value) || 5; let chr = parseInt(document.getElementById('c_chr').value) || 5; let total = 0; for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4)); document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`; }
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function calcSkillCost() {
+            let val = parseInt(document.getElementById('calc_skill').value);
+            if (isNaN(val) || val < 5) val = 5;
+            let cost = Math.floor(Math.pow(val - 4, 2.4));
+            document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
+        }
+
+        function calcBattleValue() {
+            let val = parseInt(document.getElementById('calc_wb').value);
+            if (isNaN(val) || val < 1) val = 1;
+            let min = Math.floor(val * 0.8);
+            let max = Math.floor(val * 1.25);
+            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
+        }
+
+        function calcTotalGold() {
+            let str = parseInt(document.getElementById('c_str').value) || 5;
+            let def = parseInt(document.getElementById('c_def').value) || 5;
+            let dex = parseInt(document.getElementById('c_dex').value) || 5;
+            let end = parseInt(document.getElementById('c_end').value) || 5;
+            let chr = parseInt(document.getElementById('c_chr').value) || 5;
+
+            let total = 0;
+            for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
+            for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
+
+            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
+        }
 
         // ==========================================
         // GŁÓWNY SILNIK STRONY
         // ==========================================
         function switchTab(tabId) {
-            ['tracker', 'ranking', 'heatmap', 'clans', 'tools'].forEach(t => {
-                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn').classList.remove('active');
-                document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
-            });
-            document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
-            document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+            document.getElementById('tabTrackerBtn').classList.remove('active');
+            document.getElementById('tabRankingBtn').classList.remove('active');
+            document.getElementById('tabHeatmapBtn').classList.remove('active');
+            document.getElementById('tabClansBtn').classList.remove('active');
+            document.getElementById('tabToolsBtn').classList.remove('active');
+            document.getElementById('tabWarBtn').classList.remove('active');
+            
+            document.getElementById('sectionTracker').classList.remove('active');
+            document.getElementById('sectionRanking').classList.remove('active');
+            document.getElementById('sectionHeatmap').classList.remove('active');
+            document.getElementById('sectionClans').classList.remove('active');
+            document.getElementById('sectionTools').classList.remove('active');
+            document.getElementById('sectionWar').classList.remove('active');
 
-            if (tabId === 'ranking') { if (globalRankingData.length === 0) loadRankingData(); else calculateAndRenderRanking(); } 
-            else if (tabId === 'heatmap') { renderChart(); } 
-            else if (tabId === 'clans') { renderClans(); }
+            if (tabId === 'tracker') {
+                document.getElementById('tabTrackerBtn').classList.add('active');
+                document.getElementById('sectionTracker').classList.add('active');
+            } else if (tabId === 'ranking') {
+                document.getElementById('tabRankingBtn').classList.add('active');
+                document.getElementById('sectionRanking').classList.add('active');
+                if (globalRankingData.length === 0) loadRankingData();
+                else calculateAndRenderRanking();
+            } else if (tabId === 'heatmap') {
+                document.getElementById('tabHeatmapBtn').classList.add('active');
+                document.getElementById('sectionHeatmap').classList.add('active');
+                renderChart();
+            } else if (tabId === 'clans') {
+                document.getElementById('tabClansBtn').classList.add('active');
+                document.getElementById('sectionClans').classList.add('active');
+                renderClans();
+            } else if (tabId === 'tools') {
+                document.getElementById('tabToolsBtn').classList.add('active');
+                document.getElementById('sectionTools').classList.add('active');
+            } else if (tabId === 'war') {
+                document.getElementById('tabWarBtn').classList.add('active');
+                document.getElementById('sectionWar').classList.add('active');
+                renderWarSchedules();
+                // Inicjalizacja odbywa się z renderClans po załadowaniu danych
+                let savedWebhook = localStorage.getItem('bf_war_webhook');
+                if(savedWebhook) document.getElementById('warWebhookInput').value = savedWebhook;
+            }
         }
 
         function handleFilterChange() { renderTable(); }
         document.addEventListener("DOMContentLoaded", function() {
-            ['filterDate', 'filterPlayer', 'filterStat'].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).addEventListener('change', handleFilterChange);
-            });
+            if(document.getElementById('filterDate')) document.getElementById('filterDate').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterPlayer')) document.getElementById('filterPlayer').addEventListener('change', handleFilterChange);
+            if(document.getElementById('filterStat')) document.getElementById('filterStat').addEventListener('change', handleFilterChange);
             if(document.getElementById('summaryPeriodSelect')) document.getElementById('summaryPeriodSelect').addEventListener('change', renderSummaryTable);
             if(document.getElementById('rankingPeriodSelect')) {
                 document.getElementById('rankingPeriodSelect').addEventListener('change', function() {
@@ -541,32 +693,99 @@
             setInterval(loadTableData, 300000);
         });
 
+        function parseCSVLine(text) {
+            let ret = [], val = "", inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"') { if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; } else { inQuotes = false; } } else { val += ch; }
+                } else {
+                    if (ch === '"') { inQuotes = true; } else if (ch === ',') { ret.push(val); val = ""; } else { val += ch; }
+                }
+            }
+            ret.push(val); return ret;
+        }
+
+        function parseLogDate(dateStr) {
+            if(!dateStr) return new Date(0);
+            const cleanStr = dateStr.replace(/"/g, '').replace(',', '');
+            const parts = cleanStr.trim().split(/\s+/);
+            if(parts.length < 2) { let d = new Date(cleanStr); return isNaN(d) ? new Date(0) : d; }
+            const dParts = parts[0].split(/[\.\-\/]/); 
+            const tParts = parts[1].split(':');
+            if (dParts.length === 3) {
+                let year = dParts[2].length === 4 ? dParts[2] : dParts[0];
+                let day = dParts[2].length === 4 ? dParts[0] : dParts[2];
+                let month = dParts[1];
+                return new Date(year, month - 1, day, tParts[0], tParts[1], tParts[2] || 0);
+            }
+            return new Date(0);
+        }
+
         async function loadTableData() {
             try {
                 const response = await fetch(urlGoogleSheet + '&t=' + new Date().getTime());
-                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + new Date().toLocaleTimeString('pl-PL');
-                const wiersze = (await response.text()).trim().split('\n');
+                const nowInfo = new Date();
+                if(document.getElementById('lastRefresh')) document.getElementById('lastRefresh').innerHTML = "Ostatnie odświeżenie danych: " + nowInfo.toLocaleTimeString('pl-PL');
+                const text = await response.text();
+                const wiersze = text.trim().split('\n');
                 
-                try {
-                    const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
-                    globalRutynaData = [];
-                    (await rRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom); } });
-                } catch(ex) {}
+                if (urlRutynaSheet.includes("docs.google.com")) {
+                    try {
+                        const rRes = await fetch(urlRutynaSheet + '&t=' + new Date().getTime());
+                        const rText = await rRes.text();
+                        const rWiersze = rText.trim().split('\n');
+                        globalRutynaData = [];
+                        for (let i = 1; i < rWiersze.length; i++) {
+                            let line = rWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && !BLACKLIST.includes(kom[0])) globalRutynaData.push(kom);
+                        }
+                    } catch(ex) {}
+                }
 
-                try {
-                    const cbRes = await fetch(urlClansBazaSheet + '&t=' + new Date().getTime());
-                    globalClansBaza = [];
-                    (await cbRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 3 && kom[0] && !CLAN_BLACKLIST.includes(kom[0])) globalClansBaza.push(kom); } });
-                } catch(ex) {}
+                if (urlClansBazaSheet.includes("docs.google.com")) {
+                    try {
+                        const cbRes = await fetch(urlClansBazaSheet + '&t=' + new Date().getTime());
+                        const cbText = await cbRes.text();
+                        const cbWiersze = cbText.trim().split('\n');
+                        globalClansBaza = [];
+                        for (let i = 1; i < cbWiersze.length; i++) {
+                            let line = cbWiersze[i].trim();
+                            if (!line) continue;
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 3 && kom[0] && kom[0].trim() !== "" && !CLAN_BLACKLIST.includes(kom[0])) {
+                                globalClansBaza.push(kom);
+                            }
+                        }
+                    } catch(ex) {}
+                }
 
-                try {
-                    const clRes = await fetch(urlClansLogiSheet + '&t=' + new Date().getTime());
-                    globalClansLogi = [];
-                    (await clRes.text()).trim().split('\n').forEach((l, i) => { if (i > 0 && l) { let kom = parseCSVLine(l); if (kom.length >= 5 && kom[0] && kom[1] && !CLAN_BLACKLIST.includes(kom[1])) globalClansLogi.push(kom); } });
-                    globalClansLogi.reverse(); 
-                } catch(ex) {}
+                if (urlClansLogiSheet.includes("docs.google.com")) {
+                    try {
+                        const clRes = await fetch(urlClansLogiSheet + '&t=' + new Date().getTime());
+                        const clText = await clRes.text();
+                        const clWiersze = clText.trim().split('\n');
+                        globalClansLogi = [];
+                        for (let i = 1; i < clWiersze.length; i++) {
+                            let line = clWiersze[i].trim();
+                            if (!line) continue; 
+                            let kom = parseCSVLine(line);
+                            if (kom.length >= 5 && kom[0] && kom[0].trim() !== "" && kom[1] && kom[1].trim() !== "") {
+                                if (!CLAN_BLACKLIST.includes(kom[1])) {
+                                    globalClansLogi.push(kom);
+                                }
+                            }
+                        }
+                        globalClansLogi.reverse(); 
+                    } catch(ex) {}
+                }
 
-                if (wiersze.length <= 1) { if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; return; }
+                if (wiersze.length <= 1) { 
+                    if(document.getElementById('tableContainer')) document.getElementById('tableContainer').innerHTML = "<p>Brak logów w arkuszu.</p>"; 
+                    return; 
+                }
 
                 let rawData = [];
                 for (let i = 1; i < wiersze.length; i++) {
@@ -574,33 +793,36 @@
                     if (!line) continue;
                     let komorki = parseCSVLine(line);
                     if (komorki.length < 6) continue;
-                    komorki[0] = komorki[0].trim().replace(',', '');
+                    let rawDate = komorki[0].trim().replace(',', '');
+                    komorki[0] = rawDate;
                     rawData.push(komorki.map(k => k.trim()));
                 }
 
-                let playerAccumulator = {}, playerLevel = {};
-                globalData = []; globalEnemyBlocks = {}; 
+                let playerAccumulator = {}; 
+                let playerLevel = {};
+                globalData = [];
 
                 rawData.forEach(row => {
-                    let gracz = row[1], stat = row[2], przyrost = parseInt(row[5]) || 0;
+                    let gracz = row[1];
                     if (BLACKLIST.includes(gracz)) return;
-                    
-                    if (stat === "Stracone złoto" && przyrost > 0) {
-                        let blockEnd = parseLogDate(row[0]).getTime() + (30 * 60 * 1000);
-                        if (!globalEnemyBlocks[gracz] || blockEnd > globalEnemyBlocks[gracz]) globalEnemyBlocks[gracz] = blockEnd;
-                    }
-
+                    let stat = row[2];
+                    let przyrost = parseInt(row[5]) || 0;
                     if (stat === "Poziom") playerLevel[gracz] = parseInt(row[4]); 
                     if (!playerAccumulator[gracz]) playerAccumulator[gracz] = 0;
-                    if (["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(stat)) playerAccumulator[gracz] = 0; 
-                    else if (["Zrabowane dobra", "Zrabowane złoto"].includes(stat)) playerAccumulator[gracz] += przyrost; 
+                    const atrybuty = ["Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                    if (atrybuty.includes(stat)) { playerAccumulator[gracz] = 0; } 
+                    else if (stat === "Zrabowane dobra" || stat === "Zrabowane złoto") { playerAccumulator[gracz] += przyrost; } 
                     else if (stat === "Stracone złoto") { playerAccumulator[gracz] -= przyrost; if(playerAccumulator[gracz] < 0) playerAccumulator[gracz] = 0; }
-                    let lvl = playerLevel[gracz] || 0, exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
+                    let lvl = playerLevel[gracz] || 0;
+                    let exposed = (lvl > 0) ? Math.max(0, playerAccumulator[gracz] - (lvl * 12000)) : 0;
                     globalData.push([...row, playerAccumulator[gracz], exposed]);
                 });
 
                 globalData.reverse(); 
-                renderSummaryTable(); updateFilters(); renderTable(); 
+                renderSummaryTable();
+                updateFilters(); 
+                renderTable(); 
+                renderClans(); // Inicjuje dane klanowe, także dla zakładki Operacje Wojenne
             } catch (e) { console.error("Błąd ładowania silnika głównego: ", e); }
         }
 
@@ -616,25 +838,47 @@
 
         function sortSummary(colIndex) {
             if (currentSummarySortCol === colIndex) { currentSummarySortAsc = !currentSummarySortAsc; } 
-            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 9) ? true : false; }
+            else { currentSummarySortCol = colIndex; currentSummarySortAsc = (colIndex === 0 || colIndex === 8) ? true : false; }
             renderSummaryTable();
         }
 
         function renderChart() {
             if (!document.getElementById('heatmapPlayerSelect')) return;
-            const player = document.getElementById('heatmapPlayerSelect').value, dayFilter = document.getElementById('heatmapDaySelect').value;
-            if (player === 'ALL') { if(routineChartInstance) routineChartInstance.destroy(); return; }
+            const player = document.getElementById('heatmapPlayerSelect').value;
+            const dayFilter = document.getElementById('heatmapDaySelect').value;
 
-            let labels = [], chartData = new Array(720).fill(0);
-            for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 2) labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+            if (player === 'ALL') {
+                if(routineChartInstance) routineChartInstance.destroy();
+                return;
+            }
+
+            let labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 2) {
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                }
+            }
+
+            let chartData = new Array(720).fill(0);
 
             globalRutynaData.forEach(r => {
                 if (r[0] === player) {
                     let parts = r[1].split('_');
                     if (parts.length === 3) {
-                        let day = parts[0], match = false;
-                        if (dayFilter === 'ALL' || dayFilter === day || (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) || (dayFilter === 'WEEKEND' && ['6','7'].includes(day))) match = true;
-                        if (match) chartData[(parseInt(parts[1]) * 30) + (parseInt(parts[2]) / 2)] += parseInt(r[2]);
+                        let day = parts[0];
+                        let hour = parseInt(parts[1]);
+                        let minute = parseInt(parts[2]);
+                        let index = (hour * 30) + (minute / 2);
+                        
+                        let match = false;
+                        if (dayFilter === 'ALL') match = true;
+                        else if (dayFilter === 'WORKDAYS' && ['1','2','3','4','5'].includes(day)) match = true;
+                        else if (dayFilter === 'WEEKEND' && ['6','7'].includes(day)) match = true;
+                        else if (dayFilter === day) match = true;
+
+                        if (match) {
+                            chartData[index] += parseInt(r[2]);
+                        }
                     }
                 }
             });
@@ -642,22 +886,99 @@
             if (routineChartInstance) routineChartInstance.destroy();
             const ctxElem = document.getElementById('routineChart');
             if(!ctxElem) return;
-            routineChartInstance = new Chart(ctxElem.getContext('2d'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Aktywność', data: chartData, backgroundColor: 'rgba(255, 51, 51, 0.7)', borderColor: 'rgba(192, 12, 12, 1)', borderWidth: 1, borderRadius: 3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            const ctx = ctxElem.getContext('2d');
+            routineChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aktywność (kliknięcia)',
+                        data: chartData,
+                        backgroundColor: 'rgba(255, 51, 51, 0.7)',
+                        borderColor: 'rgba(192, 12, 12, 1)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        hoverBackgroundColor: 'rgba(255, 204, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#aaa',
+                                maxTicksLimit: 24, 
+                                callback: function(value) {
+                                    let label = this.getLabelForValue(value);
+                                    return label.endsWith(':00') ? label : '';
+                                }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ffcc00', precision: 0 },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#ffcc00',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) { return `Czas: ${context[0].label}`; },
+                                label: function(context) { return `Potwierdzone akcje: ${context.raw}`; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatLastSeen(dateObj) {
+            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
+            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
+            let diffMins = Math.floor(diffMs / 60000);
+            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
+            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
+            else {
+                let diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
+                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
+            }
         }
 
         function renderSummaryTable() {
             if(!document.getElementById('summaryPeriodSelect')) return;
-            const range = getRangeForPeriod(document.getElementById('summaryPeriodSelect').value); if (!range) return;
+            const period = document.getElementById('summaryPeriodSelect').value;
+            const range = getRangeForPeriod(period); if (!range) return;
             
-            let summary = {}, absoluteLastSeen = {}, fightLogs = {}, currentExposed = {};
+            let summary = {}; 
+            let absoluteLastSeen = {}; 
+            let fightLogs = {};
+            let currentExposed = {};
 
             globalData.forEach(w => {
                 if (!w[0] || !w[1]) return;
-                let gracz = w[1], stat = w[2], logDate = parseLogDate(w[0]), przyrost = parseInt(w[5]) || 0;
+                let gracz = w[1]; 
+                let stat = w[2]; 
+                let logDate = parseLogDate(w[0]);
+                let przyrost = parseInt(w[5]) || 0;
                 
-                if (currentExposed[gracz] === undefined) currentExposed[gracz] = w[7] ? parseInt(w[7]) : 0;
-                if (["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"].includes(stat)) {
-                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = logDate; 
+                if (currentExposed[gracz] === undefined) {
+                    currentExposed[gracz] = (w[7] !== undefined && w[7] !== "") ? parseInt(w[7]) : 0;
+                }
+
+                const aktywneStatystyki = ["Zrabowane dobra", "Sila", "Obrona", "Zwinnosc", "Wytrzymalosc", "Charyzma"];
+                
+                if (aktywneStatystyki.includes(stat)) {
+                    if (!absoluteLastSeen[gracz] || logDate > absoluteLastSeen[gracz]) { 
+                        absoluteLastSeen[gracz] = logDate; 
+                    }
                 } else if (stat === "Walki") {
                     if (!fightLogs[gracz]) fightLogs[gracz] = [];
                     fightLogs[gracz].push({ time: logDate.getTime(), count: przyrost });
@@ -668,15 +989,29 @@
                 let logs = fightLogs[gracz].sort((a, b) => b.time - a.time); 
                 for (let i = 0; i < logs.length; i++) {
                     let currentLog = logs[i];
+                    
                     if (currentLog.count >= 2) {
-                        if (!absoluteLastSeen[gracz] || new Date(currentLog.time) > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = new Date(currentLog.time); 
-                    } else if (currentLog.count === 1) {
+                        let inferredDate = new Date(currentLog.time);
+                        if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                            absoluteLastSeen[gracz] = inferredDate; 
+                        }
+                    } 
+                    else if (currentLog.count === 1) {
                         let acc = 1;
                         for (let j = i + 1; j < logs.length; j++) {
-                            if ((currentLog.time - logs[j].time) <= 30 * 60 * 1000) {
-                                acc += logs[j].count;
-                                if (acc >= 2) { if (!absoluteLastSeen[gracz] || new Date(currentLog.time) > absoluteLastSeen[gracz]) absoluteLastSeen[gracz] = new Date(currentLog.time); break; }
-                            } else break; 
+                            let olderLog = logs[j];
+                            if ((currentLog.time - olderLog.time) <= 30 * 60 * 1000) {
+                                acc += olderLog.count;
+                                if (acc >= 2) {
+                                    let inferredDate = new Date(currentLog.time);
+                                    if (!absoluteLastSeen[gracz] || inferredDate > absoluteLastSeen[gracz]) { 
+                                        absoluteLastSeen[gracz] = inferredDate; 
+                                    }
+                                    break; 
+                                }
+                            } else {
+                                break; 
+                            }
                         }
                     }
                 }
@@ -697,135 +1032,46 @@
                 }
             });
 
-            let summaryArray = Object.keys(summary).map(g => ({ gracz: g, dobra: summary[g].dobra, zlotoPvP: summary[g].zlotoPvP, walki: summary[g].walki, wygrane: summary[g].wygrane, przegrane: summary[g].przegrane, poziomy: summary[g].poziomy, wystajace: summary[g].wystajace, blockEndTime: globalEnemyBlocks[g] || 0, lastSeen: absoluteLastSeen[g] || new Date(0) }));
+            let summaryArray = [];
+            for (let gracz in summary) {
+                let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
+                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, wystajace: summary[gracz].wystajace, lastSeen: lSeen });
+            }
 
             summaryArray.sort((a, b) => {
-                let vA, vB;
-                if (currentSummarySortCol === 0) { vA = a.gracz; vB = b.gracz; } else if (currentSummarySortCol === 1) { vA = a.dobra; vB = b.dobra; } else if (currentSummarySortCol === 2) { vA = a.zlotoPvP; vB = b.zlotoPvP; } else if (currentSummarySortCol === 3) { vA = a.walki; vB = b.walki; } else if (currentSummarySortCol === 4) { vA = a.wygrane; vB = b.wygrane; } else if (currentSummarySortCol === 5) { vA = a.przegrane; vB = b.przegrane; } else if (currentSummarySortCol === 6) { vA = a.poziomy; vB = b.poziomy; } else if (currentSummarySortCol === 7) { vA = a.wystajace; vB = b.wystajace; } else if (currentSummarySortCol === 8) { vA = a.blockEndTime; vB = b.blockEndTime; } else if (currentSummarySortCol === 9) { vA = a.lastSeen.getTime(); vB = b.lastSeen.getTime(); }
-                return (currentSummarySortCol === 0) ? (currentSummarySortAsc ? vA.localeCompare(vB) : vB.localeCompare(vA)) : (currentSummarySortAsc ? vB - vA : vA - vB);
+                let valA, valB;
+                if (currentSummarySortCol === 0) { valA = a.gracz; valB = b.gracz; }
+                else if (currentSummarySortCol === 1) { valA = a.dobra; valB = b.dobra; }
+                else if (currentSummarySortCol === 2) { valA = a.zlotoPvP; valB = b.zlotoPvP; }
+                else if (currentSummarySortCol === 3) { valA = a.walki; valB = b.walki; }
+                else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
+                else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
+                else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
+                else if (currentSummarySortCol === 7) { valA = a.wystajace; valB = b.wystajace; }
+                else if (currentSummarySortCol === 8) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                
+                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
+                else { return currentSummarySortAsc ? valB - valA : valA - valB; }
             });
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
-            ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"].forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
+            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Ostatnia Aktywność"];
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
-                let dobraStr = data.dobra > 0 ? formatNumber(data.dobra) : "0", zlotoPvPStr = formatNumber(data.zlotoPvP), poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
-                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : ""), wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0", przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
+
+                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
+                let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
+                let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
                 let wystajaceStr = data.wystajace > 0 ? `<span class="wystajace-col">${formatNumber(data.wystajace)}</span>` : "0";
                 
-                let blockHtml = '<span style="color:#55ff55;">Brak</span>';
-                if (data.blockEndTime > new Date().getTime()) blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
-
-                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${blockHtml}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
+                html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
-        }
-
-        function formatLastSeen(dateObj) {
-            if (!dateObj || dateObj.getTime() === 0) return '<span style="color:#555">Brak akcji</span>';
-            let diffMs = new Date() - dateObj; if (diffMs < 0) diffMs = 0;
-            let diffMins = Math.floor(diffMs / 60000);
-            if (diffMins <= 15) { return `<span style="color:#55ff55; font-weight:bold;">🟢 ${diffMins <= 1 ? 'Przed chwilą' : diffMins + ' min temu'}</span>`; } 
-            else if (diffMins <= 60) { return `<span style="color:#ffcc00">🟡 ${diffMins} min temu</span>`; } 
-            else {
-                let diffHours = Math.floor(diffMins / 60);
-                if (diffHours < 24) { return `<span style="color:#888888">⚪ ${diffHours}h temu</span>`; } 
-                else { return `<span style="color:#555555">⚪ ${Math.floor(diffHours / 24)} dni temu</span>`; }
-            }
-        }
-
-        function getUniqueRankingDates() {
-            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
-        }
-
-        function updateRankingDropdownLabels() {
-            let uniqueDates = getUniqueRankingDates();
-            if (uniqueDates.length === 0) return;
-            
-            let latest = uniqueDates[uniqueDates.length - 1];
-            let d24h = uniqueDates[Math.max(0, uniqueDates.length - 2)];
-            let d3d = uniqueDates[Math.max(0, uniqueDates.length - 4)];
-            let d7d = uniqueDates[Math.max(0, uniqueDates.length - 8)];
-            let targetMonth = latest.split('.')[1];
-            let dMonth = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0];
-
-            let opt24h = document.getElementById('opt_24h');
-            if(opt24h) opt24h.text = (d24h !== latest) ? `Ostatnie 24h (${d24h} do ${latest})` : `Ostatnie 24h (Tylko dzisiaj: ${latest})`;
-            
-            let opt3d = document.getElementById('opt_3d');
-            if(opt3d) opt3d.text = (d3d !== latest) ? `Ostatnie 3 dni (Suma: ${d3d} do ${latest})` : `Ostatnie 3 dni`;
-            
-            let opt1w = document.getElementById('opt_1w');
-            if(opt1w) opt1w.text = (d7d !== latest) ? `Ostatni tydzień (${d7d} do ${latest})` : `Ostatni tydzień`;
-            
-            let opt1m = document.getElementById('opt_1m');
-            if(opt1m) opt1m.text = `Bieżący miesiąc (od ${dMonth})`;
-        }
-
-        async function loadRankingData() {
-            try {
-                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
-                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
-                globalRankingData = [];
-                for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
-                updateRankingDropdownLabels();
-                calculateAndRenderRanking();
-            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
-        }
-
-        function populateRankingSpecificDays() {
-            const specSelect = document.getElementById('rankingSpecificDaySelect'); const currentVal = specSelect.value; specSelect.innerHTML = "";
-            let validDays = getUniqueRankingDates().slice(1).reverse(); 
-            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
-            validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
-        }
-
-        function calculateAndRenderRanking() {
-            if (globalRankingData.length === 0) return;
-            const period = document.getElementById('rankingPeriodSelect').value, specDay = document.getElementById('rankingSpecificDaySelect').value;
-            let uniqueDates = getUniqueRankingDates();
-            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
-            
-            let endDateStr = uniqueDates[uniqueDates.length - 1], startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
-            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
-            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
-            else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
-            else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
-            else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
-            
-            if (startDateStr === endDateStr) startDateStr = null; let isDelta = (startDateStr !== null);
-            let endRecords = globalRankingData.filter(r => r[0] === endDateStr), startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
-            let startMap = {}; startRecords.forEach(r => { startMap[r[3]] = r; }); 
-
-            computedRankingRows = [];
-            function cleanNum(val) { if (!val || val === "?" || val === "Ukryte") return 0; return parseInt(String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '')) || 0; }
-            
-            endRecords.forEach(endRow => {
-                let rasa = endRow[2], nick = endRow[3], startRow = startMap[nick];
-                let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
-                if (startRow && isDelta) { dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0); dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]); dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]); dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]); dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]); dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]); dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]); } 
-                else if (isDelta) { dPoziom = dLup = dWartosc = dWygrane = dPrzegrane = dZdobyte = dStracone = 0; }
-                else { dPoziom = parseInt(endRow[4]) || 0; dLup = cleanNum(endRow[5]); dWartosc = cleanNum(endRow[6]); dWygrane = cleanNum(endRow[7]); dPrzegrane = cleanNum(endRow[8]); dZdobyte = cleanNum(endRow[9]); dStracone = cleanNum(endRow[10]); }
-                computedRankingRows.push({ rasa, nick, poziom: dPoziom, lup: dLup, wartosc: dWartosc, wygrane: dWygrane, przegrane: dPrzegrane, zdobyte: dZdobyte, stracone: dStracone });
-            });
-            sortAndRenderRankingTable(isDelta);
-        }
-
-        function sortRanking(colIndex) { let dataKeyIndex = colIndex - 1; if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; } let uniqueDates = Array.from(new Set(globalRankingData.map(r => r[0]))); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY'; sortAndRenderRankingTable(isDelta); }
-
-        function sortAndRenderRankingTable(isDelta) {
-            if (computedRankingRows.length === 0) return;
-            computedRankingRows.sort((a, b) => { let valA, valB; if (currentSortCol === -1) return 0; if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; } else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; } else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
-                if (currentSortCol === 0 || currentSortCol === 1) return currentSortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA)); else return currentSortAsc ? (Number(valA) - Number(valB)) : (Number(valB) - Number(valA)); 
-            });
-            let html = "<table><thead><tr>";
-            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM", "ŁUP", "WARTOŚĆ BOJOWA", "WYGRANE", "PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (TOTAL)", "WARTOŚĆ BOJOWA", "WYGRANE (TOTAL)", "PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
-            headers.forEach((h, i) => { let arrow = " ⇅", arrowClass = "sort-arrow-inactive"; if (currentSortCol === i - 1 && i !== 0) { arrow = currentSortAsc ? " ▲" : " ▼"; arrowClass = "sort-arrow-active"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`; } else { let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; } });
-            html += "</tr></thead><tbody>";
-            function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
-            computedRankingRows.forEach((row, idx) => { let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : ""); let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`; html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="przyrost-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`; });
-            document.getElementById('rankingTableContainer').innerHTML = html + "</tbody></table>";
         }
 
         function updateFilters() {
@@ -900,6 +1146,74 @@
             document.getElementById('tableContainer').innerHTML = html + "</tbody></table>";
         }
 
+        async function loadRankingData() {
+            try {
+                const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
+                if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
+                globalRankingData = [];
+                for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
+                calculateAndRenderRanking();
+            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
+        }
+
+        function getUniqueRankingDates() {
+            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
+        }
+
+        function populateRankingSpecificDays() {
+            const specSelect = document.getElementById('rankingSpecificDaySelect'); const currentVal = specSelect.value; specSelect.innerHTML = "";
+            let validDays = getUniqueRankingDates().slice(1).reverse(); 
+            if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
+            validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
+        }
+
+        function calculateAndRenderRanking() {
+            if (globalRankingData.length === 0) return;
+            const period = document.getElementById('rankingPeriodSelect').value, specDay = document.getElementById('rankingSpecificDaySelect').value;
+            let uniqueDates = getUniqueRankingDates();
+            if (uniqueDates.length === 0) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak punktów pomiarowych w bazie.</p>"; return; }
+            
+            let endDateStr = uniqueDates[uniqueDates.length - 1], startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; 
+            if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
+            else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
+            else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
+            else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
+            
+            if (startDateStr === endDateStr) startDateStr = null; let isDelta = (startDateStr !== null);
+            let endRecords = globalRankingData.filter(r => r[0] === endDateStr), startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
+            let startMap = {}; startRecords.forEach(r => { startMap[r[3]] = r; }); 
+
+            computedRankingRows = [];
+            function cleanNum(val) { if (!val || val === "?" || val === "Ukryte") return 0; return parseInt(String(val).replace(/\./g, '').replace(/[^0-9\-]/g, '')) || 0; }
+            
+            endRecords.forEach(endRow => {
+                let rasa = endRow[2], nick = endRow[3], startRow = startMap[nick];
+                let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
+                if (startRow && isDelta) { dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0); dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]); dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]); dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]); dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]); dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]); dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]); } 
+                else if (isDelta) { dPoziom = dLup = dWartosc = dWygrane = dPrzegrane = dZdobyte = dStracone = 0; }
+                else { dPoziom = parseInt(endRow[4]) || 0; dLup = cleanNum(endRow[5]); dWartosc = cleanNum(endRow[6]); dWygrane = cleanNum(endRow[7]); dPrzegrane = cleanNum(endRow[8]); dZdobyte = cleanNum(endRow[9]); dStracone = cleanNum(endRow[10]); }
+                computedRankingRows.push({ rasa, nick, poziom: dPoziom, lup: dLup, wartosc: dWartosc, wygrane: dWygrane, przegrane: dPrzegrane, zdobyte: dZdobyte, stracone: dStracone });
+            });
+            sortAndRenderRankingTable(isDelta);
+        }
+
+        function sortRanking(colIndex) { let dataKeyIndex = colIndex - 1; if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; } let uniqueDates = Array.from(new Set(globalRankingData.map(r => r[0]))); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY'; sortAndRenderRankingTable(isDelta); }
+
+        function sortAndRenderRankingTable(isDelta) {
+            if (computedRankingRows.length === 0) return;
+            computedRankingRows.sort((a, b) => { let valA, valB; if (currentSortCol === -1) return 0; if (currentSortCol === 0) { valA = a.rasa; valB = b.rasa; } else if (currentSortCol === 1) { valA = a.nick; valB = b.nick; } else if (currentSortCol === 2) { valA = a.poziom; valB = b.poziom; } else if (currentSortCol === 3) { valA = a.lup; valB = b.lup; } else if (currentSortCol === 4) { valA = a.wartosc; valB = b.wartosc; } else if (currentSortCol === 5) { valA = a.wygrane; valB = b.wygrane; } else if (currentSortCol === 6) { valA = a.przegrane; valB = b.przegrane; } else if (currentSortCol === 7) { valA = a.zdobyte; valB = b.zdobyte; } else if (currentSortCol === 8) { valA = a.stracone; valB = b.stracone; }
+                if (currentSortCol === 0 || currentSortCol === 1) return currentSortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA)); else return currentSortAsc ? (Number(valA) - Number(valB)) : (Number(valB) - Number(valA)); 
+            });
+            let html = "<table><thead><tr>";
+            let headers = isDelta ? ["LP", "RASA", "NICK", "POZIOM", "ŁUP", "WARTOŚĆ BOJOWA", "WYGRANE", "PRZEGRANE", "ZDOBYTE ZŁOTO", "STRACONE ZŁOTO"] : ["LP", "RASA", "NICK", "POZIOM (LVL)", "ŁUP (TOTAL)", "WARTOŚĆ BOJOWA", "WYGRANE (TOTAL)", "PRZEGRANE (TOTAL)", "ZDOBYTE ZŁOTO (TOTAL)", "STRACONE ZŁOTO (TOTAL)"];
+            headers.forEach((h, i) => { let arrow = " ⇅", arrowClass = "sort-arrow-inactive"; if (currentSortCol === i - 1 && i !== 0) { arrow = currentSortAsc ? " ▲" : " ▼"; arrowClass = "sort-arrow-active"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})" style="background-color: #7a1111;">${h}<span class="${arrowClass}">${arrow}</span></th>`; } else { let sortClass = i !== 0 ? `class="sortable" title="Kliknij, aby posortować!" onclick="sortRanking(${i})"` : ''; html += `<th ${sortClass}>${h}<span class="${arrowClass}">${arrow}</span></th>`; } });
+            html += "</tr></thead><tbody>";
+            function formatDelta(num, suffix = "") { if (!num && num !== 0) return "0" + (suffix ? " " + suffix : ""); let sign = (isDelta && num > 0) ? "+" : ""; return `${sign}${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${suffix ? " " + suffix : ""}`; }
+            computedRankingRows.forEach((row, idx) => { let rasaClass = row.rasa === "Wampir" ? "rasa-wampir" : (row.rasa === "Wilkołak" ? "rasa-wilkolak" : ""); let pLink = PLAYERS[row.nick] ? `<a href="${PLAYERS[row.nick]}" class="player-link" target="_blank" style="color: #00e5ff; text-decoration: none;"><strong>${row.nick}</strong></a>` : `<strong>${row.nick}</strong>`; html += `<tr><td class="rank-num">${idx + 1}</td><td class="${rasaClass}">${row.rasa}</td><td>${pLink}</td><td${row.poziom > 0 ? ' class="level-col"' : (row.poziom < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.poziom)}</td><td${row.lup > 0 ? ' class="przyrost-col"' : (row.lup < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.lup)}</td><td${row.wartosc > 0 ? ' class="przyrost-col"' : (row.wartosc < 0 ? ' class="strata-col"' : '')}>${formatDelta(row.wartosc)}</td><td${row.wygrane > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.wygrane)}</td><td${row.przegrane > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.przegrane)}</td><td${row.zdobyte > 0 ? ' class="przyrost-col"' : ''}>${formatDelta(row.zdobyte)}</td><td${row.stracone > 0 ? ' class="strata-col"' : ''}>${formatDelta(row.stracone)}</td></tr>`; });
+            document.getElementById('rankingTableContainer').innerHTML = html + "</tbody></table>";
+        }
+
         function formatClanLink(nazwa, url) { return (!url || url === "") ? `<span class="clan-text-plain">${nazwa}</span>` : `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`; }
 
         function renderClans() {
@@ -931,7 +1245,158 @@
             let currentHtml = "<table><thead><tr><th>Nazwa Klanu</th><th>Posiadane Pieczęcie</th><th>Członkowie</th></tr></thead><tbody>";
             for (let klan in currentClanState) { let data = currentClanState[klan]; if (data.czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) { currentHtml += `<tr><td>${formatClanLink(data.nazwa, data.url)}</td><td>${data.pieczecie !== "Brak" ? `<span style="color:#ffcc00; font-weight:bold;">${data.pieczecie}</span>` : `<span style="color:#888;">Brak</span>`}</td><td>${data.czlonkowie}</td></tr>`; } }
             document.getElementById('clansCurrentContainer').innerHTML = currentHtml + "</tbody></table>";
+            
+            // Renderowanie klanów wojny
+            renderWarClans(currentClanState);
         }
+
+        // ==========================================
+        // SYSTEM OPERACJI WOJENNYCH
+        // ==========================================
+        function saveWarWebhook() {
+            let hook = document.getElementById('warWebhookInput').value;
+            localStorage.setItem('bf_war_webhook', hook);
+            if(hook) alert("Webhook do wojen został pomyślnie zapisany!");
+        }
+
+        function renderWarClans(currentClanState) {
+            let ourListHtml = "";
+            OUR_CLANS_LIST.forEach(clan => {
+                let idEscaped = clan.replace(/'/g, "\\'");
+                let extraClass = clan === "Obojętnie jakim klanem" ? "war-tile-any" : "";
+                ourListHtml += `<div class="war-tile ${extraClass}" onclick="selectOurClan('${idEscaped}', this)">${clan}</div>`;
+            });
+            document.getElementById('warOurClansList').innerHTML = ourListHtml;
+
+            let enemyListHtml = "";
+            for (let klan in currentClanState) {
+                if (currentClanState[klan].czlonkowie !== "-" && !CLAN_BLACKLIST.includes(klan)) {
+                    let nazwaFormat = currentClanState[klan].nazwa;
+                    let idEscaped = nazwaFormat.replace(/'/g, "\\'");
+                    enemyListHtml += `<div class="war-tile" onclick="selectEnemyClan('${idEscaped}', this)">${nazwaFormat}</div>`;
+                }
+            }
+            if(!enemyListHtml) enemyListHtml = "<span style='color:#888;'>Brak wrogów w bazie.</span>";
+            document.getElementById('warEnemyClansList').innerHTML = enemyListHtml;
+            
+            selectedOurClan = null;
+            selectedEnemyClan = null;
+        }
+
+        function selectOurClan(name, el) {
+            document.querySelectorAll('#warOurClansList .war-tile').forEach(t => t.classList.remove('active-our'));
+            el.classList.add('active-our');
+            selectedOurClan = name;
+        }
+
+        function selectEnemyClan(name, el) {
+            document.querySelectorAll('#warEnemyClansList .war-tile').forEach(t => t.classList.remove('active-enemy'));
+            el.classList.add('active-enemy');
+            selectedEnemyClan = name;
+        }
+
+        function scheduleWar() {
+            if (!selectedOurClan) return alert("Wybierz nasz klan z lewej listy!");
+            if (!selectedEnemyClan) return alert("Wybierz wrogi klan z prawej listy!");
+            
+            let timeInput = document.getElementById('warTimeInput').value;
+            if (!timeInput) return alert("Podaj prawidłową datę i godzinę ataku!");
+
+            let targetTime = new Date(timeInput).getTime();
+            if (targetTime <= new Date().getTime()) return alert("Wybrany czas musi być w przyszłości!");
+
+            let newWar = {
+                id: Date.now(),
+                ourClan: selectedOurClan,
+                enemyClan: selectedEnemyClan,
+                targetTime: targetTime
+            };
+
+            warSchedules.push(newWar);
+            warSchedules.sort((a,b) => a.targetTime - b.targetTime);
+            localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
+            
+            renderWarSchedules();
+            
+            // Opcjonalne czyszczenie zaznaczeń
+            document.querySelectorAll('.war-tile').forEach(t => { t.classList.remove('active-our'); t.classList.remove('active-enemy'); });
+            selectedOurClan = null; selectedEnemyClan = null;
+            document.getElementById('warTimeInput').value = "";
+        }
+
+        function cancelWar(id) {
+            warSchedules = warSchedules.filter(w => w.id !== id);
+            localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
+            renderWarSchedules();
+        }
+
+        function renderWarSchedules() {
+            let body = document.getElementById('scheduledWarsBody');
+            if(!body) return;
+            
+            if (warSchedules.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="color:#888;">Brak zaplanowanych akcji...</td></tr>';
+                return;
+            }
+
+            let html = "";
+            warSchedules.forEach(w => {
+                let dateObj = new Date(w.targetTime);
+                let dateStr = dateObj.toLocaleDateString('pl-PL') + " " + dateObj.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
+                
+                html += `<tr>
+                    <td>${dateStr}</td>
+                    <td style="color:#55ff55; font-weight:bold;">${w.ourClan}</td>
+                    <td style="color:#ff5555; font-weight:bold;">${w.enemyClan}</td>
+                    <td class="war-countdown" data-target="${w.targetTime}">Liczenie...</td>
+                    <td><button class="cancel-btn" onclick="cancelWar(${w.id})">Anuluj</button></td>
+                </tr>`;
+            });
+            body.innerHTML = html;
+        }
+
+        function checkWarSchedules() {
+            if (warSchedules.length === 0) return;
+            let now = new Date().getTime();
+            let changed = false;
+
+            for (let i = warSchedules.length - 1; i >= 0; i--) {
+                let w = warSchedules[i];
+                if (now >= w.targetTime) {
+                    // Czas ataku minął!
+                    fireWarDiscordAlert(w.ourClan, w.enemyClan);
+                    playBeep('warning'); // Sygnał dźwiękowy na ekranie
+                    
+                    warSchedules.splice(i, 1);
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
+                renderWarSchedules();
+            }
+        }
+
+        function fireWarDiscordAlert(ourClan, enemyClan) {
+            let webhookUrl = localStorage.getItem('bf_war_webhook');
+            if (!webhookUrl) return; // Brak dodanego webhooka = brak wysyłki
+
+            let message = `🚨 **CZAS NA ATAK!** 🚨\nKierunek uderzenia: **${enemyClan}**\nNasz atakujący klan: **${ourClan}**`;
+            
+            const payload = JSON.stringify({
+                content: message,
+                username: "Dowództwo BiteFight",
+                avatar_url: "https://i.postimg.cc/mD8zQ6b9/2c1de8-png.png" 
+            });
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload
+            }).catch(err => console.log("Błąd wysyłki webhooka wojennego", err));
+        }
+
     </script>
 </body>
 </html>
