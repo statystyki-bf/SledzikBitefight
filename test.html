@@ -60,7 +60,6 @@
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
         .sort-arrow-inactive { color: #555; font-size: 12px; margin-left: 5px; }
-
         .u-nas-glow { color: #55ff55 !important; font-weight: bold !important; font-size: 13px !important; text-shadow: 0 0 8px rgba(85,255,85,0.9) !important; display: block; }
 
         /* PRZYBORNIK */
@@ -86,21 +85,22 @@
         input:checked + .slider-sound { background-color: #1f7244; border-color: #103c23; }
         input:checked + .slider-sound:before { transform: translateX(16px); background-color: #fff; }
 
-        /* GÓRNY PANEL: RAPORT + OCHRONA */
+        /* GÓRNY PANEL */
         .top-dashboard-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 1600px; margin-left: auto; margin-right: auto; }
         .top-dashboard-box { flex: 1; min-width: 300px; max-width: 600px; background: #231212; border-radius: 8px; border: 1px solid #4a0d0d; padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
         
-        /* STYLE DLA OPERACJI WOJENNYCH */
-        .war-container { display: flex; gap: 20px; justify-content: center; align-items: flex-start; margin-top: 15px; flex-wrap: wrap; }
-        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 15px; border-radius: 6px; width: 320px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        /* STYLE DLA OPERACJI WOJENNYCH (Kompaktowa siatka) */
+        .war-container { display: flex; gap: 15px; justify-content: center; align-items: stretch; margin-top: 15px; width: 100%; max-width: 1600px; margin-left: auto; margin-right: auto; }
+        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 15px; border-radius: 6px; flex: 1; max-width: 700px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
         .war-col h3 { color: #ffcc00; font-size: 15px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #600000; padding-bottom: 5px; }
-        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; transition: 0.2s; border-radius: 4px; font-size: 13px; font-weight: bold; color: #ccc; }
-        .war-tile:hover { background: #4a2727; color: white; transform: translateX(3px); }
+        .war-clans-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: stretch; }
+        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 8px 10px; cursor: pointer; transition: 0.2s; border-radius: 4px; font-size: 12px; font-weight: bold; color: #ccc; flex: 1 1 30%; min-width: 140px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .war-tile:hover { background: #4a2727; color: white; transform: translateY(-2px); }
         .war-tile.active-our { background: #1f7244 !important; border-color: #55ff55 !important; color: white !important; box-shadow: 0 0 8px rgba(85,255,85,0.5); }
         .war-tile.active-enemy { background: #c00c0c !important; border-color: #ff3333 !important; color: white !important; box-shadow: 0 0 8px rgba(255,51,51,0.5); }
         .war-actions { margin: 20px auto; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; }
+        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; flex: 1 1 100%; margin-bottom: 10px; padding: 10px;}
     </style>
 </head>
 <body>
@@ -114,6 +114,7 @@
         <button id="tabToolsBtn" class="tab-btn" onclick="switchTab('tools')">Przybornik</button>
     </div>
 
+    <!-- ZAKŁADKA LIVE -->
     <div id="sectionTracker" class="active">
         <div class="top-dashboard-panel">
             <div class="top-dashboard-box">
@@ -170,6 +171,7 @@
         <div id="tableContainer"><p>Ładowanie najnowszych danych...</p></div>
     </div>
 
+    <!-- ZAKŁADKA HEATMAP -->
     <div id="sectionHeatmap">
         <h2>Precyzyjny Wykres Aktywności (Interwały 2-minutowe)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz gracza i dzień, aby zobaczyć dokładne piki jego logowań.</div>
@@ -187,6 +189,7 @@
         <div id="heatmapStatsContainer" style="margin-top: 30px;"></div>
     </div>
 
+    <!-- ZAKŁADKA RANKINGU -->
     <div id="sectionRanking">
         <h2>Przyrosty i Zmiany w Rankingu TOP 100</h2>
         <div class="filter-container">
@@ -203,6 +206,7 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
+    <!-- ZAKŁADKA KLANÓW -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
         <div id="sealsBoardContainer" class="seal-board"></div>
@@ -219,30 +223,43 @@
         <div class="summary-box"><div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div></div>
     </div>
 
+    <!-- ZAKŁADKA OPERACJE WOJENNE -->
     <div id="sectionWar">
         <h2>Zaplanuj Operację Wojenną</h2>
-        <div style="margin-bottom: 20px;">
-            <input type="text" id="warWebhookInput" placeholder="Wklej link Webhooka Discord do powiadomień..." style="width: 400px;" onchange="saveWarWebhook()">
-            <button class="action-btn" onclick="saveWarWebhook()">Zapisz Webhook</button>
+        <div style="margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="warWebhookInput" placeholder="Discord Webhook..." style="width: 250px;">
+            <input type="text" id="warWebAppInput" placeholder="[OPCJA 2] Wklej link Google Apps Script (Skrypt w Chmurze)..." style="width: 350px;">
+            <button class="action-btn" onclick="saveWarSettings()">Zapisz Linki Zewnętrzne</button>
         </div>
         
         <div class="war-container">
+            <!-- Kolumna NASZE KLANY -->
             <div class="war-col">
                 <h3>🟢 Nasze Klany</h3>
-                <div id="warOurClansList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+                <div id="warOurClansList" class="war-clans-grid"></div>
             </div>
             
+            <!-- Kolumna KLAN WROGA -->
             <div class="war-col">
                 <h3>🔴 Klany Wroga</h3>
-                <div id="warEnemyClansList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-                    <p style="color:#888; font-size: 12px;">Ładowanie listy wrogów...</p>
+                <div id="warEnemyClansList" class="war-clans-grid">
+                    <p style="color:#888; font-size: 12px; width: 100%;">Ładowanie listy wrogów z arkusza...</p>
                 </div>
             </div>
         </div>
 
         <div class="war-actions">
-            <label style="color: #ffcc00; font-weight: bold; margin-right: 10px;">Godzina Ataku:</label>
-            <input type="datetime-local" id="warTimeInput" style="margin-right: 10px;">
+            <label style="color: #ffcc00; font-weight: bold; margin-right: 5px;">Godzina Ataku:</label>
+            <input type="datetime-local" id="warTimeInput" style="margin-right: 15px;">
+            
+            <label style="color: #ffcc00; font-weight: bold; margin-right: 5px;">Wyślij alarm wcześniej o:</label>
+            <select id="warOffsetInput" style="margin-right: 15px;">
+                <option value="10">10 minut</option>
+                <option value="15" selected>15 minut</option>
+                <option value="20">20 minut</option>
+                <option value="30">30 minut</option>
+            </select>
+            
             <button class="action-btn" onclick="scheduleWar()">⚔️ GENERUJ PRZYPOMNIENIE</button>
         </div>
 
@@ -251,7 +268,7 @@
         <div class="summary-box" style="border-color: #600000;">
             <table id="scheduledWarsTable">
                 <thead>
-                    <tr><th>Data i Godzina</th><th>Atakujący (Nasz)</th><th>Cel (Wróg)</th><th>Pozostało</th><th>Akcja</th></tr>
+                    <tr><th>Czas Ataku (Czas Alarmu)</th><th>Atakujący (Nasz)</th><th>Cel (Wróg)</th><th>Pozostało do Alarmu</th><th>Akcja</th></tr>
                 </thead>
                 <tbody id="scheduledWarsBody">
                     <tr><td colspan="5" style="color:#888;">Brak zaplanowanych akcji...</td></tr>
@@ -260,6 +277,7 @@
         </div>
     </div>
 
+    <!-- ZAKŁADKA PRZYBORNIK -->
     <div id="sectionTools">
         <div class="tools-layout">
             <div class="links-section">
@@ -375,10 +393,10 @@
             
             // Tabela zaplanowanych wojen
             document.querySelectorAll('.war-countdown').forEach(el => {
-                let targetTime = parseInt(el.getAttribute('data-target'));
-                let diff = targetTime - new Date().getTime();
+                let alarmTime = parseInt(el.getAttribute('data-alarmtime'));
+                let diff = alarmTime - new Date().getTime();
                 if (diff <= 0) {
-                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">WYKONANO!</span>';
+                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">AKCJA! / Wysłano</span>';
                 } else {
                     let d = Math.floor(diff / (1000 * 60 * 60 * 24));
                     let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -393,7 +411,7 @@
             });
         }, 1000);
 
-        // Zawsze sprawdzaj czy nie pora wykonać alarmu na Discord
+        // Zawsze sprawdzaj czy nie pora wykonać alarmu na Discord w przeglądarce (Fallback Opcji 1)
         setInterval(checkWarSchedules, 5000);
 
         // ==========================================
@@ -668,7 +686,9 @@
                 renderWarSchedules();
                 // Inicjalizacja odbywa się z renderClans po załadowaniu danych
                 let savedWebhook = localStorage.getItem('bf_war_webhook');
+                let savedWebApp = localStorage.getItem('bf_war_webapp');
                 if(savedWebhook) document.getElementById('warWebhookInput').value = savedWebhook;
+                if(savedWebApp) document.getElementById('warWebAppInput').value = savedWebApp;
             }
         }
 
@@ -1253,10 +1273,12 @@
         // ==========================================
         // SYSTEM OPERACJI WOJENNYCH
         // ==========================================
-        function saveWarWebhook() {
+        function saveWarSettings() {
             let hook = document.getElementById('warWebhookInput').value;
+            let webapp = document.getElementById('warWebAppInput').value;
             localStorage.setItem('bf_war_webhook', hook);
-            if(hook) alert("Webhook do wojen został pomyślnie zapisany!");
+            localStorage.setItem('bf_war_webapp', webapp);
+            alert("Ustawienia systemów powiadomień zostały zapisane!");
         }
 
         function renderWarClans(currentClanState) {
@@ -1303,20 +1325,52 @@
             if (!timeInput) return alert("Podaj prawidłową datę i godzinę ataku!");
 
             let targetTime = new Date(timeInput).getTime();
-            if (targetTime <= new Date().getTime()) return alert("Wybrany czas musi być w przyszłości!");
+            let nowTime = new Date().getTime();
+            
+            if (targetTime <= nowTime) return alert("Wybrany czas ataku musi być w przyszłości!");
+
+            let offsetMinutes = parseInt(document.getElementById('warOffsetInput').value);
+            let alarmTime = targetTime - (offsetMinutes * 60 * 1000);
+            
+            if (alarmTime <= nowTime) return alert("Błąd! Czas alarmu (czas ataku minus " + offsetMinutes + " minut) wypada w przeszłości!");
 
             let newWar = {
                 id: Date.now(),
                 ourClan: selectedOurClan,
                 enemyClan: selectedEnemyClan,
-                targetTime: targetTime
+                targetTime: targetTime,
+                alarmTime: alarmTime,
+                offset: offsetMinutes
             };
 
+            // Zapisz lokalnie w przeglądarce, by wyświetlić w tabeli
             warSchedules.push(newWar);
-            warSchedules.sort((a,b) => a.targetTime - b.targetTime);
+            warSchedules.sort((a,b) => a.alarmTime - b.alarmTime);
             localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
-            
             renderWarSchedules();
+
+            // WYŚLIJ DO CHMURY (OPCJA 2)
+            let webAppUrl = document.getElementById('warWebAppInput').value;
+            let webhookUrl = document.getElementById('warWebhookInput').value;
+
+            if (webAppUrl && webhookUrl) {
+                let params = new URLSearchParams({
+                    action: 'addWar',
+                    ourClan: selectedOurClan,
+                    enemyClan: selectedEnemyClan,
+                    targetTime: targetTime,
+                    alarmTime: alarmTime,
+                    webhook: webhookUrl,
+                    offset: offsetMinutes
+                });
+                
+                fetch(webAppUrl + "?" + params.toString(), {mode: 'no-cors'})
+                    .then(() => console.log("Skrypt przekazany do chmury pomyślnie."))
+                    .catch(e => console.log("Błąd komunikacji z chmurą Google", e));
+            } else if (!webAppUrl) {
+                // Informacja, jeśli brakuje linku do chmury
+                console.log("Działanie tylko w przeglądarce (brak WebApp URL).");
+            }
             
             // Opcjonalne czyszczenie zaznaczeń
             document.querySelectorAll('.war-tile').forEach(t => { t.classList.remove('active-our'); t.classList.remove('active-enemy'); });
@@ -1341,14 +1395,17 @@
 
             let html = "";
             warSchedules.forEach(w => {
-                let dateObj = new Date(w.targetTime);
-                let dateStr = dateObj.toLocaleDateString('pl-PL') + " " + dateObj.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
+                let tDateObj = new Date(w.targetTime);
+                let tDateStr = tDateObj.toLocaleDateString('pl-PL') + " " + tDateObj.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
+                
+                let aDateObj = new Date(w.alarmTime);
+                let aDateStr = aDateObj.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
                 
                 html += `<tr>
-                    <td>${dateStr}</td>
+                    <td><strong>${tDateStr}</strong><br><span style="color:#ffcc00; font-size:10px;">Alarm o ${aDateStr}</span></td>
                     <td style="color:#55ff55; font-weight:bold;">${w.ourClan}</td>
                     <td style="color:#ff5555; font-weight:bold;">${w.enemyClan}</td>
-                    <td class="war-countdown" data-target="${w.targetTime}">Liczenie...</td>
+                    <td class="war-countdown" data-alarmtime="${w.alarmTime}">Liczenie...</td>
                     <td><button class="cancel-btn" onclick="cancelWar(${w.id})">Anuluj</button></td>
                 </tr>`;
             });
@@ -1362,11 +1419,15 @@
 
             for (let i = warSchedules.length - 1; i >= 0; i--) {
                 let w = warSchedules[i];
-                if (now >= w.targetTime) {
-                    // Czas ataku minął!
-                    fireWarDiscordAlert(w.ourClan, w.enemyClan);
-                    playBeep('warning'); // Sygnał dźwiękowy na ekranie
+                if (now >= w.alarmTime) {
                     
+                    // Odpala Discord webhooka z poziomu strony TYLKO gdy gracz nie skonfigurował chmury Google.
+                    // (Zabezpiecza to przed podwójnym wysyłaniem alertów: raz z Google i raz z przeglądarki)
+                    if (!localStorage.getItem('bf_war_webapp')) {
+                        fireWarDiscordAlert(w.ourClan, w.enemyClan, w.targetTime, w.offset);
+                    }
+                    
+                    playBeep('warning'); // Sygnał na komputerze
                     warSchedules.splice(i, 1);
                     changed = true;
                 }
@@ -1378,11 +1439,14 @@
             }
         }
 
-        function fireWarDiscordAlert(ourClan, enemyClan) {
+        function fireWarDiscordAlert(ourClan, enemyClan, targetTime, offset) {
             let webhookUrl = localStorage.getItem('bf_war_webhook');
-            if (!webhookUrl) return; // Brak dodanego webhooka = brak wysyłki
+            if (!webhookUrl) return; 
 
-            let message = `🚨 **CZAS NA ATAK!** 🚨\nKierunek uderzenia: **${enemyClan}**\nNasz atakujący klan: **${ourClan}**`;
+            let targetDate = new Date(targetTime);
+            let timeStr = targetDate.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
+
+            let message = `🚨 **PRZYGOTOWANIE DO ATAKU!** 🚨\nAtak zaplanowany na: **${timeStr}** (za ${offset} minut)\nKierunek uderzenia: **${enemyClan}**\nNasz atakujący klan: **${ourClan}**`;
             
             const payload = JSON.stringify({
                 content: message,
@@ -1394,7 +1458,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: payload
-            }).catch(err => console.log("Błąd wysyłki webhooka wojennego", err));
+            }).catch(err => console.log("Błąd wysyłki", err));
         }
 
     </script>
