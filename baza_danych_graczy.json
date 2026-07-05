@@ -1,43 +1,43 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "207.450.526 / 207.503.260",
+        "Doswiadczenie": "207.654.766 / 207.696.570",
         "Sila": "4000",
         "Obrona": "3768",
         "Zwinnosc": "3498",
-        "Wytrzymalosc": "3304",
+        "Wytrzymalosc": "3305",
         "Charyzma": "1506",
-        "Walki": "96.981",
-        "Zrabowane dobra": "297.608.203.568 krwi"
+        "Walki": "96.986",
+        "Zrabowane dobra": "297.788.564.449 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "127.801.804 / 127.820.735",
+        "Doswiadczenie": "127.883.415 / 127.921.875",
         "Sila": "2530",
         "Obrona": "2509",
         "Zwinnosc": "2311",
-        "Wytrzymalosc": "2016",
+        "Wytrzymalosc": "2018",
         "Charyzma": "1575",
         "Walki": "57.300",
-        "Zrabowane dobra": "192.475.619.846 krwi"
+        "Zrabowane dobra": "192.570.542.295 krwi"
     },
     "lux": {
-        "Doswiadczenie": "119.021.065 / 119.028.080",
+        "Doswiadczenie": "119.094.067 / 119.125.685",
         "Sila": "2391",
         "Obrona": "2923",
         "Zwinnosc": "2147",
         "Wytrzymalosc": "2551",
         "Charyzma": "1915",
-        "Walki": "106.206",
-        "Zrabowane dobra": "183.600.144.066 krwi"
+        "Walki": "106.207",
+        "Zrabowane dobra": "183.646.583.049 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "434.029.888 / 434.041.760",
+        "Doswiadczenie": "434.521.993 / 434.600.965",
         "Sila": "4311",
         "Obrona": "3319",
-        "Zwinnosc": "3923",
-        "Wytrzymalosc": "3754",
+        "Zwinnosc": "3924",
+        "Wytrzymalosc": "3756",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "845.781.920.418 mięsa"
+        "Zrabowane dobra": "846.687.023.351 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "150.340.960 / 150.376.760",
@@ -50,7 +50,7 @@
         "Zrabowane dobra": "254.663.717.384 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "146.535.345 / 146.562.390",
+        "Doswiadczenie": "146.540.759 / 146.562.390",
         "Sila": "4794",
         "Obrona": "3289",
         "Zwinnosc": "3003",
