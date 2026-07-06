@@ -1,12 +1,12 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "209.518.600 / 209.569.850",
+        "Doswiadczenie": "209.518.602 / 209.569.850",
         "Sila": "4000",
         "Obrona": "3770",
         "Zwinnosc": "3500",
         "Wytrzymalosc": "3307",
         "Charyzma": "1506",
-        "Walki": "97.060",
+        "Walki": "97.061",
         "Zrabowane dobra": "299.667.196.276 krwi"
     },
     "Gawron": {
@@ -16,28 +16,28 @@
         "Zwinnosc": "2313",
         "Wytrzymalosc": "2024",
         "Charyzma": "1576",
-        "Walki": "57.339",
+        "Walki": "57.340",
         "Zrabowane dobra": "193.562.321.025 krwi"
     },
     "lux": {
-        "Doswiadczenie": "120.199.584 / 120.201.945",
-        "Sila": "2392",
+        "Doswiadczenie": "120.294.603 / 120.300.030",
+        "Sila": "2393",
         "Obrona": "2925",
         "Zwinnosc": "2151",
         "Wytrzymalosc": "2552",
         "Charyzma": "1915",
-        "Walki": "106.430",
-        "Zrabowane dobra": "185.125.917.308 krwi"
+        "Walki": "106.433",
+        "Zrabowane dobra": "185.320.951.523 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "438.558.329 / 438.619.145",
+        "Doswiadczenie": "438.685.154 / 438.712.810",
         "Sila": "4311",
         "Obrona": "3320",
         "Zwinnosc": "3924",
         "Wytrzymalosc": "3768",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "851.057.459.071 mięsa"
+        "Zrabowane dobra": "851.185.394.285 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "150.439.432 / 150.486.465",
@@ -46,7 +46,7 @@
         "Zwinnosc": "2632",
         "Wytrzymalosc": "2428",
         "Charyzma": "1590",
-        "Walki": "50.183",
+        "Walki": "50.185",
         "Zrabowane dobra": "254.816.382.555 krwi"
     },
     "PEON": {
@@ -56,7 +56,7 @@
         "Zwinnosc": "3004",
         "Wytrzymalosc": "3047",
         "Charyzma": "1781",
-        "Walki": "30.727",
+        "Walki": "30.728",
         "Zrabowane dobra": "299.791.875.250 mięsa"
     }
 }
