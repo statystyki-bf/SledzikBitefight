@@ -195,10 +195,10 @@
         <div class="filter-container">
             <span style="font-size: 15px; font-weight: bold; color: #ffcc00;">Wybierz zakres przyrostów:</span>
             <select id="rankingPeriodSelect">
-                <option value="LAST_24H">Ostatnie 24h (Ostatni dzień)</option>
-                <option value="LAST_3_DAYS">Ostatnie 3 dni</option>
-                <option value="LAST_WEEK">Ostatni tydzień (7 dni)</option>
-                <option value="THIS_MONTH">Bieżący miesiąc (od 1-go dnia miesiąca)</option>
+                <option value="LAST_24H" id="opt_24h">Ostatnie 24h</option>
+                <option value="LAST_3_DAYS" id="opt_3d">Ostatnie 3 dni</option>
+                <option value="LAST_WEEK" id="opt_1w">Ostatni tydzień</option>
+                <option value="THIS_MONTH" id="opt_1m">Bieżący miesiąc</option>
                 <option value="SPECIFIC_DAY">Archiwum: Konkretny dzień (24h)...</option>
             </select>
             <select id="rankingSpecificDaySelect" style="display: none;"></select>
@@ -226,11 +226,7 @@
     <!-- ZAKŁADKA OPERACJE WOJENNE -->
     <div id="sectionWar">
         <h2>Zaplanuj Operację Wojenną</h2>
-        <div style="margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <input type="text" id="warWebhookInput" placeholder="Discord Webhook..." style="width: 250px;">
-            <input type="text" id="warWebAppInput" placeholder="[OPCJA 2] Wklej link Google Apps Script (Skrypt w Chmurze)..." style="width: 350px;">
-            <button class="action-btn" onclick="saveWarSettings()">Zapisz Linki Zewnętrzne</button>
-        </div>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie, które serwer Google automatycznie wyśle prosto na Discorda.</div>
         
         <div class="war-container">
             <!-- Kolumna NASZE KLANY -->
@@ -318,13 +314,20 @@
 
     <script>
         // =========================================================
+        // LINKI WEWNĘTRZNE DO ARKUSZA GOOGLE
+        // =========================================================
         const urlGoogleSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=0&single=true&output=csv";
         const urlRankingSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=109350413&single=true&output=csv"; 
         const urlRutynaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1551413162&single=true&output=csv"; 
         const urlClansBazaSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=2007434492&single=true&output=csv"; 
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
-        // =========================================================
         
+        // =========================================================
+        // LINKI DO SYSTEMU POWIADOMIEŃ WOJENNYCH (CHMURA GOOGLE + DISCORD)
+        // =========================================================
+        const WAR_WEBHOOK_URL = "https://discord.com/api/webhooks/1520189628869771384/r-3_Fv7H248LCt_5AajA0Ct8luKXCZsijqUI_Gox9mgSAIFU_8qIdyhuchX5gLBjvADW";
+        const WAR_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzVmSezQk9NDfeywdnzNYmPe1K5MZ-FvKvRKftqSWmOXt5SByYXUIB66DOwaRHG1Kll/exec";
+
         const PLAYERS = {
             "Brahmaparuss": "https://s60-pl.bitefight.gameforge.com/profile/player/2504867",
             "Gawron": "https://s60-pl.bitefight.gameforge.com/profile/player/2505390",
@@ -343,7 +346,6 @@
         const BLACKLIST = ["Kark23", "Darksun"]; 
         const CLAN_BLACKLIST = ["Paruwas", "LYC", ".L.Y.C.", "=LYC=", "LYCANS_pl"];
         
-        // Zdefiniowane nasze klany
         const OUR_CLANS_LIST = [
             "Obojętnie jakim klanem",
             "LYCANS [.L.Y.C.]", "Brahmassie [-BSP-]", "ZADYMIACZ [RAMBO]", "Bobas_Gangs [.B.G.]",
@@ -411,7 +413,7 @@
             });
         }, 1000);
 
-        // Zawsze sprawdzaj czy nie pora wykonać alarmu na Discord w przeglądarce (Fallback Opcji 1)
+        // Zawsze sprawdzaj czy nie pora na alarm z poziomu przeglądarki (Dźwięk)
         setInterval(checkWarSchedules, 5000);
 
         // ==========================================
@@ -684,11 +686,6 @@
                 document.getElementById('tabWarBtn').classList.add('active');
                 document.getElementById('sectionWar').classList.add('active');
                 renderWarSchedules();
-                // Inicjalizacja odbywa się z renderClans po załadowaniu danych
-                let savedWebhook = localStorage.getItem('bf_war_webhook');
-                let savedWebApp = localStorage.getItem('bf_war_webapp');
-                if(savedWebhook) document.getElementById('warWebhookInput').value = savedWebhook;
-                if(savedWebApp) document.getElementById('warWebAppInput').value = savedWebApp;
             }
         }
 
@@ -842,7 +839,7 @@
                 renderSummaryTable();
                 updateFilters(); 
                 renderTable(); 
-                renderClans(); // Inicjuje dane klanowe, także dla zakładki Operacje Wojenne
+                renderClans(); 
             } catch (e) { console.error("Błąd ładowania silnika głównego: ", e); }
         }
 
@@ -1171,13 +1168,50 @@
                 const response = await fetch(urlRankingSheet + '&t=' + new Date().getTime()); const text = await response.text(); const wiersze = text.trim().split('\n');
                 if (wiersze.length <= 1) { document.getElementById('rankingTableContainer').innerHTML = "<p>Brak danych historycznych rankingu.</p>"; return; }
                 globalRankingData = [];
-                for (let i = 1; i < wiersze.length; i++) { let komorki = parseCSVLine(wiersze[i].trim()); if (komorki.length >= 11) globalRankingData.push(komorki); }
+                for (let i = 1; i < wiersze.length; i++) { 
+                    let komorki = parseCSVLine(wiersze[i].trim()); 
+                    if (komorki.length >= 10) globalRankingData.push(komorki); 
+                }
+                updateRankingDropdownLabels();
                 calculateAndRenderRanking();
-            } catch (e) { document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu.</p>"; }
+            } catch (e) { 
+                document.getElementById('rankingTableContainer').innerHTML = "<p style='color: #ff5555;'>Błąd wczytywania bazy rankingu. Sprawdź plik arkusza.</p>"; 
+            }
         }
 
         function getUniqueRankingDates() {
-            const datesSet = new Set(); globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0]); }); return Array.from(datesSet);
+            const datesSet = new Set(); 
+            globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0].trim()); }); 
+            return Array.from(datesSet);
+        }
+
+        function updateRankingDropdownLabels() {
+            let uniqueDates = getUniqueRankingDates();
+            if (uniqueDates.length === 0) return;
+            
+            function extractDate(str) { return str ? str.split(' ')[0] : ''; }
+            
+            let latest = uniqueDates[uniqueDates.length - 1];
+            let d24h = uniqueDates[Math.max(0, uniqueDates.length - 2)];
+            let d3d = uniqueDates[Math.max(0, uniqueDates.length - 4)];
+            let d7d = uniqueDates[Math.max(0, uniqueDates.length - 8)];
+            
+            let latestDate = extractDate(latest);
+            let targetMonth = latestDate.split('.')[1];
+            let dMonthStr = uniqueDates.find(d => extractDate(d).split('.')[1] === targetMonth) || uniqueDates[0];
+            let dMonthDate = extractDate(dMonthStr);
+
+            let opt24h = document.querySelector('#rankingPeriodSelect option[value="LAST_24H"]');
+            if(opt24h) opt24h.text = (d24h && d24h !== latest) ? `Ostatnie 24h (${extractDate(d24h)} do ${latestDate})` : `Ostatnie 24h (Tylko dzisiaj: ${latestDate})`;
+            
+            let opt3d = document.querySelector('#rankingPeriodSelect option[value="LAST_3_DAYS"]');
+            if(opt3d) opt3d.text = (d3d && d3d !== latest) ? `Ostatnie 3 dni (Suma: ${extractDate(d3d)} do ${latestDate})` : `Ostatnie 3 dni`;
+            
+            let opt1w = document.querySelector('#rankingPeriodSelect option[value="LAST_WEEK"]');
+            if(opt1w) opt1w.text = (d7d && d7d !== latest) ? `Ostatni tydzień (${extractDate(d7d)} do ${latestDate})` : `Ostatni tydzień`;
+            
+            let opt1m = document.querySelector('#rankingPeriodSelect option[value="THIS_MONTH"]');
+            if(opt1m) opt1m.text = `Bieżący miesiąc (od ${dMonthDate} do ${latestDate})`;
         }
 
         function populateRankingSpecificDays() {
@@ -1197,11 +1231,15 @@
             if (period === 'LAST_24H') { endDateStr = uniqueDates[uniqueDates.length - 1]; startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 2)]; }
             else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
-            else if (period === 'THIS_MONTH') { let targetMonth = endDateStr.split('.')[1]; startDateStr = uniqueDates.find(d => d.split('.')[1] === targetMonth) || uniqueDates[0]; }
+            else if (period === 'THIS_MONTH') { 
+                let targetMonth = endDateStr.split(' ')[0].split('.')[1]; 
+                startDateStr = uniqueDates.find(d => d.split(' ')[0].split('.')[1] === targetMonth) || uniqueDates[0]; 
+            }
             else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
             
             if (startDateStr === endDateStr) startDateStr = null; let isDelta = (startDateStr !== null);
-            let endRecords = globalRankingData.filter(r => r[0] === endDateStr), startRecords = startDateStr ? globalRankingData.filter(r => r[0] === startDateStr) : [];
+            let endRecords = globalRankingData.filter(r => r[0].trim() === endDateStr); 
+            let startRecords = startDateStr ? globalRankingData.filter(r => r[0].trim() === startDateStr) : [];
             let startMap = {}; startRecords.forEach(r => { startMap[r[3]] = r; }); 
 
             computedRankingRows = [];
@@ -1210,15 +1248,31 @@
             endRecords.forEach(endRow => {
                 let rasa = endRow[2], nick = endRow[3], startRow = startMap[nick];
                 let dPoziom = 0, dLup = 0, dWartosc = 0, dWygrane = 0, dPrzegrane = 0, dZdobyte = 0, dStracone = 0;
-                if (startRow && isDelta) { dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0); dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]); dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]); dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]); dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]); dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]); dStracone = cleanNum(endRow[10]) - cleanNum(startRow[10]); } 
+                if (startRow && isDelta) { 
+                    dPoziom = (parseInt(endRow[4]) || 0) - (parseInt(startRow[4]) || 0); 
+                    dLup = cleanNum(endRow[5]) - cleanNum(startRow[5]); 
+                    dWartosc = cleanNum(endRow[6]) - cleanNum(startRow[6]); 
+                    dWygrane = cleanNum(endRow[7]) - cleanNum(startRow[7]); 
+                    dPrzegrane = cleanNum(endRow[8]) - cleanNum(startRow[8]); 
+                    dZdobyte = cleanNum(endRow[9]) - cleanNum(startRow[9]); 
+                    dStracone = cleanNum(endRow[10] || 0) - cleanNum(startRow[10] || 0); 
+                } 
                 else if (isDelta) { dPoziom = dLup = dWartosc = dWygrane = dPrzegrane = dZdobyte = dStracone = 0; }
-                else { dPoziom = parseInt(endRow[4]) || 0; dLup = cleanNum(endRow[5]); dWartosc = cleanNum(endRow[6]); dWygrane = cleanNum(endRow[7]); dPrzegrane = cleanNum(endRow[8]); dZdobyte = cleanNum(endRow[9]); dStracone = cleanNum(endRow[10]); }
+                else { 
+                    dPoziom = parseInt(endRow[4]) || 0; 
+                    dLup = cleanNum(endRow[5]); 
+                    dWartosc = cleanNum(endRow[6]); 
+                    dWygrane = cleanNum(endRow[7]); 
+                    dPrzegrane = cleanNum(endRow[8]); 
+                    dZdobyte = cleanNum(endRow[9]); 
+                    dStracone = cleanNum(endRow[10] || 0); 
+                }
                 computedRankingRows.push({ rasa, nick, poziom: dPoziom, lup: dLup, wartosc: dWartosc, wygrane: dWygrane, przegrane: dPrzegrane, zdobyte: dZdobyte, stracone: dStracone });
             });
             sortAndRenderRankingTable(isDelta);
         }
 
-        function sortRanking(colIndex) { let dataKeyIndex = colIndex - 1; if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; } let uniqueDates = Array.from(new Set(globalRankingData.map(r => r[0]))); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY'; sortAndRenderRankingTable(isDelta); }
+        function sortRanking(colIndex) { let dataKeyIndex = colIndex - 1; if (currentSortCol === dataKeyIndex) currentSortAsc = !currentSortAsc; else { currentSortCol = dataKeyIndex; currentSortAsc = (dataKeyIndex === 0 || dataKeyIndex === 1) ? true : false; } let uniqueDates = getUniqueRankingDates(); let isDelta = uniqueDates.length > 1 && document.getElementById('rankingPeriodSelect').value !== 'SPECIFIC_DAY'; sortAndRenderRankingTable(isDelta); }
 
         function sortAndRenderRankingTable(isDelta) {
             if (computedRankingRows.length === 0) return;
@@ -1273,13 +1327,6 @@
         // ==========================================
         // SYSTEM OPERACJI WOJENNYCH
         // ==========================================
-        function saveWarSettings() {
-            let hook = document.getElementById('warWebhookInput').value;
-            let webapp = document.getElementById('warWebAppInput').value;
-            localStorage.setItem('bf_war_webhook', hook);
-            localStorage.setItem('bf_war_webapp', webapp);
-            alert("Ustawienia systemów powiadomień zostały zapisane!");
-        }
 
         function renderWarClans(currentClanState) {
             let ourListHtml = "";
@@ -1349,27 +1396,21 @@
             localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
             renderWarSchedules();
 
-            // WYŚLIJ DO CHMURY (OPCJA 2)
-            let webAppUrl = document.getElementById('warWebAppInput').value;
-            let webhookUrl = document.getElementById('warWebhookInput').value;
-
-            if (webAppUrl && webhookUrl) {
+            // WYŚLIJ DO CHMURY
+            if (WAR_WEBAPP_URL && WAR_WEBHOOK_URL) {
                 let params = new URLSearchParams({
                     action: 'addWar',
                     ourClan: selectedOurClan,
                     enemyClan: selectedEnemyClan,
                     targetTime: targetTime,
                     alarmTime: alarmTime,
-                    webhook: webhookUrl,
+                    webhook: WAR_WEBHOOK_URL,
                     offset: offsetMinutes
                 });
                 
-                fetch(webAppUrl + "?" + params.toString(), {mode: 'no-cors'})
+                fetch(WAR_WEBAPP_URL + "?" + params.toString(), {mode: 'no-cors'})
                     .then(() => console.log("Skrypt przekazany do chmury pomyślnie."))
                     .catch(e => console.log("Błąd komunikacji z chmurą Google", e));
-            } else if (!webAppUrl) {
-                // Informacja, jeśli brakuje linku do chmury
-                console.log("Działanie tylko w przeglądarce (brak WebApp URL).");
             }
             
             // Opcjonalne czyszczenie zaznaczeń
@@ -1421,13 +1462,8 @@
                 let w = warSchedules[i];
                 if (now >= w.alarmTime) {
                     
-                    // Odpala Discord webhooka z poziomu strony TYLKO gdy gracz nie skonfigurował chmury Google.
-                    // (Zabezpiecza to przed podwójnym wysyłaniem alertów: raz z Google i raz z przeglądarki)
-                    if (!localStorage.getItem('bf_war_webapp')) {
-                        fireWarDiscordAlert(w.ourClan, w.enemyClan, w.targetTime, w.offset);
-                    }
-                    
-                    playBeep('warning'); // Sygnał na komputerze
+                    // Odgrywamy tylko sygnał. Discordem zajmie się chmura (Apps Script)
+                    playBeep('warning'); 
                     warSchedules.splice(i, 1);
                     changed = true;
                 }
@@ -1438,29 +1474,6 @@
                 renderWarSchedules();
             }
         }
-
-        function fireWarDiscordAlert(ourClan, enemyClan, targetTime, offset) {
-            let webhookUrl = localStorage.getItem('bf_war_webhook');
-            if (!webhookUrl) return; 
-
-            let targetDate = new Date(targetTime);
-            let timeStr = targetDate.toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'});
-
-            let message = `🚨 **PRZYGOTOWANIE DO ATAKU!** 🚨\nAtak zaplanowany na: **${timeStr}** (za ${offset} minut)\nKierunek uderzenia: **${enemyClan}**\nNasz atakujący klan: **${ourClan}**`;
-            
-            const payload = JSON.stringify({
-                content: message,
-                username: "Dowództwo BiteFight",
-                avatar_url: "https://i.postimg.cc/mD8zQ6b9/2c1de8-png.png" 
-            });
-
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: payload
-            }).catch(err => console.log("Błąd wysyłki", err));
-        }
-
     </script>
 </body>
 </html>
