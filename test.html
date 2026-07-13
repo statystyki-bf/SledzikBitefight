@@ -226,7 +226,7 @@
     <!-- ZAKŁADKA OPERACJE WOJENNE -->
     <div id="sectionWar">
         <h2>Zaplanuj Operację Wojenną</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie, które serwer Google automatycznie wyśle prosto na Discorda.</div>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie. System w chmurze (Google Apps Script) automatycznie wyśle alert wprost na serwer Discord.</div>
         
         <div class="war-container">
             <!-- Kolumna NASZE KLANY -->
@@ -323,7 +323,7 @@
         const urlClansLogiSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUL3LMQgsMw_kzKZkvQ8cKEp7XuCGkuPaWGVbQlGHdz8-C_oTMSZC7oEJjfzE5wwo-UoqmFU6FdAPT/pub?gid=1323690342&single=true&output=csv"; 
         
         // =========================================================
-        // LINKI DO SYSTEMU POWIADOMIEŃ WOJENNYCH (CHMURA GOOGLE + DISCORD)
+        // LINKI DO SYSTEMU POWIADOMIEŃ WOJENNYCH (ZAKODOWANE NA TWARDO)
         // =========================================================
         const WAR_WEBHOOK_URL = "https://discord.com/api/webhooks/1520189628869771384/r-3_Fv7H248LCt_5AajA0Ct8luKXCZsijqUI_Gox9mgSAIFU_8qIdyhuchX5gLBjvADW";
         const WAR_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzVmSezQk9NDfeywdnzNYmPe1K5MZ-FvKvRKftqSWmOXt5SByYXUIB66DOwaRHG1Kll/exec";
@@ -370,7 +370,6 @@
         let routineChartInstance = null;
         let sealsChartInstance = null;
         
-        // Stan do Operacji Wojennych
         let selectedOurClan = null;
         let selectedEnemyClan = null;
         let warSchedules = JSON.parse(localStorage.getItem('bf_war_schedules') || '[]');
@@ -379,7 +378,6 @@
         // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI (NA ŻYWO)
         // ==========================================
         setInterval(() => {
-            // Tabela live blokad graczy
             document.querySelectorAll('.live-block-timer').forEach(el => {
                 let endTime = parseInt(el.getAttribute('data-endtime'));
                 let diff = endTime - new Date().getTime();
@@ -393,12 +391,11 @@
                 }
             });
             
-            // Tabela zaplanowanych wojen
             document.querySelectorAll('.war-countdown').forEach(el => {
                 let alarmTime = parseInt(el.getAttribute('data-alarmtime'));
                 let diff = alarmTime - new Date().getTime();
                 if (diff <= 0) {
-                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">AKCJA! / Wysłano</span>';
+                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">AKCJA! / Wysłano z chmury</span>';
                 } else {
                     let d = Math.floor(diff / (1000 * 60 * 60 * 24));
                     let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -413,7 +410,6 @@
             });
         }, 1000);
 
-        // Zawsze sprawdzaj czy nie pora na alarm z poziomu przeglądarki (Dźwięk)
         setInterval(checkWarSchedules, 5000);
 
         // ==========================================
@@ -457,9 +453,7 @@
 
         function parseAttackDate(str) {
             let m = str.match(/(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})/);
-            if(m) {
-                return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime();
-            }
+            if(m) { return new Date(m[3], m[2]-1, m[1], m[4], m[5], 0).getTime(); }
             return null;
         }
 
@@ -470,11 +464,7 @@
 
         function startBlockCountdown(attackTimeStr) {
             let t = parseAttackDate(attackTimeStr);
-            if(!t) {
-                alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM");
-                return;
-            }
-            
+            if(!t) { alert("Nie rozpoznano formatu daty! Wklej datę w formacie: DD.MM.YYYY HH:MM"); return; }
             if(titleBlinkInterval) { clearInterval(titleBlinkInterval); titleBlinkInterval = null; }
             document.title = "BiteFight - Centrum Dowodzenia";
 
@@ -484,11 +474,7 @@
             endBeepPlayed = false;
             
             let now = new Date().getTime();
-            if (blockEndTime <= now) {
-                alert("Ochrona z tego ataku już dawno wygasła!");
-                clearBlockData();
-                return;
-            }
+            if (blockEndTime <= now) { alert("Ochrona z tego ataku już dawno wygasła!"); clearBlockData(); return; }
 
             if(blockInterval) clearInterval(blockInterval);
             blockInterval = setInterval(updateBlockTimer, 1000);
@@ -534,17 +520,10 @@
                 titleTab.style.backgroundColor = "#ff5555";
                 titleTab.style.color = "#fff";
                 
-                if (!endBeepPlayed) {
-                    playBeep('end');
-                    endBeepPlayed = true;
-                }
-
+                if (!endBeepPlayed) { playBeep('end'); endBeepPlayed = true; }
                 if (!titleBlinkInterval) {
                     let blinkState = false;
-                    titleBlinkInterval = setInterval(() => {
-                        document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!";
-                        blinkState = !blinkState;
-                    }, 1000);
+                    titleBlinkInterval = setInterval(() => { document.title = blinkState ? "⚠️ KONIEC OCHRONY!" : "⚔️ MOŻNA ATAKOWAĆ!"; blinkState = !blinkState; }, 1000);
                 }
                 return;
             }
@@ -557,30 +536,15 @@
             display.innerHTML = `🛡️ Czas do końca ochrony: ${timeStr}`;
 
             if (totalSeconds <= 60) { 
-                display.style.color = "#ff3333";
-                box.style.borderColor = "#ff3333";
-                box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
-                document.title = `🔴 [${timeStr}] Ochrona zanika!`;
-                titleTab.style.backgroundColor = "#ff3333";
-                titleTab.style.color = "#fff";
-                if (!warningBeepPlayed) {
-                    playBeep('warning');
-                    warningBeepPlayed = true;
-                }
+                display.style.color = "#ff3333"; box.style.borderColor = "#ff3333"; box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.8)";
+                document.title = `🔴 [${timeStr}] Ochrona zanika!`; titleTab.style.backgroundColor = "#ff3333"; titleTab.style.color = "#fff";
+                if (!warningBeepPlayed) { playBeep('warning'); warningBeepPlayed = true; }
             } else if (totalSeconds <= 180) { 
-                display.style.color = "#ffcc00";
-                box.style.borderColor = "#ffcc00";
-                box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
-                document.title = `🟡 [${timeStr}] Ochrona wygasa!`;
-                titleTab.style.backgroundColor = "#ffcc00";
-                titleTab.style.color = "#000";
+                display.style.color = "#ffcc00"; box.style.borderColor = "#ffcc00"; box.style.boxShadow = "0 0 20px rgba(255, 204, 0, 0.6)";
+                document.title = `🟡 [${timeStr}] Ochrona wygasa!`; titleTab.style.backgroundColor = "#ffcc00"; titleTab.style.color = "#000";
             } else { 
-                display.style.color = "#55ff55";
-                box.style.borderColor = "#00e5ff";
-                box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
-                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`;
-                titleTab.style.backgroundColor = "#00e5ff";
-                titleTab.style.color = "#000";
+                display.style.color = "#55ff55"; box.style.borderColor = "#00e5ff"; box.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
+                document.title = `🛡️ [${timeStr}] Ochrona - BiteFight`; titleTab.style.backgroundColor = "#00e5ff"; titleTab.style.color = "#000";
             }
         }
 
@@ -609,84 +573,26 @@
         // ==========================================
         // SKRYPTY PRZYBORNIKA 
         // ==========================================
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function calcSkillCost() {
-            let val = parseInt(document.getElementById('calc_skill').value);
-            if (isNaN(val) || val < 5) val = 5;
-            let cost = Math.floor(Math.pow(val - 4, 2.4));
-            document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`;
-        }
-
-        function calcBattleValue() {
-            let val = parseInt(document.getElementById('calc_wb').value);
-            if (isNaN(val) || val < 1) val = 1;
-            let min = Math.floor(val * 0.8);
-            let max = Math.floor(val * 1.25);
-            document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`;
-        }
-
-        function calcTotalGold() {
-            let str = parseInt(document.getElementById('c_str').value) || 5;
-            let def = parseInt(document.getElementById('c_def').value) || 5;
-            let dex = parseInt(document.getElementById('c_dex').value) || 5;
-            let end = parseInt(document.getElementById('c_end').value) || 5;
-            let chr = parseInt(document.getElementById('c_chr').value) || 5;
-
-            let total = 0;
-            for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4));
-            for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4));
-
-            document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`;
-        }
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        function calcSkillCost() { let val = parseInt(document.getElementById('calc_skill').value); if (isNaN(val) || val < 5) val = 5; let cost = Math.floor(Math.pow(val - 4, 2.4)); document.getElementById('res_skill').innerHTML = `Cena skilla: <span style="color: #ffcc00">${formatNumber(cost)}</span> złota`; }
+        function calcBattleValue() { let val = parseInt(document.getElementById('calc_wb').value); if (isNaN(val) || val < 1) val = 1; let min = Math.floor(val * 0.8); let max = Math.floor(val * 1.25); document.getElementById('res_wb').innerHTML = `Atakujesz: <span style="color: #ffcc00">${formatNumber(min)}</span> - <span style="color: #ffcc00">${formatNumber(max)}</span> WB`; }
+        function calcTotalGold() { let str = parseInt(document.getElementById('c_str').value) || 5; let def = parseInt(document.getElementById('c_def').value) || 5; let dex = parseInt(document.getElementById('c_dex').value) || 5; let end = parseInt(document.getElementById('c_end').value) || 5; let chr = parseInt(document.getElementById('c_chr').value) || 5; let total = 0; for(let i=5; i<str; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<def; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<dex; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<end; i++) total += Math.floor(Math.pow(i-4, 2.4)); for(let i=5; i<chr; i++) total += Math.floor(Math.pow(i-4, 2.4)); document.getElementById('res_total').innerHTML = `Łączna cena zakupionych skilli: <span style="color: #55ff55; font-size: 16px;">${formatNumber(total)}</span> złota`; }
 
         // ==========================================
         // GŁÓWNY SILNIK STRONY
         // ==========================================
         function switchTab(tabId) {
-            document.getElementById('tabTrackerBtn').classList.remove('active');
-            document.getElementById('tabRankingBtn').classList.remove('active');
-            document.getElementById('tabHeatmapBtn').classList.remove('active');
-            document.getElementById('tabClansBtn').classList.remove('active');
-            document.getElementById('tabToolsBtn').classList.remove('active');
-            document.getElementById('tabWarBtn').classList.remove('active');
-            
-            document.getElementById('sectionTracker').classList.remove('active');
-            document.getElementById('sectionRanking').classList.remove('active');
-            document.getElementById('sectionHeatmap').classList.remove('active');
-            document.getElementById('sectionClans').classList.remove('active');
-            document.getElementById('sectionTools').classList.remove('active');
-            document.getElementById('sectionWar').classList.remove('active');
+            ['tracker', 'ranking', 'heatmap', 'clans', 'tools', 'war'].forEach(t => {
+                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn').classList.remove('active');
+                document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
+            });
+            document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Btn').classList.add('active');
+            document.getElementById('section' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
 
-            if (tabId === 'tracker') {
-                document.getElementById('tabTrackerBtn').classList.add('active');
-                document.getElementById('sectionTracker').classList.add('active');
-            } else if (tabId === 'ranking') {
-                document.getElementById('tabRankingBtn').classList.add('active');
-                document.getElementById('sectionRanking').classList.add('active');
-                if (globalRankingData.length === 0) loadRankingData();
-                else calculateAndRenderRanking();
-            } else if (tabId === 'heatmap') {
-                document.getElementById('tabHeatmapBtn').classList.add('active');
-                document.getElementById('sectionHeatmap').classList.add('active');
-                renderChart();
-            } else if (tabId === 'clans') {
-                document.getElementById('tabClansBtn').classList.add('active');
-                document.getElementById('sectionClans').classList.add('active');
-                renderClans();
-            } else if (tabId === 'tools') {
-                document.getElementById('tabToolsBtn').classList.add('active');
-                document.getElementById('sectionTools').classList.add('active');
-            } else if (tabId === 'war') {
-                document.getElementById('tabWarBtn').classList.add('active');
-                document.getElementById('sectionWar').classList.add('active');
-                renderWarSchedules();
-            }
+            if (tabId === 'ranking') { if (globalRankingData.length === 0) loadRankingData(); else calculateAndRenderRanking(); } 
+            else if (tabId === 'heatmap') { renderChart(); } 
+            else if (tabId === 'clans') { renderClans(); }
+            else if (tabId === 'war') { renderWarSchedules(); }
         }
 
         function handleFilterChange() { renderTable(); }
@@ -1462,7 +1368,7 @@
                 let w = warSchedules[i];
                 if (now >= w.alarmTime) {
                     
-                    // Odgrywamy tylko sygnał. Discordem zajmie się chmura (Apps Script)
+                    // Odgrywamy tylko sygnał dźwiękowy w przeglądarce. Discordem zajmuje się chmura!
                     playBeep('warning'); 
                     warSchedules.splice(i, 1);
                     changed = true;
