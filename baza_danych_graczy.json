@@ -1,43 +1,43 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "220.987.982 / 221.052.650",
+        "Doswiadczenie": "220.987.988 / 221.052.650",
         "Sila": "4000",
         "Obrona": "3784",
         "Zwinnosc": "3523",
         "Wytrzymalosc": "3314",
         "Charyzma": "1507",
-        "Walki": "97.370",
+        "Walki": "97.371",
         "Zrabowane dobra": "310.766.708.404 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "132.504.911 / 132.514.665",
+        "Doswiadczenie": "132.581.976 / 132.617.650",
         "Sila": "2542",
         "Obrona": "2513",
         "Zwinnosc": "2316",
-        "Wytrzymalosc": "2036",
+        "Wytrzymalosc": "2037",
         "Charyzma": "1580",
-        "Walki": "57.445",
-        "Zrabowane dobra": "197.488.937.317 krwi"
+        "Walki": "57.447",
+        "Zrabowane dobra": "197.547.905.416 krwi"
     },
     "lux": {
-        "Doswiadczenie": "123.594.637 / 123.608.890",
-        "Sila": "2400",
+        "Doswiadczenie": "123.677.302 / 123.708.350",
+        "Sila": "2401",
         "Obrona": "2925",
         "Zwinnosc": "2159",
         "Wytrzymalosc": "2558",
         "Charyzma": "1929",
-        "Walki": "106.623",
-        "Zrabowane dobra": "187.973.224.915 krwi"
+        "Walki": "106.624",
+        "Zrabowane dobra": "188.043.807.901 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "457.392.453 / 457.455.690",
+        "Doswiadczenie": "457.649.334 / 457.742.685",
         "Sila": "4323",
         "Obrona": "3320",
         "Zwinnosc": "3927",
         "Wytrzymalosc": "3803",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "869.738.616.267 mięsa"
+        "Zrabowane dobra": "870.011.031.795 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "153.643.862 / 153.685.220",
@@ -46,7 +46,7 @@
         "Zwinnosc": "2641",
         "Wytrzymalosc": "2438",
         "Charyzma": "1601",
-        "Walki": "50.312",
+        "Walki": "50.314",
         "Zrabowane dobra": "257.692.275.022 krwi"
     },
     "PEON": {
