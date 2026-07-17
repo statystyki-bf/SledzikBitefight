@@ -53,9 +53,9 @@
         .clan-text-plain { color: #ccc; }
         
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
-        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 4px; padding: 10px; width: 150px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
+        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 4px; padding: 10px; width: 160px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
-        .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
+        .seal-name { font-size: 12px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
         .seal-date { font-size: 9px; color: #888; border-top: 1px solid #2d0a0a; padding-top: 4px; width: 100%; font-family: monospace; }
         .sort-arrow-active { color: #ffcc00; font-weight: bold; font-size: 13px; text-shadow: 0 0 4px #ffcc00; margin-left: 5px; }
@@ -92,16 +92,16 @@
         .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
         
         /* STYLE DLA OPERACJI WOJENNYCH */
-        .war-container { display: flex; gap: 15px; justify-content: center; align-items: stretch; margin-top: 15px; width: 100%; max-width: 1600px; margin-left: auto; margin-right: auto; }
-        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 15px; border-radius: 6px; flex: 1; max-width: 700px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
-        .war-col h3 { color: #ffcc00; font-size: 15px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #600000; padding-bottom: 5px; }
-        .war-clans-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: stretch; }
-        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 8px 10px; cursor: pointer; transition: 0.2s; border-radius: 4px; font-size: 12px; font-weight: bold; color: #ccc; flex: 1 1 30%; min-width: 140px; text-align: center; display: flex; align-items: center; justify-content: center; }
-        .war-tile:hover { background: #4a2727; color: white; transform: translateY(-2px); }
+        .war-container { display: flex; gap: 10px; justify-content: center; align-items: stretch; margin-top: 10px; max-width: 1400px; margin-left: auto; margin-right: auto; }
+        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 10px; border-radius: 6px; flex: 1; max-width: 50%; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .war-col h3 { color: #ffcc00; font-size: 14px; margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #600000; padding-bottom: 4px; }
+        .war-clans-grid { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: stretch; }
+        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 4px 6px; cursor: pointer; transition: 0.1s; border-radius: 3px; font-size: 11px; font-weight: bold; color: #ccc; flex: 1 1 23%; min-width: 100px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .war-tile:hover { background: #4a2727; color: white; border-color: #ff3333; transform: scale(1.03); }
         .war-tile.active-our { background: #1f7244 !important; border-color: #55ff55 !important; color: white !important; box-shadow: 0 0 8px rgba(85,255,85,0.5); }
         .war-tile.active-enemy { background: #c00c0c !important; border-color: #ff3333 !important; color: white !important; box-shadow: 0 0 8px rgba(255,51,51,0.5); }
-        .war-actions { margin: 20px auto; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; flex: 1 1 100%; margin-bottom: 10px; padding: 10px;}
+        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; flex: 1 1 100%; margin-bottom: 5px; padding: 6px; }
+        .war-actions { margin: 15px auto; background: #231212; padding: 10px 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
@@ -231,7 +231,7 @@
     <!-- ZAKŁADKA OPERACJE WOJENNE -->
     <div id="sectionWar">
         <h2>Zaplanuj Operację Wojenną</h2>
-        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie. System w chmurze (Google Apps Script) automatycznie wyśle alert wprost na serwer Discord.</div>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie. System w chmurze automatycznie wyśle alert na serwer Discord.</div>
         
         <div class="war-container">
             <!-- Kolumna NASZE KLANY -->
@@ -998,49 +998,26 @@
                 }
             });
 
-            let summaryArray = [];
-            for (let gracz in summary) {
-                let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
-                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, wystajace: summary[gracz].wystajace, blockEndTime: globalEnemyBlocks[gracz] || 0, lastSeen: lSeen });
-            }
+            let summaryArray = Object.keys(summary).map(g => ({ gracz: g, dobra: summary[g].dobra, zlotoPvP: summary[g].zlotoPvP, walki: summary[g].walki, wygrane: summary[g].wygrane, przegrane: summary[g].przegrane, poziomy: summary[g].poziomy, wystajace: summary[g].wystajace, blockEndTime: globalEnemyBlocks[g] || 0, lastSeen: absoluteLastSeen[g] || new Date(0) }));
 
             summaryArray.sort((a, b) => {
-                let valA, valB;
-                if (currentSummarySortCol === 0) { valA = a.gracz; valB = b.gracz; }
-                else if (currentSummarySortCol === 1) { valA = a.dobra; valB = b.dobra; }
-                else if (currentSummarySortCol === 2) { valA = a.zlotoPvP; valB = b.zlotoPvP; }
-                else if (currentSummarySortCol === 3) { valA = a.walki; valB = b.walki; }
-                else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
-                else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
-                else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
-                else if (currentSummarySortCol === 7) { valA = a.wystajace; valB = b.wystajace; }
-                else if (currentSummarySortCol === 8) { valA = a.blockEndTime; valB = b.blockEndTime; }
-                else if (currentSummarySortCol === 9) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
-                
-                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
-                else { return currentSummarySortAsc ? valB - valA : valA - valB; }
+                let vA, vB;
+                if (currentSummarySortCol === 0) { vA = a.gracz; vB = b.gracz; } else if (currentSummarySortCol === 1) { vA = a.dobra; vB = b.dobra; } else if (currentSummarySortCol === 2) { vA = a.zlotoPvP; vB = b.zlotoPvP; } else if (currentSummarySortCol === 3) { vA = a.walki; vB = b.walki; } else if (currentSummarySortCol === 4) { vA = a.wygrane; vB = b.wygrane; } else if (currentSummarySortCol === 5) { vA = a.przegrane; vB = b.przegrane; } else if (currentSummarySortCol === 6) { vA = a.poziomy; vB = b.poziomy; } else if (currentSummarySortCol === 7) { vA = a.wystajace; vB = b.wystajace; } else if (currentSummarySortCol === 8) { vA = a.blockEndTime; vB = b.blockEndTime; } else if (currentSummarySortCol === 9) { vA = a.lastSeen.getTime(); vB = b.lastSeen.getTime(); }
+                return (currentSummarySortCol === 0) ? (currentSummarySortAsc ? vA.localeCompare(vB) : vB.localeCompare(vA)) : (currentSummarySortAsc ? vB - vA : vA - vB);
             });
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
-            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"];
-            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
+            ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"].forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
-
-                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
-                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
-                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
-                let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
-                let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
+                let dobraStr = data.dobra > 0 ? formatNumber(data.dobra) : "0", zlotoPvPStr = formatNumber(data.zlotoPvP), poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : ""), wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0", przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
                 let wystajaceStr = data.wystajace > 0 ? `<span class="wystajace-col">${formatNumber(data.wystajace)}</span>` : "0";
                 
                 let blockHtml = '<span style="color:#55ff55;">Brak</span>';
-                if (data.blockEndTime > new Date().getTime()) {
-                    blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
-                }
-                
+                if (data.blockEndTime > new Date().getTime()) blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
+
                 html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${blockHtml}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
@@ -1245,27 +1222,14 @@
 
         function formatClanLink(nazwa, url) { return (!url || url === "") ? `<span class="clan-text-plain">${nazwa}</span>` : `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`; }
 
+        // ==========================================
         // LOGIKA ZAPISU I ALARMÓW DLA PIECZĘCI
-        function saveSealExp(sealId) {
-            let val = document.getElementById('exp_time_' + sealId).value;
-            if(!val) {
-                delete sealExpirations[sealId];
-            } else {
-                if(!sealExpirations[sealId]) sealExpirations[sealId] = {};
-                sealExpirations[sealId].expireTime = new Date(val).getTime();
-                sealExpirations[sealId].reminderSet = false; 
-            }
-            localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
-            renderClans();
-        }
-
+        // ==========================================
+        
         function setSealReminder(sealId) {
-            if(!sealExpirations[sealId] || !sealExpirations[sealId].expireTime) {
-                return alert("Najpierw ustaw datę i godzinę wygaśnięcia pieczęci!");
-            }
+            let expData = sealExpirations[sealId] || {};
             
-            let expData = sealExpirations[sealId];
-            
+            // Funkcja wyłączania dzwonka, jeśli jest już ustawiony
             if (expData.reminderSet) {
                 expData.reminderSet = false;
                 localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
@@ -1273,11 +1237,27 @@
                 return;
             }
             
-            let expTime = expData.expireTime;
+            // Ustawianie dzwonka - pobieramy wartości z formularza
+            let val = document.getElementById('exp_time_' + sealId).value;
+            if(!val) return alert("Wprowadź datę i godzinę wygaśnięcia pieczęci!");
+            
+            let expTime = new Date(val).getTime();
             let now = new Date().getTime();
+            
             if (expTime <= now) return alert("Czas wygaśnięcia musi być w przyszłości!");
 
+            let offsetHours = parseInt(document.getElementById('seal_offset_' + sealId).value);
+            let alarmTime = expTime - (offsetHours * 60 * 60 * 1000); // offset w godzinach!
+            
+            if (alarmTime <= now) return alert("Błąd! Czas alarmu (czyli " + offsetHours + " godzin(y) przed wygaśnięciem) przypada w przeszłości!");
+
+            expData.expireTime = expTime;
+            expData.alarmTime = alarmTime;
+            expData.offset = offsetHours;
             expData.reminderSet = true;
+            expData.alarmPlayed = false; // reset flagi dźwięku
+            
+            sealExpirations[sealId] = expData;
             localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
             
             if (WAR_WEBAPP_URL && WAR_WEBHOOK_URL) {
@@ -1285,6 +1265,8 @@
                     action: 'addSealReminder',
                     sealName: sealId,
                     expireTime: expTime,
+                    alarmTime: alarmTime,
+                    offset: offsetHours,
                     webhook: WAR_WEBHOOK_URL
                 });
                 fetch(WAR_WEBAPP_URL + "?" + params.toString(), {mode: 'no-cors'})
@@ -1310,32 +1292,47 @@
                 let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`; 
                 
                 let expData = sealExpirations[id] || {};
-                let expTimeVal = "";
-                let btnClass = "action-btn";
-                let btnText = "🔔 Ustaw Przypomnienie";
-                let countdownHtml = "";
-                
-                if (expData.expireTime) {
-                    let d = new Date(expData.expireTime);
-                    let tzoffset = d.getTimezoneOffset() * 60000;
-                    expTimeVal = (new Date(d - tzoffset)).toISOString().slice(0, 16);
-                    countdownHtml = `<div class="seal-countdown" data-target="${expData.expireTime}" style="font-size: 11px; color: #ffcc00; margin-top: 4px; font-weight: bold;"></div>`;
-                }
-                
-                if (expData.reminderSet) {
-                    btnClass = "cancel-btn";
-                    btnText = "Dzwonek Ustawiony (Anuluj)";
-                }
-                
-                let expHtml = `
-                    <div style="margin-top: 6px; width: 100%; border-top: 1px solid #4a0d0d; padding-top: 5px;">
-                        <div style="font-size: 9px; color: #888; margin-bottom: 2px;">Wygasa (Czas):</div>
-                        <input type="datetime-local" id="exp_time_${id}" value="${expTimeVal}" style="width: 130px; font-size: 10px; padding: 2px; margin-bottom: 4px;" onchange="saveSealExp('${id}')">
-                        <button class="${btnClass}" id="exp_btn_${id}" style="font-size: 9px; padding: 4px 5px; width: 130px;" onclick="setSealReminder('${id}')">${btnText}</button>
-                        ${countdownHtml}
-                    </div>
-                `;
+                let expHtml = `<div style="margin-top: 6px; width: 100%; border-top: 1px solid #4a0d0d; padding-top: 5px;">`;
 
+                if (expData.reminderSet) {
+                    let expD = new Date(expData.expireTime);
+                    let alarmD = new Date(expData.alarmTime);
+                    let eStr = expD.toLocaleDateString('pl-PL') + " " + expD.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
+                    let aStr = alarmD.toLocaleDateString('pl-PL') + " " + alarmD.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
+                    
+                    expHtml += `
+                        <div style="font-size: 10px; color: #ccc; margin-bottom: 5px; line-height: 1.3;">
+                            Wygasa: <span style="color:#ffcc00; font-weight:bold;">${eStr}</span><br>
+                            Alarm o: <span style="color:#55ff55; font-weight:bold;">${aStr}</span>
+                        </div>
+                        <button class="cancel-btn" id="exp_btn_${id}" style="font-size: 9px; padding: 4px 5px; width: 130px;" onclick="setSealReminder('${id}')">Anuluj Przypomnienie</button>
+                        <div class="seal-countdown" data-target="${expData.expireTime}" style="font-size: 11px; color: #ffcc00; margin-top: 4px; font-weight: bold;"></div>
+                    `;
+                } else {
+                    let expTimeVal = "";
+                    if (expData.expireTime) {
+                        let d = new Date(expData.expireTime);
+                        let tzoffset = d.getTimezoneOffset() * 60000;
+                        expTimeVal = (new Date(d - tzoffset)).toISOString().slice(0, 16);
+                    }
+                    
+                    let selectOptions = "";
+                    for(let h=1; h<=24; h++){
+                        let sel = (h === 1) ? "selected" : "";
+                        selectOptions += `<option value="${h}" ${sel}>Przypomnij ${h}h przed</option>`;
+                    }
+                    
+                    expHtml += `
+                        <div style="font-size: 9px; color: #888; margin-bottom: 2px;">Wprowadź datę wygaśnięcia:</div>
+                        <input type="datetime-local" id="exp_time_${id}" value="${expTimeVal}" style="width: 130px; font-size: 10px; padding: 2px; margin-bottom: 4px;">
+                        <select id="seal_offset_${id}" style="width: 134px; font-size: 10px; padding: 2px; margin-bottom: 4px; background-color: #2b1717; color: white; border: 1px solid #600000; border-radius: 3px;">
+                            ${selectOptions}
+                        </select>
+                        <button class="action-btn" id="exp_btn_${id}" style="font-size: 9px; padding: 4px 5px; width: 130px;" onclick="setSealReminder('${id}')">🔔 Ustaw Przypomnienie</button>
+                    `;
+                }
+                expHtml += `</div>`;
+                
                 sealsBoardHtml += `<div class="seal-badge"><img src="${data.img}" class="seal-img" alt="${id}" onerror="this.style.display='none';"><div class="seal-name">${id}</div><div class="seal-holder">${data.holder}</div>${dateHtml}${expHtml}</div>`; 
             }
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
@@ -1361,7 +1358,7 @@
         }
 
         // ==========================================
-        // SYSTEM OPERACJI WOJENNYCH I ALARMÓW
+        // SYSTEM OPERACJI WOJENNYCH
         // ==========================================
 
         function renderWarClans(currentClanState) {
@@ -1491,7 +1488,7 @@
             let warChanged = false;
             let sealChanged = false;
 
-            // 1. Sprawdzanie Wojen (Tylko powiadomienie dźwiękowe na stronie, Discord ogarnia chmura)
+            // Sprawdzanie Wojen (Dźwięk)
             if (warSchedules.length > 0) {
                 for (let i = warSchedules.length - 1; i >= 0; i--) {
                     let w = warSchedules[i];
@@ -1503,12 +1500,13 @@
                 }
             }
 
-            // 2. Sprawdzanie Pieczęci (Sygnał dźwiękowy)
+            // Sprawdzanie Pieczęci (Dźwięk)
             for (let sealId in sealExpirations) {
                 let expData = sealExpirations[sealId];
-                if (expData.reminderSet && expData.expireTime && now >= expData.expireTime) {
+                // Dzwonimy, gdy minie czas alarmu i nie został on jeszcze na ekranie odtworzony
+                if (expData.reminderSet && expData.alarmTime && now >= expData.alarmTime && !expData.alarmPlayed) {
                     playBeep('warning');
-                    expData.reminderSet = false;
+                    expData.alarmPlayed = true;
                     sealChanged = true;
                 }
             }
@@ -1519,7 +1517,6 @@
             }
             if (sealChanged) {
                 localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
-                renderClans();
             }
         }
     </script>
