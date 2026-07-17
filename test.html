@@ -53,7 +53,7 @@
         .clan-text-plain { color: #ccc; }
         
         .seal-board { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px auto; max-width: 100%; }
-        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 2px; padding: 8px; width: 130px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
+        .seal-badge { background: #110505; border: 1px solid #3a0a0a; border-radius: 4px; padding: 10px; width: 150px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; }
         .seal-img { width: 44px; height: 44px; border: 2px ridge #808080; border-radius: 2px; box-shadow: 0 0 6px rgba(0,0,0,1); margin-bottom: 8px; background-color: #220000; }
         .seal-name { font-size: 11px; font-weight: bold; color: #ffaaaa; text-transform: uppercase; margin-bottom: 5px; width: 100%; letter-spacing: 0.5px; border-bottom: 1px solid #4a0d0d; padding-bottom: 4px; }
         .seal-holder { font-size: 11px; font-weight: bold; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 10; }
@@ -91,17 +91,17 @@
         .top-dashboard-box { flex: 1; min-width: 300px; max-width: 600px; background: #231212; border-radius: 8px; border: 1px solid #4a0d0d; padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .top-dashboard-box.protection { background: #110505; border: 2px solid #00e5ff; transition: 0.3s; }
         
-        /* STYLE DLA OPERACJI WOJENNYCH (Kompaktowa siatka) */
-        .war-container { display: flex; gap: 10px; justify-content: center; align-items: stretch; margin-top: 10px; max-width: 1400px; margin-left: auto; margin-right: auto; }
-        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 10px; border-radius: 6px; flex: 1; max-width: 50%; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
-        .war-col h3 { color: #ffcc00; font-size: 14px; margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #600000; padding-bottom: 4px; }
-        .war-clans-grid { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: stretch; }
-        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 4px 6px; cursor: pointer; transition: 0.1s; border-radius: 3px; font-size: 11px; font-weight: bold; color: #ccc; flex: 1 1 23%; min-width: 100px; text-align: center; display: flex; align-items: center; justify-content: center; }
-        .war-tile:hover { background: #4a2727; color: white; border-color: #ff3333; transform: scale(1.03); }
+        /* STYLE DLA OPERACJI WOJENNYCH */
+        .war-container { display: flex; gap: 15px; justify-content: center; align-items: stretch; margin-top: 15px; width: 100%; max-width: 1600px; margin-left: auto; margin-right: auto; }
+        .war-col { background: #1a0a0a; border: 1px solid #4a0d0d; padding: 15px; border-radius: 6px; flex: 1; max-width: 700px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .war-col h3 { color: #ffcc00; font-size: 15px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #600000; padding-bottom: 5px; }
+        .war-clans-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: stretch; }
+        .war-tile { background: #2b1717; border: 1px solid #600000; padding: 8px 10px; cursor: pointer; transition: 0.2s; border-radius: 4px; font-size: 12px; font-weight: bold; color: #ccc; flex: 1 1 30%; min-width: 140px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .war-tile:hover { background: #4a2727; color: white; transform: translateY(-2px); }
         .war-tile.active-our { background: #1f7244 !important; border-color: #55ff55 !important; color: white !important; box-shadow: 0 0 8px rgba(85,255,85,0.5); }
         .war-tile.active-enemy { background: #c00c0c !important; border-color: #ff3333 !important; color: white !important; box-shadow: 0 0 8px rgba(255,51,51,0.5); }
-        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; flex: 1 1 100%; margin-bottom: 5px; padding: 6px; }
-        .war-actions { margin: 15px auto; background: #231212; padding: 10px 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .war-actions { margin: 20px auto; background: #231212; padding: 15px; border-radius: 8px; border: 1px solid #4a0d0d; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .war-tile-any { background: #333 !important; border-color: #888 !important; color: #fff; border-style: dashed; flex: 1 1 100%; margin-bottom: 10px; padding: 10px;}
     </style>
 </head>
 <body>
@@ -207,18 +207,22 @@
         <div id="rankingTableContainer"><p>Ładowanie danych analitycznych rankingu...</p></div>
     </div>
 
-    <!-- ZAKŁADKA KLANÓW -->
+    <!-- ZAKŁADKA KLANÓW I PIECZĘCI -->
     <div id="sectionClans">
         <h2>Gdzie są Pieczęcie Podziemi?</h2>
+        <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wprowadź datę wygaśnięcia pod pieczęcią i ustaw dzwonek, aby Discord sam przypomniał Ci o wejściu do Grot!</div>
         <div id="sealsBoardContainer" class="seal-board"></div>
+        
         <hr class="separator">
         <h2>Zniszczone Pieczęcie (Spadek z 3 na 2 graczy)</h2>
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Monitorowanie zjawiska utraty pieczęci przez klany. Wykres prezentuje przedziały 5-minutowe.</div>
         <div id="clansKicksContainer"><p>Trwa analizowanie rotacji graczy...</p></div>
         <div class="chart-container" style="height: 300px; margin-top: 20px; max-width: 1200px;"><canvas id="sealsChart"></canvas></div>
+        
         <hr class="separator">
         <h2>Historia Przekazywania Pieczęci i Zmian u wrogów</h2>
         <div id="clansLogContainer"><p>Trwa ładowanie logów klanowych...</p></div>
+        
         <hr class="separator">
         <h2>Aktualny stan Klanów Wroga</h2>
         <div class="summary-box"><div id="clansCurrentContainer"><p>Trwa ładowanie statusu klanów...</p></div></div>
@@ -374,15 +378,21 @@
         
         let selectedOurClan = null;
         let selectedEnemyClan = null;
+        
+        // Lokalne bazy pamięci
         let warSchedules = JSON.parse(localStorage.getItem('bf_war_schedules') || '[]');
+        let sealExpirations = JSON.parse(localStorage.getItem('bf_seal_expirations') || '{}');
 
         // ==========================================
         // SILNIK TIMERÓW - ZARZĄDZA WSZYSTKIMI ODLICZANIAMI (NA ŻYWO)
         // ==========================================
         setInterval(() => {
+            let now = new Date().getTime();
+            
+            // 1. Tabela live blokad graczy
             document.querySelectorAll('.live-block-timer').forEach(el => {
                 let endTime = parseInt(el.getAttribute('data-endtime'));
-                let diff = endTime - new Date().getTime();
+                let diff = endTime - now;
                 if (diff <= 0) {
                     el.innerHTML = '<span style="color:#55ff55;">Brak</span>';
                     el.classList.remove('live-block-timer');
@@ -393,9 +403,10 @@
                 }
             });
             
+            // 2. Tabela zaplanowanych wojen
             document.querySelectorAll('.war-countdown').forEach(el => {
                 let alarmTime = parseInt(el.getAttribute('data-alarmtime'));
-                let diff = alarmTime - new Date().getTime();
+                let diff = alarmTime - now;
                 if (diff <= 0) {
                     el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">AKCJA! / Wysłano z chmury</span>';
                 } else {
@@ -410,9 +421,29 @@
                     el.innerHTML = timeStr;
                 }
             });
+            
+            // 3. Zegary na pieczątkach
+            document.querySelectorAll('.seal-countdown').forEach(el => {
+                let targetTime = parseInt(el.getAttribute('data-target'));
+                let diff = targetTime - now;
+                if (diff <= 0) {
+                    el.innerHTML = '<span style="color:#ff3333; font-weight:bold;">WYGASŁA!</span>';
+                } else {
+                    let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    let s = Math.floor((diff % (1000 * 60)) / 1000);
+                    let tStr = "";
+                    if(d>0) tStr += d + "d ";
+                    if(h>0) tStr += h + "h ";
+                    tStr += m + "m " + s + "s";
+                    el.innerHTML = "⏳ " + tStr;
+                }
+            });
+            
         }, 1000);
 
-        setInterval(checkWarSchedules, 5000);
+        setInterval(checkAlarms, 5000);
 
         // ==========================================
         // MODUŁ OCHRONY PRZED ATAKIEM (30 MIN) Z PAMIĘCIĄ SESJI
@@ -1214,6 +1245,55 @@
 
         function formatClanLink(nazwa, url) { return (!url || url === "") ? `<span class="clan-text-plain">${nazwa}</span>` : `<a href="${url}" class="player-link" target="_blank">${nazwa}</a>`; }
 
+        // LOGIKA ZAPISU I ALARMÓW DLA PIECZĘCI
+        function saveSealExp(sealId) {
+            let val = document.getElementById('exp_time_' + sealId).value;
+            if(!val) {
+                delete sealExpirations[sealId];
+            } else {
+                if(!sealExpirations[sealId]) sealExpirations[sealId] = {};
+                sealExpirations[sealId].expireTime = new Date(val).getTime();
+                sealExpirations[sealId].reminderSet = false; 
+            }
+            localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
+            renderClans();
+        }
+
+        function setSealReminder(sealId) {
+            if(!sealExpirations[sealId] || !sealExpirations[sealId].expireTime) {
+                return alert("Najpierw ustaw datę i godzinę wygaśnięcia pieczęci!");
+            }
+            
+            let expData = sealExpirations[sealId];
+            
+            if (expData.reminderSet) {
+                expData.reminderSet = false;
+                localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
+                renderClans();
+                return;
+            }
+            
+            let expTime = expData.expireTime;
+            let now = new Date().getTime();
+            if (expTime <= now) return alert("Czas wygaśnięcia musi być w przyszłości!");
+
+            expData.reminderSet = true;
+            localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
+            
+            if (WAR_WEBAPP_URL && WAR_WEBHOOK_URL) {
+                let params = new URLSearchParams({
+                    action: 'addSealReminder',
+                    sealName: sealId,
+                    expireTime: expTime,
+                    webhook: WAR_WEBHOOK_URL
+                });
+                fetch(WAR_WEBAPP_URL + "?" + params.toString(), {mode: 'no-cors'})
+                    .then(() => console.log("Alarm pieczęci wysłany do chmury."))
+                    .catch(e => console.log("Błąd chmury", e));
+            }
+            renderClans();
+        }
+
         function renderClans() {
             if (globalClansBaza.length === 0) { document.getElementById('sealsBoardContainer').innerHTML = "<p>Brak danych klanów.</p>"; return; }
             let currentClanState = {};
@@ -1225,7 +1305,39 @@
             globalClansLogi.forEach(w => { if (String(w[2]) === "Pieczęcie") { let klan = w[1], oldArr = (w[3] === "Brak" || w[3] === "START") ? [] : w[3].split(", "), newArr = (w[4] === "Brak" || w[4] === "START") ? [] : w[4].split(", "); newArr.filter(x => !oldArr.includes(x)).forEach(s => { if (sealHolders[s] && sealHolders[s].klanId === klan && !sealHolders[s].date) sealHolders[s].date = w[0]; }); } });
 
             let sealsBoardHtml = "";
-            for (let id in sealHolders) { let data = sealHolders[id], dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`; sealsBoardHtml += `<div class="seal-badge"><img src="${data.img}" class="seal-img" alt="${id}" onerror="this.style.display='none';"><div class="seal-name">${id}</div><div class="seal-holder">${data.holder}</div>${dateHtml}</div>`; }
+            for (let id in sealHolders) { 
+                let data = sealHolders[id];
+                let dateHtml = data.date ? `<div class="seal-date">${data.date.split(" ")[0]}<br>${data.date.split(" ")[1] || ""}</div>` : `<div class="seal-date">-</div>`; 
+                
+                let expData = sealExpirations[id] || {};
+                let expTimeVal = "";
+                let btnClass = "action-btn";
+                let btnText = "🔔 Ustaw Przypomnienie";
+                let countdownHtml = "";
+                
+                if (expData.expireTime) {
+                    let d = new Date(expData.expireTime);
+                    let tzoffset = d.getTimezoneOffset() * 60000;
+                    expTimeVal = (new Date(d - tzoffset)).toISOString().slice(0, 16);
+                    countdownHtml = `<div class="seal-countdown" data-target="${expData.expireTime}" style="font-size: 11px; color: #ffcc00; margin-top: 4px; font-weight: bold;"></div>`;
+                }
+                
+                if (expData.reminderSet) {
+                    btnClass = "cancel-btn";
+                    btnText = "Dzwonek Ustawiony (Anuluj)";
+                }
+                
+                let expHtml = `
+                    <div style="margin-top: 6px; width: 100%; border-top: 1px solid #4a0d0d; padding-top: 5px;">
+                        <div style="font-size: 9px; color: #888; margin-bottom: 2px;">Wygasa (Czas):</div>
+                        <input type="datetime-local" id="exp_time_${id}" value="${expTimeVal}" style="width: 130px; font-size: 10px; padding: 2px; margin-bottom: 4px;" onchange="saveSealExp('${id}')">
+                        <button class="${btnClass}" id="exp_btn_${id}" style="font-size: 9px; padding: 4px 5px; width: 130px;" onclick="setSealReminder('${id}')">${btnText}</button>
+                        ${countdownHtml}
+                    </div>
+                `;
+
+                sealsBoardHtml += `<div class="seal-badge"><img src="${data.img}" class="seal-img" alt="${id}" onerror="this.style.display='none';"><div class="seal-name">${id}</div><div class="seal-holder">${data.holder}</div>${dateHtml}${expHtml}</div>`; 
+            }
             document.getElementById('sealsBoardContainer').innerHTML = sealsBoardHtml;
 
             let kicksHtml = "<table><thead><tr><th>Data i godzina</th><th>Klan wroga</th><th>Zdarzenie</th><th>Efekt</th></tr></thead><tbody>", entriesFound = false, kicksPer5Min = new Array(288).fill(0); 
@@ -1249,7 +1361,7 @@
         }
 
         // ==========================================
-        // SYSTEM OPERACJI WOJENNYCH
+        // SYSTEM OPERACJI WOJENNYCH I ALARMÓW
         // ==========================================
 
         function renderWarClans(currentClanState) {
@@ -1314,13 +1426,11 @@
                 offset: offsetMinutes
             };
 
-            // Zapisz lokalnie w przeglądarce, by wyświetlić w tabeli
             warSchedules.push(newWar);
             warSchedules.sort((a,b) => a.alarmTime - b.alarmTime);
             localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
             renderWarSchedules();
 
-            // WYŚLIJ DO CHMURY
             if (WAR_WEBAPP_URL && WAR_WEBHOOK_URL) {
                 let params = new URLSearchParams({
                     action: 'addWar',
@@ -1337,7 +1447,6 @@
                     .catch(e => console.log("Błąd komunikacji z chmurą Google", e));
             }
             
-            // Opcjonalne czyszczenie zaznaczeń
             document.querySelectorAll('.war-tile').forEach(t => { t.classList.remove('active-our'); t.classList.remove('active-enemy'); });
             selectedOurClan = null; selectedEnemyClan = null;
             document.getElementById('warTimeInput').value = "";
@@ -1377,25 +1486,40 @@
             body.innerHTML = html;
         }
 
-        function checkWarSchedules() {
-            if (warSchedules.length === 0) return;
+        function checkAlarms() {
             let now = new Date().getTime();
-            let changed = false;
+            let warChanged = false;
+            let sealChanged = false;
 
-            for (let i = warSchedules.length - 1; i >= 0; i--) {
-                let w = warSchedules[i];
-                if (now >= w.alarmTime) {
-                    
-                    // Odgrywamy tylko sygnał dźwiękowy w przeglądarce. Discordem zajmuje się chmura!
-                    playBeep('warning'); 
-                    warSchedules.splice(i, 1);
-                    changed = true;
+            // 1. Sprawdzanie Wojen (Tylko powiadomienie dźwiękowe na stronie, Discord ogarnia chmura)
+            if (warSchedules.length > 0) {
+                for (let i = warSchedules.length - 1; i >= 0; i--) {
+                    let w = warSchedules[i];
+                    if (now >= w.alarmTime) {
+                        playBeep('warning'); 
+                        warSchedules.splice(i, 1);
+                        warChanged = true;
+                    }
                 }
             }
 
-            if (changed) {
+            // 2. Sprawdzanie Pieczęci (Sygnał dźwiękowy)
+            for (let sealId in sealExpirations) {
+                let expData = sealExpirations[sealId];
+                if (expData.reminderSet && expData.expireTime && now >= expData.expireTime) {
+                    playBeep('warning');
+                    expData.reminderSet = false;
+                    sealChanged = true;
+                }
+            }
+
+            if (warChanged) {
                 localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
                 renderWarSchedules();
+            }
+            if (sealChanged) {
+                localStorage.setItem('bf_seal_expirations', JSON.stringify(sealExpirations));
+                renderClans();
             }
         }
     </script>
