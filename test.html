@@ -234,13 +234,11 @@
         <div style="color: #888; font-size: 12px; margin-bottom: 15px;">Wybierz cel i zaplanuj przypomnienie. System w chmurze automatycznie wyśle alert na serwer Discord.</div>
         
         <div class="war-container">
-            <!-- Kolumna NASZE KLANY -->
             <div class="war-col">
                 <h3>🟢 Nasze Klany</h3>
                 <div id="warOurClansList" class="war-clans-grid"></div>
             </div>
             
-            <!-- Kolumna KLAN WROGA -->
             <div class="war-col">
                 <h3>🔴 Klany Wroga</h3>
                 <div id="warEnemyClansList" class="war-clans-grid">
@@ -330,7 +328,7 @@
         // =========================================================
         // LINKI DO SYSTEMU POWIADOMIEŃ WOJENNYCH (ZAKODOWANE NA TWARDO)
         // =========================================================
-        const WAR_WEBHOOK_URL = "https://discord.com/api/webhooks/1520189628869771384/r-3_Fv7H248LCt_5AajA0Ct8luKXCZsijqUI_Gox9mgSAIFU_8qIdyhuchX5gLBjvADW";
+        const WAR_WEBHOOK_URL = "https://discord.com/api/webhooks/1518378798670807122/giYQQb_DX2Joh2CTVt8yN5QwOAAXHCajnMwN4ZB9wp0BrYlyNGrSl1cWRtZeoZtm8niM";
         const WAR_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzVmSezQk9NDfeywdnzNYmPe1K5MZ-FvKvRKftqSWmOXt5SByYXUIB66DOwaRHG1Kll/exec";
 
         const PLAYERS = {
@@ -379,7 +377,6 @@
         let selectedOurClan = null;
         let selectedEnemyClan = null;
         
-        // Lokalne bazy pamięci
         let warSchedules = JSON.parse(localStorage.getItem('bf_war_schedules') || '[]');
         let sealExpirations = JSON.parse(localStorage.getItem('bf_seal_expirations') || '{}');
 
@@ -389,7 +386,6 @@
         setInterval(() => {
             let now = new Date().getTime();
             
-            // 1. Tabela live blokad graczy
             document.querySelectorAll('.live-block-timer').forEach(el => {
                 let endTime = parseInt(el.getAttribute('data-endtime'));
                 let diff = endTime - now;
@@ -403,7 +399,6 @@
                 }
             });
             
-            // 2. Tabela zaplanowanych wojen
             document.querySelectorAll('.war-countdown').forEach(el => {
                 let alarmTime = parseInt(el.getAttribute('data-alarmtime'));
                 let diff = alarmTime - now;
@@ -422,7 +417,6 @@
                 }
             });
             
-            // 3. Zegary na pieczątkach
             document.querySelectorAll('.seal-countdown').forEach(el => {
                 let targetTime = parseInt(el.getAttribute('data-target'));
                 let diff = targetTime - now;
@@ -998,26 +992,49 @@
                 }
             });
 
-            let summaryArray = Object.keys(summary).map(g => ({ gracz: g, dobra: summary[g].dobra, zlotoPvP: summary[g].zlotoPvP, walki: summary[g].walki, wygrane: summary[g].wygrane, przegrane: summary[g].przegrane, poziomy: summary[g].poziomy, wystajace: summary[g].wystajace, blockEndTime: globalEnemyBlocks[g] || 0, lastSeen: absoluteLastSeen[g] || new Date(0) }));
+            let summaryArray = [];
+            for (let gracz in summary) {
+                let lSeen = absoluteLastSeen[gracz] ? absoluteLastSeen[gracz] : new Date(0);
+                summaryArray.push({ gracz: gracz, dobra: summary[gracz].dobra, zlotoPvP: summary[gracz].zlotoPvP, walki: summary[gracz].walki, wygrane: summary[gracz].wygrane, przegrane: summary[gracz].przegrane, poziomy: summary[gracz].poziomy, wystajace: summary[gracz].wystajace, blockEndTime: globalEnemyBlocks[gracz] || 0, lastSeen: lSeen });
+            }
 
             summaryArray.sort((a, b) => {
-                let vA, vB;
-                if (currentSummarySortCol === 0) { vA = a.gracz; vB = b.gracz; } else if (currentSummarySortCol === 1) { vA = a.dobra; vB = b.dobra; } else if (currentSummarySortCol === 2) { vA = a.zlotoPvP; vB = b.zlotoPvP; } else if (currentSummarySortCol === 3) { vA = a.walki; vB = b.walki; } else if (currentSummarySortCol === 4) { vA = a.wygrane; vB = b.wygrane; } else if (currentSummarySortCol === 5) { vA = a.przegrane; vB = b.przegrane; } else if (currentSummarySortCol === 6) { vA = a.poziomy; vB = b.poziomy; } else if (currentSummarySortCol === 7) { vA = a.wystajace; vB = b.wystajace; } else if (currentSummarySortCol === 8) { vA = a.blockEndTime; vB = b.blockEndTime; } else if (currentSummarySortCol === 9) { vA = a.lastSeen.getTime(); vB = b.lastSeen.getTime(); }
-                return (currentSummarySortCol === 0) ? (currentSummarySortAsc ? vA.localeCompare(vB) : vB.localeCompare(vA)) : (currentSummarySortAsc ? vB - vA : vA - vB);
+                let valA, valB;
+                if (currentSummarySortCol === 0) { valA = a.gracz; valB = b.gracz; }
+                else if (currentSummarySortCol === 1) { valA = a.dobra; valB = b.dobra; }
+                else if (currentSummarySortCol === 2) { valA = a.zlotoPvP; valB = b.zlotoPvP; }
+                else if (currentSummarySortCol === 3) { valA = a.walki; valB = b.walki; }
+                else if (currentSummarySortCol === 4) { valA = a.wygrane; valB = b.wygrane; }
+                else if (currentSummarySortCol === 5) { valA = a.przegrane; valB = b.przegrane; }
+                else if (currentSummarySortCol === 6) { valA = a.poziomy; valB = b.poziomy; }
+                else if (currentSummarySortCol === 7) { valA = a.wystajace; valB = b.wystajace; }
+                else if (currentSummarySortCol === 8) { valA = a.blockEndTime; valB = b.blockEndTime; }
+                else if (currentSummarySortCol === 9) { valA = a.lastSeen.getTime(); valB = b.lastSeen.getTime(); }
+                
+                if (currentSummarySortCol === 0) { return currentSummarySortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA); } 
+                else { return currentSummarySortAsc ? valB - valA : valA - valB; }
             });
 
             let html = `<div style="font-weight:bold; margin-bottom:5px; color:#c00c0c;">Podsumowanie: ${range.label}</div><table><thead><tr>`;
-            ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"].forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
+            let headers = ["Gracz", "Zdobyte Dobra", "Bilans Walk PvP", "Walki (Razem)", "Wygrane Walki", "Przegrane Walki", "Wbite Poziomy", "Wystające Złoto", "Blokada (Ochrona)", "Ostatnia Aktywność"];
+            headers.forEach((h, i) => { let arrow = " ⇅"; if (currentSummarySortCol === i) arrow = currentSummarySortAsc ? " ▲" : " ▼"; html += `<th class="sortable" title="Kliknij, aby posortować!" onclick="sortSummary(${i})">${h} <span style="color:#ffcc00; margin-left:3px;">${arrow}</span></th>`; });
             html += `</tr></thead><tbody>`;
             summaryArray.forEach(data => {
                 let pLink = PLAYERS[data.gracz] ? `<a href="${PLAYERS[data.gracz]}" class="player-link" target="_blank"><strong>${data.gracz}</strong></a>` : `<strong>${data.gracz}</strong>`;
-                let dobraStr = data.dobra > 0 ? formatNumber(data.dobra) : "0", zlotoPvPStr = formatNumber(data.zlotoPvP), poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
-                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : ""), wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0", przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
+
+                let dobraStr = data.dobra > 0 ? data.dobra.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
+                let zlotoPvPStr = data.zlotoPvP.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                let poziomStr = data.poziomy > 0 ? `<span class="level-col">+${data.poziomy}</span>` : "0";
+                let klasaPvP = data.zlotoPvP > 0 ? "przyrost-col" : (data.zlotoPvP < 0 ? "strata-col" : "");
+                let wygStr = data.wygrane > 0 ? `<span class="przyrost-col">+${data.wygrane}</span>` : "0";
+                let przStr = data.przegrane > 0 ? `<span class="strata-col">${data.przegrane}</span>` : "0";
                 let wystajaceStr = data.wystajace > 0 ? `<span class="wystajace-col">${formatNumber(data.wystajace)}</span>` : "0";
                 
                 let blockHtml = '<span style="color:#55ff55;">Brak</span>';
-                if (data.blockEndTime > new Date().getTime()) blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
-
+                if (data.blockEndTime > new Date().getTime()) {
+                    blockHtml = `<span class="live-block-timer" data-endtime="${data.blockEndTime}" style="color:#ff3333; font-weight:bold;">Trwa obliczanie...</span>`;
+                }
+                
                 html += `<tr><td>${pLink}</td><td class="suma-col">${dobraStr}</td><td class="${klasaPvP}">${data.zlotoPvP > 0 ? '+' : ''}${zlotoPvPStr}</td><td>${data.walki}</td><td>${wygStr}</td><td>${przStr}</td><td>${poziomStr}</td><td>${wystajaceStr}</td><td>${blockHtml}</td><td>${formatLastSeen(data.lastSeen)}</td></tr>`;
             });
             document.getElementById('summaryContainer').innerHTML = html + "</tbody></table>";
@@ -1111,9 +1128,21 @@
             }
         }
 
+        function extractSafeMonth(dateStr) {
+            if(!dateStr) return "";
+            let clean = dateStr.trim().split(' ')[0];
+            let p = clean.split(/[\.\-\/]/);
+            if(p.length === 3) return p[2].length === 4 ? p[1] : p[1];
+            return "";
+        }
+
+        function extractDate(str) { 
+            return str ? str.trim().split(' ')[0] : ''; 
+        }
+
         function getUniqueRankingDates() {
             const datesSet = new Set(); 
-            globalRankingData.forEach(row => { if (row[0]) datesSet.add(row[0].trim()); }); 
+            globalRankingData.forEach(row => { if (row[0]) datesSet.add(extractDate(row[0])); }); 
             return Array.from(datesSet);
         }
 
@@ -1121,26 +1150,22 @@
             let uniqueDates = getUniqueRankingDates();
             if (uniqueDates.length === 0) return;
             
-            function extractDate(str) { return str ? str.split(' ')[0] : ''; }
-            
-            let latest = uniqueDates[uniqueDates.length - 1];
+            let latestDate = uniqueDates[uniqueDates.length - 1];
             let d24h = uniqueDates[Math.max(0, uniqueDates.length - 2)];
             let d3d = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             let d7d = uniqueDates[Math.max(0, uniqueDates.length - 8)];
             
-            let latestDate = extractDate(latest);
-            let targetMonth = latestDate.split('.')[1];
-            let dMonthStr = uniqueDates.find(d => extractDate(d).split('.')[1] === targetMonth) || uniqueDates[0];
-            let dMonthDate = extractDate(dMonthStr);
+            let targetMonth = extractSafeMonth(latestDate);
+            let dMonthDate = uniqueDates.find(d => extractSafeMonth(d) === targetMonth) || uniqueDates[0];
 
             let opt24h = document.querySelector('#rankingPeriodSelect option[value="LAST_24H"]');
-            if(opt24h) opt24h.text = (d24h && d24h !== latest) ? `Ostatnie 24h (${extractDate(d24h)} do ${latestDate})` : `Ostatnie 24h (Tylko dzisiaj: ${latestDate})`;
+            if(opt24h) opt24h.text = (d24h && d24h !== latestDate) ? `Ostatnie 24h (${d24h} do ${latestDate})` : `Ostatnie 24h (Tylko dzisiaj: ${latestDate})`;
             
             let opt3d = document.querySelector('#rankingPeriodSelect option[value="LAST_3_DAYS"]');
-            if(opt3d) opt3d.text = (d3d && d3d !== latest) ? `Ostatnie 3 dni (Suma: ${extractDate(d3d)} do ${latestDate})` : `Ostatnie 3 dni`;
+            if(opt3d) opt3d.text = (d3d && d3d !== latestDate) ? `Ostatnie 3 dni (Suma: ${d3d} do ${latestDate})` : `Ostatnie 3 dni`;
             
             let opt1w = document.querySelector('#rankingPeriodSelect option[value="LAST_WEEK"]');
-            if(opt1w) opt1w.text = (d7d && d7d !== latest) ? `Ostatni tydzień (${extractDate(d7d)} do ${latestDate})` : `Ostatni tydzień`;
+            if(opt1w) opt1w.text = (d7d && d7d !== latestDate) ? `Ostatni tydzień (${d7d} do ${latestDate})` : `Ostatni tydzień`;
             
             let opt1m = document.querySelector('#rankingPeriodSelect option[value="THIS_MONTH"]');
             if(opt1m) opt1m.text = `Bieżący miesiąc (od ${dMonthDate} do ${latestDate})`;
@@ -1151,6 +1176,19 @@
             let validDays = getUniqueRankingDates().slice(1).reverse(); 
             if(validDays.length === 0) { specSelect.innerHTML = "<option>Brak archiwalnych dni</option>"; return; }
             validDays.forEach(item => { let opt = document.createElement('option'); opt.value = item; opt.textContent = item; if (item === currentVal) opt.selected = true; specSelect.appendChild(opt); });
+        }
+
+        function deduplicateRecords(records) {
+            let unique = [];
+            let seen = new Set();
+            for(let i=0; i<records.length; i++) {
+                let nick = records[i][3];
+                if(!seen.has(nick)) {
+                    seen.add(nick);
+                    unique.push(records[i]);
+                }
+            }
+            return unique;
         }
 
         function calculateAndRenderRanking() {
@@ -1164,14 +1202,20 @@
             else if (period === 'LAST_3_DAYS') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 4)];
             else if (period === 'LAST_WEEK') startDateStr = uniqueDates[Math.max(0, uniqueDates.length - 8)];
             else if (period === 'THIS_MONTH') { 
-                let targetMonth = endDateStr.split(' ')[0].split('.')[1]; 
-                startDateStr = uniqueDates.find(d => d.split(' ')[0].split('.')[1] === targetMonth) || uniqueDates[0]; 
+                let targetMonth = extractSafeMonth(endDateStr); 
+                startDateStr = uniqueDates.find(d => extractSafeMonth(d) === targetMonth) || uniqueDates[0]; 
             }
             else if (period === 'SPECIFIC_DAY' && specDay) { endDateStr = specDay; startDateStr = uniqueDates[uniqueDates.indexOf(specDay) - 1] || uniqueDates[0]; }
             
             if (startDateStr === endDateStr) startDateStr = null; let isDelta = (startDateStr !== null);
-            let endRecords = globalRankingData.filter(r => r[0].trim() === endDateStr); 
-            let startRecords = startDateStr ? globalRankingData.filter(r => r[0].trim() === startDateStr) : [];
+            
+            let endRecords = globalRankingData.filter(r => extractDate(r[0]) === endDateStr); 
+            let startRecords = startDateStr ? globalRankingData.filter(r => extractDate(r[0]) === startDateStr) : [];
+            
+            // KRYTYCZNE: Deduplikacja wyników, naprawia "bzdury" generowane przez zdublowane wiersze w bazie
+            endRecords = deduplicateRecords(endRecords);
+            startRecords = deduplicateRecords(startRecords);
+            
             let startMap = {}; startRecords.forEach(r => { startMap[r[3]] = r; }); 
 
             computedRankingRows = [];
@@ -1423,11 +1467,13 @@
                 offset: offsetMinutes
             };
 
+            // Zapisz lokalnie w przeglądarce, by wyświetlić w tabeli
             warSchedules.push(newWar);
             warSchedules.sort((a,b) => a.alarmTime - b.alarmTime);
             localStorage.setItem('bf_war_schedules', JSON.stringify(warSchedules));
             renderWarSchedules();
 
+            // WYŚLIJ DO CHMURY
             if (WAR_WEBAPP_URL && WAR_WEBHOOK_URL) {
                 let params = new URLSearchParams({
                     action: 'addWar',
@@ -1444,6 +1490,7 @@
                     .catch(e => console.log("Błąd komunikacji z chmurą Google", e));
             }
             
+            // Opcjonalne czyszczenie zaznaczeń
             document.querySelectorAll('.war-tile').forEach(t => { t.classList.remove('active-our'); t.classList.remove('active-enemy'); });
             selectedOurClan = null; selectedEnemyClan = null;
             document.getElementById('warTimeInput').value = "";
