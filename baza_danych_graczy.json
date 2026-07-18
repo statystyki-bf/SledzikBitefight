@@ -1,33 +1,33 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "225.597.344 / 225.664.335",
+        "Doswiadczenie": "225.636.338 / 225.664.335",
         "Sila": "4000",
         "Obrona": "3849",
         "Zwinnosc": "3524",
         "Wytrzymalosc": "3314",
         "Charyzma": "1507",
-        "Walki": "97.516",
-        "Zrabowane dobra": "314.942.485.657 krwi"
+        "Walki": "97.524",
+        "Zrabowane dobra": "314.969.275.340 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "134.754.890 / 134.789.510",
+        "Doswiadczenie": "134.800.511 / 134.841.435",
         "Sila": "2552",
         "Obrona": "2523",
         "Zwinnosc": "2322",
         "Wytrzymalosc": "2045",
         "Charyzma": "1588",
-        "Walki": "57.497",
-        "Zrabowane dobra": "199.130.549.418 krwi"
+        "Walki": "57.499",
+        "Zrabowane dobra": "199.184.666.874 krwi"
     },
     "lux": {
-        "Doswiadczenie": "125.658.212 / 125.705.990",
+        "Doswiadczenie": "125.662.098 / 125.705.990",
         "Sila": "2402",
-        "Obrona": "2958",
+        "Obrona": "2960",
         "Zwinnosc": "2162",
         "Wytrzymalosc": "2564",
         "Charyzma": "1931",
-        "Walki": "106.836",
-        "Zrabowane dobra": "189.556.143.002 krwi"
+        "Walki": "106.837",
+        "Zrabowane dobra": "189.559.023.165 krwi"
     },
     "XTurek": {
         "Doswiadczenie": "468.738.211 / 468.812.125",
@@ -46,17 +46,17 @@
         "Zwinnosc": "2654",
         "Wytrzymalosc": "2441",
         "Charyzma": "1606",
-        "Walki": "50.602",
+        "Walki": "50.603",
         "Zrabowane dobra": "258.556.423.638 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "151.061.890 / 151.090.540",
+        "Doswiadczenie": "151.062.122 / 151.090.540",
         "Sila": "4797",
         "Obrona": "3295",
         "Zwinnosc": "3012",
         "Wytrzymalosc": "3055",
         "Charyzma": "1789",
         "Walki": "30.791",
-        "Zrabowane dobra": "303.043.813.700 mięsa"
+        "Zrabowane dobra": "303.044.794.103 mięsa"
     }
 }
