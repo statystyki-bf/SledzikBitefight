@@ -1,26 +1,26 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "226.322.838 / 226.336.645",
+        "Doswiadczenie": "226.464.694 / 226.471.230",
         "Sila": "4000",
         "Obrona": "3867",
         "Zwinnosc": "3524",
         "Wytrzymalosc": "3314",
         "Charyzma": "1507",
-        "Walki": "97.547",
-        "Zrabowane dobra": "315.591.669.607 krwi"
+        "Walki": "97.548",
+        "Zrabowane dobra": "315.712.564.928 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "134.881.691 / 134.893.370",
+        "Doswiadczenie": "134.886.913 / 134.893.370",
         "Sila": "2552",
         "Obrona": "2524",
         "Zwinnosc": "2322",
         "Wytrzymalosc": "2046",
         "Charyzma": "1589",
         "Walki": "57.507",
-        "Zrabowane dobra": "199.234.789.515 krwi"
+        "Zrabowane dobra": "199.234.878.506 krwi"
     },
     "lux": {
-        "Doswiadczenie": "125.975.718 / 126.007.020",
+        "Doswiadczenie": "125.980.738 / 126.007.020",
         "Sila": "2402",
         "Obrona": "2969",
         "Zwinnosc": "2162",
@@ -30,17 +30,17 @@
         "Zrabowane dobra": "189.821.257.724 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "469.938.245 / 469.974.820",
+        "Doswiadczenie": "470.334.641 / 470.362.700",
         "Sila": "4376",
         "Obrona": "3320",
-        "Zwinnosc": "3930",
+        "Zwinnosc": "3931",
         "Wytrzymalosc": "3803",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "882.157.612.007 mięsa"
+        "Zrabowane dobra": "882.528.282.482 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "154.687.316 / 154.740.405",
+        "Doswiadczenie": "154.691.870 / 154.740.405",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2669",
@@ -50,7 +50,7 @@
         "Zrabowane dobra": "258.631.655.979 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "151.293.867 / 151.310.505",
+        "Doswiadczenie": "151.299.368 / 151.310.505",
         "Sila": "4799",
         "Obrona": "3296",
         "Zwinnosc": "3012",
