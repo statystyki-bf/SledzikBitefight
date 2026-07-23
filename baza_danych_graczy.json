@@ -10,34 +10,34 @@
         "Zrabowane dobra": "319.215.070.657 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "136.902.863 / 136.926.675",
+        "Doswiadczenie": "136.975.472 / 136.979.010",
         "Sila": "2552",
         "Obrona": "2524",
         "Zwinnosc": "2323",
         "Wytrzymalosc": "2052",
         "Charyzma": "1593",
-        "Walki": "57.575",
-        "Zrabowane dobra": "201.006.689.714 krwi"
+        "Walki": "57.577",
+        "Zrabowane dobra": "201.053.965.018 krwi"
     },
     "lux": {
-        "Doswiadczenie": "128.023.578 / 128.073.665",
-        "Sila": "2404",
+        "Doswiadczenie": "128.062.318 / 128.073.665",
+        "Sila": "2405",
         "Obrona": "2969",
         "Zwinnosc": "2168",
         "Wytrzymalosc": "2572",
         "Charyzma": "1933",
         "Walki": "107.289",
-        "Zrabowane dobra": "191.497.147.156 krwi"
+        "Zrabowane dobra": "191.520.469.706 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "480.776.061 / 480.797.985",
+        "Doswiadczenie": "480.883.561 / 480.896.050",
         "Sila": "4377",
         "Obrona": "3320",
         "Zwinnosc": "3944",
         "Wytrzymalosc": "3818",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "893.744.797.003 mięsa"
+        "Zrabowane dobra": "893.860.252.627 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "154.871.677 / 154.907.345",
@@ -46,17 +46,17 @@
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1610",
-        "Walki": "50.735",
+        "Walki": "50.737",
         "Zrabowane dobra": "258.832.678.452 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "153.924.656 / 153.962.550",
+        "Doswiadczenie": "153.998.863 / 154.018.050",
         "Sila": "4799",
         "Obrona": "3297",
         "Zwinnosc": "3012",
         "Wytrzymalosc": "3056",
         "Charyzma": "1819",
         "Walki": "30.828",
-        "Zrabowane dobra": "305.347.217.322 mięsa"
+        "Zrabowane dobra": "305.402.367.300 mięsa"
     }
 }
