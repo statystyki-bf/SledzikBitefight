@@ -1,23 +1,23 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "231.460.889 / 231.478.880",
+        "Doswiadczenie": "231.603.386 / 231.614.985",
         "Sila": "4000",
         "Obrona": "3868",
-        "Zwinnosc": "3534",
+        "Zwinnosc": "3535",
         "Wytrzymalosc": "3321",
         "Charyzma": "1507",
-        "Walki": "97.714",
-        "Zrabowane dobra": "320.369.755.746 krwi"
+        "Walki": "97.716",
+        "Zrabowane dobra": "320.511.024.681 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "137.638.026 / 137.660.290",
+        "Doswiadczenie": "137.674.356 / 137.712.765",
         "Sila": "2552",
         "Obrona": "2525",
         "Zwinnosc": "2325",
         "Wytrzymalosc": "2053",
         "Charyzma": "1593",
         "Walki": "57.598",
-        "Zrabowane dobra": "201.537.901.870 krwi"
+        "Zrabowane dobra": "201.561.564.212 krwi"
     },
     "lux": {
         "Doswiadczenie": "128.134.321 / 128.174.905",
@@ -30,14 +30,14 @@
         "Zrabowane dobra": "191.587.812.305 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "483.520.270 / 483.547.610",
+        "Doswiadczenie": "483.686.244 / 483.744.315",
         "Sila": "4377",
         "Obrona": "3320",
         "Zwinnosc": "3944",
         "Wytrzymalosc": "3824",
         "Charyzma": "2986",
         "Walki": "115.624",
-        "Zrabowane dobra": "896.448.301.041 mięsa"
+        "Zrabowane dobra": "896.673.536.471 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "154.933.524 / 154.963.010",
@@ -50,13 +50,13 @@
         "Zrabowane dobra": "258.903.958.001 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "155.002.910 / 155.018.685",
+        "Doswiadczenie": "155.048.600 / 155.074.370",
         "Sila": "4799",
         "Obrona": "3297",
         "Zwinnosc": "3013",
         "Wytrzymalosc": "3056",
-        "Charyzma": "1829",
+        "Charyzma": "1830",
         "Walki": "30.828",
-        "Zrabowane dobra": "306.189.384.831 mięsa"
+        "Zrabowane dobra": "306.222.459.609 mięsa"
     }
 }
