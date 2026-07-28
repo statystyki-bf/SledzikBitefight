@@ -1,16 +1,16 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "237.301.873 / 237.367.390",
+        "Doswiadczenie": "237.301.877 / 237.367.390",
         "Sila": "4000",
         "Obrona": "3868",
         "Zwinnosc": "3555",
         "Wytrzymalosc": "3322",
         "Charyzma": "1507",
-        "Walki": "97.865",
+        "Walki": "97.866",
         "Zrabowane dobra": "325.769.588.321 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "139.885.307 / 139.925.790",
+        "Doswiadczenie": "139.890.597 / 139.925.790",
         "Sila": "2553",
         "Obrona": "2527",
         "Zwinnosc": "2329",
@@ -20,40 +20,40 @@
         "Zrabowane dobra": "203.504.277.634 krwi"
     },
     "lux": {
-        "Doswiadczenie": "128.764.531 / 128.783.200",
+        "Doswiadczenie": "128.764.535 / 128.783.200",
         "Sila": "2406",
         "Obrona": "2969",
         "Zwinnosc": "2171",
         "Wytrzymalosc": "2573",
         "Charyzma": "1935",
-        "Walki": "107.362",
+        "Walki": "107.363",
         "Zrabowane dobra": "192.184.548.260 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "493.886.355 / 493.928.540",
+        "Doswiadczenie": "493.926.278 / 493.928.540",
         "Sila": "4377",
         "Obrona": "3320",
         "Zwinnosc": "3951",
         "Wytrzymalosc": "3843",
         "Charyzma": "2987",
         "Walki": "115.624",
-        "Zrabowane dobra": "906.679.655.202 mięsa"
+        "Zrabowane dobra": "906.726.770.383 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "155.064.844 / 155.074.370",
+        "Doswiadczenie": "155.064.846 / 155.074.370",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1612",
-        "Walki": "50.867",
+        "Walki": "50.868",
         "Zrabowane dobra": "259.023.431.626 krwi"
     },
     "PEON": {
         "Doswiadczenie": "157.475.480 / 157.478.330",
         "Sila": "4799",
         "Obrona": "3298",
-        "Zwinnosc": "3017",
+        "Zwinnosc": "3018",
         "Wytrzymalosc": "3057",
         "Charyzma": "1844",
         "Walki": "30.832",
