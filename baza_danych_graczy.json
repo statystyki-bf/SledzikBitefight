@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "242.601.378 / 242.632.745",
+        "Doswiadczenie": "242.687.192 / 242.702.410",
         "Sila": "4000",
         "Obrona": "3876",
         "Zwinnosc": "3564",
         "Wytrzymalosc": "3327",
         "Charyzma": "1507",
-        "Walki": "98.042",
-        "Zrabowane dobra": "330.661.915.470 krwi"
+        "Walki": "98.054",
+        "Zrabowane dobra": "330.729.559.198 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "141.775.709 / 141.783.450",
@@ -20,7 +20,7 @@
         "Zrabowane dobra": "205.021.531.633 krwi"
     },
     "lux": {
-        "Doswiadczenie": "129.297.052 / 129.342.065",
+        "Doswiadczenie": "129.302.138 / 129.342.065",
         "Sila": "2407",
         "Obrona": "2969",
         "Zwinnosc": "2174",
@@ -30,33 +30,33 @@
         "Zrabowane dobra": "192.688.467.661 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "503.473.613 / 503.516.160",
+        "Doswiadczenie": "503.669.095 / 503.716.880",
         "Sila": "4391",
         "Obrona": "3320",
         "Zwinnosc": "3961",
         "Wytrzymalosc": "3843",
         "Charyzma": "2987",
         "Walki": "115.624",
-        "Zrabowane dobra": "916.494.585.813 mięsa"
+        "Zrabowane dobra": "916.693.917.769 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "155.153.025 / 155.185.775",
+        "Doswiadczenie": "155.158.596 / 155.185.775",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1614",
-        "Walki": "50.956",
+        "Walki": "50.957",
         "Zrabowane dobra": "259.088.929.202 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "160.394.306 / 160.410.140",
+        "Doswiadczenie": "160.394.307 / 160.410.140",
         "Sila": "4799",
         "Obrona": "3300",
         "Zwinnosc": "3024",
         "Wytrzymalosc": "3063",
         "Charyzma": "1846",
-        "Walki": "30.837",
+        "Walki": "30.838",
         "Zrabowane dobra": "310.329.254.312 mięsa"
     }
 }
