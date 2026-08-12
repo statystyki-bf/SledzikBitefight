@@ -10,7 +10,7 @@
         "Zrabowane dobra": "343.308.126.098 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "145.989.662 / 146.021.480",
+        "Doswiadczenie": "145.995.066 / 146.021.480",
         "Sila": "2564",
         "Obrona": "2534",
         "Zwinnosc": "2342",
@@ -50,13 +50,13 @@
         "Zrabowane dobra": "259.304.389.632 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "167.675.490 / 167.684.195",
+        "Doswiadczenie": "167.719.650 / 167.742.110",
         "Sila": "4805",
         "Obrona": "3314",
         "Zwinnosc": "3027",
         "Wytrzymalosc": "3069",
-        "Charyzma": "1881",
+        "Charyzma": "1882",
         "Walki": "30.916",
-        "Zrabowane dobra": "316.033.931.667 mięsa"
+        "Zrabowane dobra": "316.071.650.164 mięsa"
     }
 }
