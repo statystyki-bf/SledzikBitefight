@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "262.005.156 / 262.022.840",
+        "Doswiadczenie": "262.163.534 / 262.167.645",
         "Sila": "4000",
-        "Obrona": "3957",
+        "Obrona": "3958",
         "Zwinnosc": "3599",
         "Wytrzymalosc": "3338",
         "Charyzma": "1507",
-        "Walki": "98.672",
-        "Zrabowane dobra": "348.418.484.844 krwi"
+        "Walki": "98.673",
+        "Zrabowane dobra": "348.561.674.064 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "147.701.313 / 147.701.560",
@@ -20,14 +20,14 @@
         "Zrabowane dobra": "209.698.215.429 krwi"
     },
     "lux": {
-        "Doswiadczenie": "136.138.996 / 136.142.835",
+        "Doswiadczenie": "136.143.325 / 136.195.020",
         "Sila": "2415",
         "Obrona": "3001",
         "Zwinnosc": "2195",
         "Wytrzymalosc": "2601",
         "Charyzma": "1948",
         "Walki": "107.877",
-        "Zrabowane dobra": "198.491.282.245 krwi"
+        "Zrabowane dobra": "198.507.918.628 krwi"
     },
     "XTurek": {
         "Doswiadczenie": "543.853.781 / 543.934.930",
@@ -40,23 +40,23 @@
         "Zrabowane dobra": "958.394.288.531 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "155.925.283 / 155.966.710",
+        "Doswiadczenie": "155.925.667 / 155.966.710",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1616",
         "Walki": "51.627",
-        "Zrabowane dobra": "259.899.697.201 krwi"
+        "Zrabowane dobra": "259.901.338.657 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "170.832.952 / 170.884.425",
+        "Doswiadczenie": "170.915.348 / 170.942.890",
         "Sila": "4805",
         "Obrona": "3315",
         "Zwinnosc": "3033",
-        "Wytrzymalosc": "3071",
+        "Wytrzymalosc": "3072",
         "Charyzma": "1900",
         "Walki": "30.937",
-        "Zrabowane dobra": "318.471.872.724 mięsa"
+        "Zrabowane dobra": "318.537.572.950 mięsa"
     }
 }
