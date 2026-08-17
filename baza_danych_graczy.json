@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "263.038.507 / 263.109.830",
+        "Doswiadczenie": "263.119.562 / 263.182.380",
         "Sila": "4000",
         "Obrona": "3962",
         "Zwinnosc": "3600",
         "Wytrzymalosc": "3338",
         "Charyzma": "1507",
-        "Walki": "98.682",
-        "Zrabowane dobra": "349.381.790.447 krwi"
+        "Walki": "98.685",
+        "Zrabowane dobra": "349.460.607.812 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "147.979.288 / 148.027.845",
@@ -16,7 +16,7 @@
         "Zwinnosc": "2344",
         "Wytrzymalosc": "2082",
         "Charyzma": "1602",
-        "Walki": "57.935",
+        "Walki": "57.936",
         "Zrabowane dobra": "209.905.273.833 krwi"
     },
     "lux": {
@@ -26,7 +26,7 @@
         "Zwinnosc": "2198",
         "Wytrzymalosc": "2601",
         "Charyzma": "1948",
-        "Walki": "107.884",
+        "Walki": "107.885",
         "Zrabowane dobra": "198.707.740.450 krwi"
     },
     "XTurek": {
@@ -46,7 +46,7 @@
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1616",
-        "Walki": "51.648",
+        "Walki": "51.649",
         "Zrabowane dobra": "259.922.052.949 krwi"
     },
     "PEON": {
