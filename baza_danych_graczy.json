@@ -1,23 +1,23 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "263.881.916 / 263.908.390",
+        "Doswiadczenie": "263.961.409 / 263.981.045",
         "Sila": "4000",
         "Obrona": "3965",
         "Zwinnosc": "3600",
         "Wytrzymalosc": "3338",
         "Charyzma": "1507",
-        "Walki": "98.713",
-        "Zrabowane dobra": "350.146.087.946 krwi"
+        "Walki": "98.721",
+        "Zrabowane dobra": "350.214.277.727 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "148.373.820 / 148.408.965",
+        "Doswiadczenie": "148.414.982 / 148.463.450",
         "Sila": "2566",
         "Obrona": "2534",
         "Zwinnosc": "2346",
         "Wytrzymalosc": "2082",
         "Charyzma": "1602",
         "Walki": "57.944",
-        "Zrabowane dobra": "210.193.804.494 krwi"
+        "Zrabowane dobra": "210.217.824.899 krwi"
     },
     "lux": {
         "Doswiadczenie": "136.720.947 / 136.769.730",
@@ -30,14 +30,14 @@
         "Zrabowane dobra": "198.946.498.595 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "547.831.178 / 547.905.585",
+        "Doswiadczenie": "547.928.617 / 548.010.270",
         "Sila": "4520",
         "Obrona": "3321",
         "Zwinnosc": "3963",
         "Wytrzymalosc": "3843",
         "Charyzma": "2989",
         "Walki": "115.625",
-        "Zrabowane dobra": "962.433.786.978 mięsa"
+        "Zrabowane dobra": "962.528.451.539 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "155.979.391 / 156.022.565",
@@ -46,17 +46,17 @@
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1616",
-        "Walki": "51.679",
+        "Walki": "51.680",
         "Zrabowane dobra": "259.953.662.136 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "172.272.775 / 172.290.370",
+        "Doswiadczenie": "172.354.544 / 172.407.790",
         "Sila": "4805",
         "Obrona": "3316",
         "Zwinnosc": "3034",
         "Wytrzymalosc": "3078",
         "Charyzma": "1900",
         "Walki": "30.943",
-        "Zrabowane dobra": "319.649.693.493 mięsa"
+        "Zrabowane dobra": "319.712.366.693 mięsa"
     }
 }
