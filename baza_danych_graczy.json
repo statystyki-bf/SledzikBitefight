@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "266.185.808 / 266.238.340",
+        "Doswiadczenie": "266.206.980 / 266.238.340",
         "Sila": "4000",
         "Obrona": "3967",
         "Zwinnosc": "3604",
-        "Wytrzymalosc": "3341",
+        "Wytrzymalosc": "3342",
         "Charyzma": "1507",
-        "Walki": "98.802",
-        "Zrabowane dobra": "352.239.841.730 krwi"
+        "Walki": "98.804",
+        "Zrabowane dobra": "352.282.180.783 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "149.224.436 / 149.227.305",
@@ -16,7 +16,7 @@
         "Zwinnosc": "2347",
         "Wytrzymalosc": "2084",
         "Charyzma": "1603",
-        "Walki": "57.970",
+        "Walki": "57.971",
         "Zrabowane dobra": "210.858.623.928 krwi"
     },
     "lux": {
@@ -30,33 +30,33 @@
         "Zrabowane dobra": "199.396.697.468 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "554.011.222 / 554.099.170",
+        "Doswiadczenie": "554.158.205 / 554.204.445",
         "Sila": "4531",
         "Obrona": "3321",
         "Zwinnosc": "3963",
         "Wytrzymalosc": "3843",
         "Charyzma": "2989",
         "Walki": "115.625",
-        "Zrabowane dobra": "969.154.839.987 mięsa"
+        "Zrabowane dobra": "969.298.405.703 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "156.019.933 / 156.022.565",
+        "Doswiadczenie": "156.019.934 / 156.022.565",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1616",
-        "Walki": "51.821",
+        "Walki": "51.822",
         "Zrabowane dobra": "259.980.533.859 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "174.356.755 / 174.410.085",
+        "Doswiadczenie": "174.447.728 / 174.469.150",
         "Sila": "4805",
         "Obrona": "3317",
         "Zwinnosc": "3035",
         "Wytrzymalosc": "3080",
         "Charyzma": "1913",
         "Walki": "30.957",
-        "Zrabowane dobra": "321.307.535.073 mięsa"
+        "Zrabowane dobra": "321.419.422.288 mięsa"
     }
 }
