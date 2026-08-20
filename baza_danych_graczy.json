@@ -1,13 +1,13 @@
 {
     "Brahmaparuss": {
-        "Doswiadczenie": "265.707.444 / 265.727.790",
+        "Doswiadczenie": "265.794.139 / 265.800.695",
         "Sila": "4000",
         "Obrona": "3967",
         "Zwinnosc": "3604",
         "Wytrzymalosc": "3340",
         "Charyzma": "1507",
-        "Walki": "98.793",
-        "Zrabowane dobra": "351.814.568.680 krwi"
+        "Walki": "98.794",
+        "Zrabowane dobra": "351.882.914.166 krwi"
     },
     "Gawron": {
         "Doswiadczenie": "149.108.796 / 149.118.065",
@@ -16,7 +16,7 @@
         "Zwinnosc": "2347",
         "Wytrzymalosc": "2084",
         "Charyzma": "1603",
-        "Walki": "57.966",
+        "Walki": "57.967",
         "Zrabowane dobra": "210.786.487.598 krwi"
     },
     "lux": {
@@ -30,33 +30,33 @@
         "Zrabowane dobra": "199.396.697.468 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "553.199.742 / 553.257.320",
+        "Doswiadczenie": "553.378.046 / 553.467.725",
         "Sila": "4529",
         "Obrona": "3321",
         "Zwinnosc": "3963",
         "Wytrzymalosc": "3843",
         "Charyzma": "2989",
         "Walki": "115.625",
-        "Zrabowane dobra": "967.804.387.453 mięsa"
+        "Zrabowane dobra": "968.126.412.086 mięsa"
     },
     "Viktor": {
-        "Doswiadczenie": "156.014.184 / 156.022.565",
+        "Doswiadczenie": "156.014.186 / 156.022.565",
         "Sila": "3040",
         "Obrona": "3002",
         "Zwinnosc": "2670",
         "Wytrzymalosc": "2441",
         "Charyzma": "1616",
-        "Walki": "51.799",
+        "Walki": "51.800",
         "Zrabowane dobra": "259.979.953.819 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "174.063.972 / 174.114.905",
+        "Doswiadczenie": "174.116.405 / 174.173.920",
         "Sila": "4805",
         "Obrona": "3317",
         "Zwinnosc": "3035",
         "Wytrzymalosc": "3080",
         "Charyzma": "1911",
         "Walki": "30.956",
-        "Zrabowane dobra": "321.091.592.248 mięsa"
+        "Zrabowane dobra": "321.135.609.904 mięsa"
     }
 }
