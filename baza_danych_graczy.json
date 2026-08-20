@@ -10,14 +10,14 @@
         "Zrabowane dobra": "351.882.914.166 krwi"
     },
     "Gawron": {
-        "Doswiadczenie": "149.108.796 / 149.118.065",
+        "Doswiadczenie": "149.145.520 / 149.172.680",
         "Sila": "2566",
         "Obrona": "2535",
         "Zwinnosc": "2347",
         "Wytrzymalosc": "2084",
         "Charyzma": "1603",
         "Walki": "57.967",
-        "Zrabowane dobra": "210.786.487.598 krwi"
+        "Zrabowane dobra": "210.810.532.024 krwi"
     },
     "lux": {
         "Doswiadczenie": "137.281.715 / 137.293.240",
@@ -30,14 +30,14 @@
         "Zrabowane dobra": "199.396.697.468 krwi"
     },
     "XTurek": {
-        "Doswiadczenie": "553.378.046 / 553.467.725",
-        "Sila": "4529",
+        "Doswiadczenie": "553.494.597 / 553.572.940",
+        "Sila": "4530",
         "Obrona": "3321",
         "Zwinnosc": "3963",
         "Wytrzymalosc": "3843",
         "Charyzma": "2989",
         "Walki": "115.625",
-        "Zrabowane dobra": "968.126.412.086 mięsa"
+        "Zrabowane dobra": "968.425.338.858 mięsa"
     },
     "Viktor": {
         "Doswiadczenie": "156.014.186 / 156.022.565",
@@ -50,13 +50,13 @@
         "Zrabowane dobra": "259.979.953.819 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "174.116.405 / 174.173.920",
+        "Doswiadczenie": "174.145.983 / 174.173.920",
         "Sila": "4805",
         "Obrona": "3317",
         "Zwinnosc": "3035",
         "Wytrzymalosc": "3080",
         "Charyzma": "1911",
         "Walki": "30.956",
-        "Zrabowane dobra": "321.135.609.904 mięsa"
+        "Zrabowane dobra": "321.154.954.308 mięsa"
     }
 }
