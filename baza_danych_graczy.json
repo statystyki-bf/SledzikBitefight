@@ -16,18 +16,18 @@
         "Zwinnosc": "2350",
         "Wytrzymalosc": "2086",
         "Charyzma": "1603",
-        "Walki": "57.992",
+        "Walki": "57.993",
         "Zrabowane dobra": "211.463.751.358 krwi"
     },
     "lux": {
-        "Doswiadczenie": "137.712.766 / 137.765.250",
+        "Doswiadczenie": "137.749.277 / 137.765.250",
         "Sila": "2419",
         "Obrona": "3001",
         "Zwinnosc": "2205",
         "Wytrzymalosc": "2601",
         "Charyzma": "1952",
-        "Walki": "107.955",
-        "Zrabowane dobra": "199.801.389.263 krwi"
+        "Walki": "107.957",
+        "Zrabowane dobra": "199.825.783.274 krwi"
     },
     "XTurek": {
         "Doswiadczenie": "559.629.621 / 559.692.580",
@@ -56,7 +56,7 @@
         "Zwinnosc": "3035",
         "Wytrzymalosc": "3084",
         "Charyzma": "1925",
-        "Walki": "30.965",
+        "Walki": "30.966",
         "Zrabowane dobra": "322.880.911.050 mięsa"
     }
 }
