@@ -16,7 +16,7 @@
         "Zwinnosc": "2351",
         "Wytrzymalosc": "2086",
         "Charyzma": "1603",
-        "Walki": "58.001",
+        "Walki": "58.002",
         "Zrabowane dobra": "211.564.604.153 krwi"
     },
     "lux": {
@@ -50,13 +50,13 @@
         "Zrabowane dobra": "261.186.827.841 krwi"
     },
     "PEON": {
-        "Doswiadczenie": "176.404.959 / 176.423.940",
+        "Doswiadczenie": "176.405.103 / 176.423.940",
         "Sila": "4805",
         "Obrona": "3317",
         "Zwinnosc": "3035",
         "Wytrzymalosc": "3084",
         "Charyzma": "1927",
         "Walki": "30.972",
-        "Zrabowane dobra": "323.008.841.850 mięsa"
+        "Zrabowane dobra": "323.009.472.930 mięsa"
     }
 }
